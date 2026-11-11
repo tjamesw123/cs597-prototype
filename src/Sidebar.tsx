@@ -6,18 +6,16 @@ import type { CommentedHighlight } from "./types.ts";
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
   resetHighlights: () => void;
-  toggleDocument: () => void;
+  // toggleDocument: () => void;
 }
 
 const updateHash = (highlight: Highlight) => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-// declare const APP_VERSION: string;
-
 const Sidebar = ({
   highlights,
-  toggleDocument,
+  // toggleDocument,
   resetHighlights,
 }: SidebarProps) => {
   return (
@@ -25,15 +23,21 @@ const Sidebar = ({
       {/* Description section */}
       <div className="description" style={{ padding: "1rem" }}>
         <h2 style={{ marginBottom: "1rem" }}>
-          react-pdf-highlighter-extended {"0.0.0.0"}
+          Employer Review
         </h2>
-
-        <p style={{ fontSize: "0.7rem" }}>
-          <a href="https://github.com/DanielArnould/react-pdf-highlighter-extended">
-            Open in GitHub
-          </a>
+        <p>
+          Comment with quick comments on the employee's resume to tell them what they could do better and what they did well.
         </p>
-
+          <br></br>
+        <p>
+          Press the submit button once you are done with feedback
+        </p>
+        {/* You can see this as an employer */}
+        {/* <div style={{ padding: "0.5rem" }}>
+          <button onClick={toggleDocument} className="sidebar__toggle">
+            Submit feedback to resume owner
+          </button>
+        </div> */}
         <p>
           <small>
             To create an area highlight hold ⌥ Option key (Alt), then click and
@@ -86,19 +90,22 @@ const Sidebar = ({
         </ul>
       )}
 
+      {/* Change to either not be visible or a different button 
       <div style={{ padding: "0.5rem" }}>
         <button onClick={toggleDocument} className="sidebar__toggle">
           Toggle PDF document
         </button>
-      </div>
+      </div> */}
 
       {highlights && highlights.length > 0 && (
         <div style={{ padding: "0.5rem" }}>
           <button onClick={resetHighlights} className="sidebar__reset">
-            Reset highlights
+            Reset highlights and all feedback
           </button>
         </div>
       )}
+
+      
     </div>
   );
 };

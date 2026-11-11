@@ -7,3 +7,72 @@ body {
   color: #333333;
 }
 
+.navi > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333333;
+}
+
+.navi > ul li {
+  float: left;
+}
+
+.navi > ul li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.sectionLI {
+  margin-right: 0;
+  margin-left: auto;
+  float: right;
+}
+
+.section {
+  display: block;
+  color: white;
+  text-align: center;
+  /* padding: 14px 16px; */
+  text-decoration: none;
+  
+}
+
+.navi > ul li a:hover {
+  background-color: #111111;
+}
+
+
+.navbar {
+    display: flex;
+    background-color: #333;
+}
+
+.navbar a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.navbar p {
+    color: white;
+    /* padding: 14px 20px; */
+    padding-left: 10px;
+    padding-right: 10px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.navbar .right {
+  margin-left: auto;
+  display: flex;
+}
+
+.navbar a:hover {
+  background-color: #111111;
+}

@@ -22,24 +22,21 @@ import ErrorPage from "./ErrorPage.tsx";
 
 const getNextId = () => String(Math.random()).slice(2);
 
-// Refs for PdfHighlighter utilities
-const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
-
-const TEST_HIGHLIGHTS = _testHighlights;
-const PRIMARY_PDF_URL = "https://arxiv.org/pdf/2203.11115";
-const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480";
+// // // Refs for PdfHighlighter utilities
+// const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
 
 // urls: string[],
 
-export const toggleDocument = (
-    currentPdfIndexRef: React.MutableRefObject<number>, 
-    setUrl: React.Dispatch<React.SetStateAction<string>>, 
-    setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>) => {
-    const urls = [PRIMARY_PDF_URL, SECONDARY_PDF_URL];
-    currentPdfIndexRef.current = (currentPdfIndexRef.current + 1) % urls.length;
-    setUrl(urls[currentPdfIndexRef.current]);
-    setHighlights(TEST_HIGHLIGHTS[urls[currentPdfIndexRef.current]] ?? []);
-};
+// // Convert into toggleDocument into switvch
+// export const toggleDocument = (
+//     currentPdfIndexRef: React.MutableRefObject<number>, 
+//     setUrl: React.Dispatch<React.SetStateAction<string>>, 
+//     setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>) => {
+//     const urls = [PRIMARY_PDF_URL, SECONDARY_PDF_URL];
+//     currentPdfIndexRef.current = (currentPdfIndexRef.current + 1) % urls.length;
+//     setUrl(urls[currentPdfIndexRef.current]);
+//     setHighlights(TEST_HIGHLIGHTS[urls[currentPdfIndexRef.current]] ?? []);
+// };
 
 export const parseIdFromHash = () => {
   return document.location.hash.slice("#highlight-".length);
@@ -54,7 +51,8 @@ export const handleContextMenu = (
     highlight: ViewportHighlight<CommentedHighlight>,
     setContextMenu : React.Dispatch<React.SetStateAction<ContextMenuProps | null>>,
     setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, 
-    highlights: CommentedHighlight[]
+    highlights: CommentedHighlight[],
+    highlighterUtilsRef: React.MutableRefObject<PdfHighlighterUtils | undefined>
   ) => {
     event.preventDefault();
 
@@ -62,7 +60,7 @@ export const handleContextMenu = (
       xPos: event.clientX,
       yPos: event.clientY,
       deleteHighlight: () => deleteHighlight(setHighlights, highlights, highlight),
-      editComment: () => editComment(setHighlights, highlights, highlight),
+      editComment: () => editComment(setHighlights, highlights, highlight, highlighterUtilsRef),
     });
   };
 
@@ -104,7 +102,7 @@ export const handleContextMenu = (
   export const editComment = (
     setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, 
     highlights: CommentedHighlight[], 
-    highlight: ViewportHighlight<CommentedHighlight>) => {
+    highlight: ViewportHighlight<CommentedHighlight>, highlighterUtilsRef: React.MutableRefObject<PdfHighlighterUtils | undefined>) => {
     if (!highlighterUtilsRef.current) return;
 
     const editCommentTip: Tip = {
@@ -126,7 +124,7 @@ export const handleContextMenu = (
   };
 
   // Scroll to highlight based on hash in the URL
-  export const scrollToHighlightFromHash = (highlights: CommentedHighlight[]) => {
+  export const scrollToHighlightFromHash = (highlights: CommentedHighlight[], highlighterUtilsRef: React.MutableRefObject<PdfHighlighterUtils | undefined>) => {
     const highlight = getHighlightById(parseIdFromHash(), highlights);
 
     if (highlight && highlighterUtilsRef.current) {

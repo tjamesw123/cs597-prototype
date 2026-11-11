@@ -18,200 +18,158 @@ import {
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
 import type { CommentedHighlight } from "./types.ts";
-import { Route, Routes } from "react-router";
+import { Route, Routes, useParams } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
+import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
+import type { User } from "./LoginSignup.tsx";
+import type { DocumentRec, Job, JobSubmission } from "./App.tsx";
 
 // interface CommentFormProps {
 //   highlights: CommentedHighlight[];
 //   setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>;
-//   resetHighlights
-//   placeHolder?: string;
-
 // }
-
 const TEST_HIGHLIGHTS = _testHighlights;
 const PRIMARY_PDF_URL = "https://arxiv.org/pdf/2203.11115";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480";
 
-const getNextId = () => String(Math.random()).slice(2);
+interface EmployerReviewProps {
+    currentUser: User | null, // make this an id as then I can reference the user directly through a function
+    documentList: DocumentRec[],
+    jobSubmissionList: JobSubmission[],
+    jobList: Job[],
+    // highlights: CommentedHighlight[],
+    setHighlightByJobSubmissionId : (id : number, commentedHighlights : CommentedHighlight[]) => void
+    // setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>
+}
+// highlights, setHighlights
+const EmployerReview = ({currentUser, documentList, jobSubmissionList, jobList, setHighlightByJobSubmissionId} : EmployerReviewProps) => {
+    const [pdf, setPdf] = useState(documentList !== null ? documentList[1] !== null ? documentList[1].pdf : "" : ""); 
+    
 
-const parseIdFromHash = () => {
-  return document.location.hash.slice("#highlight-".length);
-};
+    // Need to be on the id route now to work
+    let params = useParams();
+    const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document to load
+    // const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == idRoute);
+    // if (jobSubmission == undefined) {
+    //     throw Error("jobSubmission undefined!");
+    // }
+    // const job = jobList.find((job) => job.id == jobSubmission.jobId);
+    // if (job == undefined) {
+    //     throw Error("job undefined!");
+    // }
+    // setHighlightByJobSubmissionId
+    const [highlights, setHighlights] = useState<CommentedHighlight[]>([]);
+    useEffect(() => {
+        console.log(idRoute + ": id route changed!");
+        console.log(jobSubmissionList);
+        const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == idRoute);
+        console.log(jobSubmission);
+        if (jobSubmission == undefined) {
+            throw Error("jobSubmission undefined!");
+        }
+        const job = jobList.find((job) => job.id == jobSubmission.jobId);
+        if (job == undefined) {
+            throw Error("job undefined!");
+        }
+        const document = documentList.find((document) => document.id == jobSubmission.docId);
+        if (document == undefined) {
+            throw Error("document undefined!");
+        }
+        setHighlights(jobSubmission.commentedHighlights);
+        setPdf(document.pdf);
+    }, [idRoute]);
+    
+    // const [url, setUrl] = useState(PRIMARY_PDF_URL); // PRIMARY_PDF_URL
+    
 
-const resetHash = () => {
-  document.location.hash = "";
-};
+    
+    // const [highlights, setHighlights] = useState<Array<CommentedHighlight>>(
+    //     TEST_HIGHLIGHTS[PRIMARY_PDF_URL] ?? [],
+    // ); // Insert the highlights saved state here, load it here on start up
 
-const EmployerReview = () => {
-  const [url, setUrl] = useState(PRIMARY_PDF_URL);
-  const [highlights, setHighlights] = useState<Array<CommentedHighlight>>(
-    TEST_HIGHLIGHTS[PRIMARY_PDF_URL] ?? [],
-  ); // Insert the highlights saved state here, load it here on start up
-  const currentPdfIndexRef = useRef(0);
-  const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null);
-  const [pdfScaleValue, setPdfScaleValue] = useState<number | undefined>(
-    undefined,
-  );
-  const [highlightPen, setHighlightPen] = useState<boolean>(false);
-
-  // Refs for PdfHighlighter utilities
-  const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
-
-  const toggleDocument = () => {
-    const urls = [PRIMARY_PDF_URL, SECONDARY_PDF_URL];
-    currentPdfIndexRef.current = (currentPdfIndexRef.current + 1) % urls.length;
-    setUrl(urls[currentPdfIndexRef.current]);
-    setHighlights(TEST_HIGHLIGHTS[urls[currentPdfIndexRef.current]] ?? []);
-  };
-
-  // Click listeners for context menu
-  useEffect(() => {
-    const handleClick = () => {
-      if (contextMenu) {
-        setContextMenu(null);
-      }
-    };
-
-    document.addEventListener("click", handleClick);
-
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, [contextMenu]);
-
-  const handleContextMenu = (
-    event: MouseEvent<HTMLDivElement>,
-    highlight: ViewportHighlight<CommentedHighlight>,
-  ) => {
-    event.preventDefault();
-
-    setContextMenu({
-      xPos: event.clientX,
-      yPos: event.clientY,
-      deleteHighlight: () => deleteHighlight(highlight),
-      editComment: () => editComment(highlight),
-    });
-  };
-
-  const addHighlight = (highlight: GhostHighlight, comment: string) => {
-    // Check here if they are the employer reviewer and if they are they can add highlights and if not don't
-    console.log("Saving highlight", highlight);
-    setHighlights([{ ...highlight, comment, id: getNextId() }, ...highlights]);
-  };
-
-  const deleteHighlight = (highlight: ViewportHighlight | Highlight) => {
-    console.log("Deleting highlight", highlight);
-    setHighlights(highlights.filter((h) => h.id != highlight.id));
-  };
-
-  const editHighlight = (
-    idToUpdate: string,
-    edit: Partial<CommentedHighlight>,
-  ) => {
-    // Check here if they are the employer reviewer and if they are they can edit highlights and if not don't
-    console.log(`Editing highlight ${idToUpdate} with `, edit);
-    setHighlights(
-      highlights.map((highlight) =>
-        highlight.id === idToUpdate ? { ...highlight, ...edit } : highlight,
-      ),
+    // Pass the document and the user that is currently logged in
+    // const currentPdfIndexRef = useRef(0);
+    const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null);
+    const [pdfScaleValue, setPdfScaleValue] = useState<number | undefined>(
+        undefined,
     );
-  };
+    const [highlightPen, setHighlightPen] = useState<boolean>(false);
 
-  const resetHighlights = () => {
-    setHighlights([]);
-  };
+    // Refs for PdfHighlighter utilities
+    const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
 
-  const getHighlightById = (id: string) => {
-    return highlights.find((highlight) => highlight.id === id);
-  };
+    // Click listeners for context menu
+    useEffect(() => {
+        const handleClick = () => {
+        if (contextMenu) {
+            setContextMenu(null);
+        }
+        };
 
-  // Open comment tip and update highlight with new user input
-  const editComment = (highlight: ViewportHighlight<CommentedHighlight>) => {
-    if (!highlighterUtilsRef.current) return;
+        document.addEventListener("click", handleClick);
 
-    const editCommentTip: Tip = {
-      position: highlight.position,
-      content: (
-        <CommentForm
-          placeHolder={highlight.comment}
-          onSubmit={(input) => {
-            editHighlight(highlight.id, { comment: input });
-            highlighterUtilsRef.current!.setTip(null);
-            highlighterUtilsRef.current!.toggleEditInProgress(false);
-          }}
-        ></CommentForm>
-      ),
-    };
+        return () => {
+        document.removeEventListener("click", handleClick);
+        };
+    }, [contextMenu]);
 
-    highlighterUtilsRef.current.setTip(editCommentTip);
-    highlighterUtilsRef.current.toggleEditInProgress(true);
-  };
+    // Hash listeners for autoscrolling to highlights
+    useEffect(() => {
+        window.addEventListener("hashchange", () => scrollToHighlightFromHash(highlights, highlighterUtilsRef));
 
-  // Scroll to highlight based on hash in the URL
-  const scrollToHighlightFromHash = () => {
-    const highlight = getHighlightById(parseIdFromHash());
+        return () => {
+        window.removeEventListener("hashchange", () => scrollToHighlightFromHash(highlights, highlighterUtilsRef));
+        };
+    }, [scrollToHighlightFromHash]);
 
-    if (highlight && highlighterUtilsRef.current) {
-      highlighterUtilsRef.current.scrollToHighlight(highlight);
-    }
-  };
-
-  // Hash listeners for autoscrolling to highlights
-  useEffect(() => {
-    window.addEventListener("hashchange", scrollToHighlightFromHash);
-
-    return () => {
-      window.removeEventListener("hashchange", scrollToHighlightFromHash);
-    };
-  }, [scrollToHighlightFromHash]);
-
-  return (
-    <div>
-    <Sidebar
-        highlights={highlights}
-        resetHighlights={resetHighlights}
-        toggleDocument={toggleDocument}
-      />
-      <div
-        style={{
-          height: "100vh",
-          width: "75vw",
-          overflow: "hidden",
-          position: "relative",
-          flexGrow: 1,
-        }}
-      >
-        <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} toggleHighlightPen={() => setHighlightPen(!highlightPen)} />
-        <PdfLoader document={url} workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs">
-          {(pdfDocument) => (
-            <PdfHighlighter
-              enableAreaSelection={(event) => event.altKey}
-              pdfDocument={pdfDocument}
-              onScrollAway={resetHash}
-              utilsRef={(_pdfHighlighterUtils) => {
-                highlighterUtilsRef.current = _pdfHighlighterUtils;
-              }}
-              pdfScaleValue={pdfScaleValue}
-              textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
-              onSelection={highlightPen ? (selection) => addHighlight(selection.makeGhostHighlight(), "") : undefined}
-              selectionTip={highlightPen ? undefined : <ExpandableTip addHighlight={addHighlight} />}
-              highlights={highlights}
-              style={{
-                height: "calc(100% - 41px)",
-              }}
-            >
-              <HighlightContainer
-                editHighlight={editHighlight}
-                onContextMenu={handleContextMenu}
-              />
-            </PdfHighlighter>
-          )}
-        </PdfLoader>
+    return (
+        <div className="App" style={{ display: "flex", height: "100vh" }}>
+        <Sidebar
+            highlights={highlights}
+            resetHighlights={() => resetHighlights(setHighlights)}
+            // toggleDocument={() => toggleDocument(currentPdfIndexRef, setUrl, setHighlights)}
+        />
+        <div
+            style={{
+            height: "100vh",
+            width: "75vw",
+            overflow: "hidden",
+            position: "relative",
+            flexGrow: 1,
+            }}
+        >
+            <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} toggleHighlightPen={() => setHighlightPen(!highlightPen)} />
+            <PdfLoader document={pdf} workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs">
+            {(pdfDocument) => (
+                <PdfHighlighter
+                enableAreaSelection={(event) => event.altKey}
+                pdfDocument={pdfDocument}
+                onScrollAway={resetHash}
+                utilsRef={(_pdfHighlighterUtils) => {
+                    highlighterUtilsRef.current = _pdfHighlighterUtils;
+                }}
+                pdfScaleValue={pdfScaleValue}
+                textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
+                onSelection={highlightPen ? (selection) => addHighlight(setHighlights, highlights, selection.makeGhostHighlight(), "") : undefined}
+                selectionTip={highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment) => addHighlight(setHighlights, highlights, highlight, comment)} />}
+                highlights={highlights}
+                style={{
+                    height: "calc(100% - 41px)",
+                }}
+                >
+                <HighlightContainer
+                    editHighlight={(idToUpdate, edit) => editHighlight(setHighlights, highlights, idToUpdate, edit)}
+                    onContextMenu={(event, highlight) => handleContextMenu(event, highlight, setContextMenu, setHighlights, highlights, highlighterUtilsRef)}
+                />
+                </PdfHighlighter>
+            )}
+            </PdfLoader>
         </div>
+
         {contextMenu && <ContextMenu {...contextMenu} />}
         </div>
-  );
+        
+    );
 };
 
 export default EmployerReview;

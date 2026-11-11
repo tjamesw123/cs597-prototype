@@ -17,8 +17,16 @@ import {
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
 import type { CommentedHighlight } from "./types.ts";
-import { Route, Routes } from "react-router";
+import { Link, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
+import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
+import EmployerReview from "./EmployerReview.tsx";
+import { NavLink } from "react-router";
+import LoginSignUpPage from "./LoginSignup.tsx";
+import type { addUserType, User } from "./LoginSignup.tsx";
+import type { DocumentInitParameters, TypedArray } from "pdfjs-dist/types/src/display/api";
+import ApplicantResumeCoverLetterSubmission from "./ApplicantResumeCoverLetterSubmission.tsx";
+
 
 // import * as pdfjs from 'pdfjs-dist';
 
@@ -31,190 +39,232 @@ const TEST_HIGHLIGHTS = _testHighlights;
 const PRIMARY_PDF_URL = "https://arxiv.org/pdf/2203.11115";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480";
 
-const getNextId = () => String(Math.random()).slice(2);
-
-const parseIdFromHash = () => {
-  return document.location.hash.slice("#highlight-".length);
+export type DocumentRec = {
+  id : number;
+  userId : number;
+  name: string;
+  type: "coverletter" | "resume";
+  pdf : string | URL | TypedArray | DocumentInitParameters;
 };
 
-const resetHash = () => {
-  document.location.hash = "";
+export type Job = {
+  id : number;
+  company : string;
+  position : string;
+  reviewerId : number; // Who's job it is to review it, would be a user id
+}
+
+// The highlights are per submission
+export type JobSubmission = {
+  id : number;
+  jobId : number;
+  date : string;
+  docId : number;
+  reviewed : boolean;
+  commentedHighlights : CommentedHighlight[];
+}
+
+// const getNextDocumentRecId = () => String(Math.random()).slice(2);
+// const getNextUserId = () => String(Math.random()).slice(2);
+// const getNextJobId = () => String(Math.random()).slice(2);
+// const getNextJobSubmission = () => String(Math.random()).slice(2);
+
+
+const getNextDocumentRecId = (documents : DocumentRec[]) => documents.map((document) => document.id).reduce((x, y) => x > y ? x : y)+1;
+const getNextUserId = (users : User[]) => users.map((user) => user.id).reduce((x, y) => x > y ? x : y)+1;
+const getNextJobId = (jobs : Job[]) => jobs.map((job) => job.id).reduce((x, y) => x > y ? x : y)+1;
+const getNextJobSubmission = (jobSubmissions : JobSubmission[]) => jobSubmissions.map((jobSubmission) => jobSubmission.id).reduce((x, y) => x > y ? x : y)+1;
+
+// const getNextDocumentRecId: (documents: DocumentRec[]) => number
+// Documents
+
+export type addDocumentType = {
+    (name: string, file: File, type: "coverletter" | "resume") : Promise<DocumentRec | null>
+}
+const addDocument = async (getNextDocumentRecId: (documents: DocumentRec[]) => number, documentList: DocumentRec[], setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>, name: string, file: File, type: "coverletter" | "resume") : Promise<DocumentRec | null> => {
+  if (name == undefined || name == "") {
+    return null;
+  }  
+  const idV = getNextDocumentRecId(documentList);
+  const pdf = await file.bytes();
+  setDocumentList([{ id: idV, userId: idV, name: name, type: type, pdf: pdf}, ...documentList]);
+  return { id: idV, userId: idV, name: name, type: type, pdf: pdf};
 };
+
+// Jobs
+
+
+// Job Submission
+
+
+const getHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number) => {
+  const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == id);
+  if (jobSubmission == undefined) {
+      throw Error("jobSubmission undefined!");
+  }
+  return jobSubmission;
+}
+
+const setHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, commentedHighlights : CommentedHighlight[]) => {
+  // const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == id);
+  // if (jobSubmission == undefined) {
+  //     throw Error("jobSubmission undefined!");
+  // }
+  setJobSubmissionList(jobSubmissionList.map(t => {
+    if (t.id === id) {
+      t.commentedHighlights = commentedHighlights;
+      return t;
+    } else {
+      return t;
+    }
+  }));
+}
+
+// setTodos(todos.map(t => {
+//       if (t.id === nextTodo.id) {
+//         return nextTodo;
+//       } else {
+//         return t;
+//       }
+//     }));
+
+// Login, signup, and log out system
+const loginUser = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>, users: User[], setUsers: React.Dispatch<React.SetStateAction<User[]>>, username: string, password: string) : User | null => {
+    
+    if (username == undefined || password == undefined || username == "" || password == "") {
+      return null;
+    }
+
+    const foundUsers = users.filter((user) => (user.username == username));
+    if (foundUsers.length == 0 && foundUsers[0].password != password) {
+      return null;
+    } else {
+      setCurrentUser(foundUsers[0]);
+      return foundUsers[0];
+    }
+};
+
+const addUser = (getNextUserId: (users: User[]) => number, users: User[], setUsers: React.Dispatch<React.SetStateAction<User[]>>, first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) : User | null => {
+  if (first_name == undefined || last_name == undefined || username == undefined || password == undefined || first_name == "" || last_name == "" || username == "" || password == "") {
+    return null;
+  }  
+  const idV = getNextUserId(users);
+  setUsers([{ id: idV, first_name: first_name, last_name: last_name, username: username, password: password, isEmployer: isEmployer }, ...users]);
+  return { id: idV, first_name: first_name, last_name: last_name, username: username, password: password, isEmployer: isEmployer };
+};
+
+const logOut = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>) => {
+  setCurrentUser(null);
+}
+
+
+
 
 const App = () => {
-  const [url, setUrl] = useState(PRIMARY_PDF_URL);
-  const [highlights, setHighlights] = useState<Array<CommentedHighlight>>(
+  // const [url, setUrl] = useState(PRIMARY_PDF_URL);
+
+// DocumentAndHighlights -> Document and Highlights
+  const [jobList, setJobList] = useState<Array<Job>>([{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
+  const [jobSubmissionList, setJobSubmissionList] = useState<Array<JobSubmission>>([{id: 0, jobId: 0, date: "11/11/2026", docId: 0, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}, {id: 1, jobId: 1, date: "11/12/2026", docId: 1, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}]);
+  const [documentList, setDocumentList] = useState<Array<DocumentRec>>([{id: 0, name: "test", userId: 0, pdf: PRIMARY_PDF_URL, type: "resume"}, {id: 1, name: "test2", userId: 0, pdf: SECONDARY_PDF_URL, type: "resume"}]);
+
+  const [highlightList, setHighlightList] = useState<CommentedHighlight[][]>([TEST_HIGHLIGHTS[PRIMARY_PDF_URL], TEST_HIGHLIGHTS[PRIMARY_PDF_URL]]);
+  
+  // const [currentDocument, setCurrentDocument] = useState<>();
+  const [currentHighlights, setCurrentHighlights] = useState<Array<CommentedHighlight>>(
     TEST_HIGHLIGHTS[PRIMARY_PDF_URL] ?? [],
   ); // Insert the highlights saved state here, load it here on start up
-  const currentPdfIndexRef = useRef(0);
-  const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null);
-  const [pdfScaleValue, setPdfScaleValue] = useState<number | undefined>(
-    undefined,
-  );
-  const [highlightPen, setHighlightPen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<Array<User>>([{id: 0, first_name: "James", last_name: "James", username: "TJames", password: "1234", isEmployer: true}, {id: 1, first_name: "Bob", last_name: "James", username: "bob1", password: "1234", isEmployer: false}]);
 
-  // Refs for PdfHighlighter utilities
-  const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
-
-  const toggleDocument = () => {
-    const urls = [PRIMARY_PDF_URL, SECONDARY_PDF_URL];
-    currentPdfIndexRef.current = (currentPdfIndexRef.current + 1) % urls.length;
-    setUrl(urls[currentPdfIndexRef.current]);
-    setHighlights(TEST_HIGHLIGHTS[urls[currentPdfIndexRef.current]] ?? []);
-  };
-
-  // Click listeners for context menu
+  // Local state
   useEffect(() => {
-    const handleClick = () => {
-      if (contextMenu) {
-        setContextMenu(null);
-      }
-    };
+    const currentHighlightsData = window.localStorage.getItem('currentHighlights');
+    
+    if ( currentHighlightsData !== null ) console.log("The data from the currentHighlights", JSON.parse(currentHighlightsData));
+    if ( currentHighlightsData !== null ) setCurrentHighlights(JSON.parse(currentHighlightsData));
 
-    document.addEventListener("click", handleClick);
+    const currentUserData = window.localStorage.getItem('currentUser');
+    
+    if ( currentUserData !== null ) console.log("The data from the currentUser", JSON.parse(currentUserData));
+    if ( currentUserData !== null ) setCurrentUser(JSON.parse(currentUserData));
 
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, [contextMenu]);
+    const usersData = window.localStorage.getItem('users');
+    
+    if ( usersData !== null ) console.log("The data from the users", JSON.parse(usersData));
+    if ( usersData !== null ) setUsers(JSON.parse(usersData));
+    // console.log(currentHighlights);
+  }, []);
 
-  const handleContextMenu = (
-    event: MouseEvent<HTMLDivElement>,
-    highlight: ViewportHighlight<CommentedHighlight>,
-  ) => {
-    event.preventDefault();
-
-    setContextMenu({
-      xPos: event.clientX,
-      yPos: event.clientY,
-      deleteHighlight: () => deleteHighlight(highlight),
-      editComment: () => editComment(highlight),
-    });
-  };
-
-  const addHighlight = (highlight: GhostHighlight, comment: string) => {
-    // Check here if they are the employer reviewer and if they are they can add highlights and if not don't
-    console.log("Saving highlight", highlight);
-    setHighlights([{ ...highlight, comment, id: getNextId() }, ...highlights]);
-  };
-
-  const deleteHighlight = (highlight: ViewportHighlight | Highlight) => {
-    console.log("Deleting highlight", highlight);
-    setHighlights(highlights.filter((h) => h.id != highlight.id));
-  };
-
-  const editHighlight = (
-    idToUpdate: string,
-    edit: Partial<CommentedHighlight>,
-  ) => {
-    // Check here if they are the employer reviewer and if they are they can edit highlights and if not don't
-    console.log(`Editing highlight ${idToUpdate} with `, edit);
-    setHighlights(
-      highlights.map((highlight) =>
-        highlight.id === idToUpdate ? { ...highlight, ...edit } : highlight,
-      ),
-    );
-  };
-
-  const resetHighlights = () => {
-    setHighlights([]);
-  };
-
-  const getHighlightById = (id: string) => {
-    return highlights.find((highlight) => highlight.id === id);
-  };
-
-  // Open comment tip and update highlight with new user input
-  const editComment = (highlight: ViewportHighlight<CommentedHighlight>) => {
-    if (!highlighterUtilsRef.current) return;
-
-    const editCommentTip: Tip = {
-      position: highlight.position,
-      content: (
-        <CommentForm
-          placeHolder={highlight.comment}
-          onSubmit={(input) => {
-            editHighlight(highlight.id, { comment: input });
-            highlighterUtilsRef.current!.setTip(null);
-            highlighterUtilsRef.current!.toggleEditInProgress(false);
-          }}
-        ></CommentForm>
-      ),
-    };
-
-    highlighterUtilsRef.current.setTip(editCommentTip);
-    highlighterUtilsRef.current.toggleEditInProgress(true);
-  };
-
-  // Scroll to highlight based on hash in the URL
-  const scrollToHighlightFromHash = () => {
-    const highlight = getHighlightById(parseIdFromHash());
-
-    if (highlight && highlighterUtilsRef.current) {
-      highlighterUtilsRef.current.scrollToHighlight(highlight);
-    }
-  };
-
-  // Hash listeners for autoscrolling to highlights
   useEffect(() => {
-    window.addEventListener("hashchange", scrollToHighlightFromHash);
+    console.log("currentHighlights: ", currentHighlights);
+    window.localStorage.setItem('currentHighlights', JSON.stringify(currentHighlights));
+  }, [currentHighlights]);
 
-    return () => {
-      window.removeEventListener("hashchange", scrollToHighlightFromHash);
-    };
-  }, [scrollToHighlightFromHash]);
+  useEffect(() => {
+    console.log("currentUser: ", currentUser);
+    window.localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  }, [currentUser]);
 
+  useEffect(() => {
+    console.log("users: ", users);
+    window.localStorage.setItem('users', JSON.stringify(users));
+  }, [users]);
+
+  
+
+// navbar
   return (
     <>
-    <div className="App" style={{ display: "flex", height: "100vh" }}>
-      <Sidebar
-        highlights={highlights}
-        resetHighlights={resetHighlights}
-        toggleDocument={toggleDocument}
-      />
-      <div
-        style={{
-          height: "100vh",
-          width: "75vw",
-          overflow: "hidden",
-          position: "relative",
-          flexGrow: 1,
-        }}
-      >
-        <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} toggleHighlightPen={() => setHighlightPen(!highlightPen)} />
-        <PdfLoader document={url} workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs">
-          {(pdfDocument) => (
-            <PdfHighlighter
-              enableAreaSelection={(event) => event.altKey}
-              pdfDocument={pdfDocument}
-              onScrollAway={resetHash}
-              utilsRef={(_pdfHighlighterUtils) => {
-                highlighterUtilsRef.current = _pdfHighlighterUtils;
-              }}
-              pdfScaleValue={pdfScaleValue}
-              textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
-              onSelection={highlightPen ? (selection) => addHighlight(selection.makeGhostHighlight(), "") : undefined}
-              selectionTip={highlightPen ? undefined : <ExpandableTip addHighlight={addHighlight} />}
-              highlights={highlights}
-              style={{
-                height: "calc(100% - 41px)",
-              }}
-            >
-              <HighlightContainer
-                editHighlight={editHighlight}
-                onContextMenu={handleContextMenu}
-              />
-            </PdfHighlighter>
-          )}
-        </PdfLoader>
-      </div>
-
-      {contextMenu && <ContextMenu {...contextMenu} />}
+    <div className="navbar">
+        <Link to={{
+              pathname: "/"
+            }}>Home</Link>
+        {currentUser && currentUser.isEmployer ?
+            <Link to={{
+              pathname: "/employer/"
+            }}>Employer</Link>
+        : ""}
+        {currentUser && !currentUser.isEmployer ?
+        <>
+            <Link to={{
+              pathname: "/applicant/"
+            }}>Applicant</Link>
+            <Link to={{
+              pathname: "/applicant/resumecoverlettersubmission"
+            }}>Resume and Cover Letters</Link>
+            <Link to={{
+              pathname: "/applicant/submission/0"
+            }}>Submission (0)</Link>
+        </>
+          : ""}
+        <div className="right">
+          {currentUser ?
+            <Link onClick={() => logOut(setCurrentUser)} to={{
+              pathname: "/"
+            }}>Log Out</Link>
+          : ""}
+          {currentUser ?
+            <p>{currentUser.first_name}</p>
+          : ""}
+        </div>
+        
     </div>
     <Routes>
-      <Route path='/' element={<h1>Hi there</h1>} />
-      <Route path='/employer/' element={<h1>Hi there employer</h1>} />
-      <Route path='/employee/' element={<h1>Hi there employee</h1>} />
+      <Route path='/' element={<><h1>Welcome to EmployerMD!</h1> 
+      <LoginSignUpPage 
+        currentUser={currentUser}
+        loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, setUsers, username, password)} 
+        addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  />
+        </>} 
+      />
+      <Route path='/employer/' element={<><h1>Hi there employer</h1></>} />
+      <Route path='/applicant/' element={<><h1>Hi there applicant</h1></>} />
+      <Route path='/applicant/resumecoverlettersubmission' element={<><h1>Resume Cover Letter Submission</h1><ApplicantResumeCoverLetterSubmission documentList={documentList} addDocument={(name: string, file: File, type: "coverletter" | "resume") => addDocument(getNextDocumentRecId, documentList, setDocumentList, name, file, type)}/> </>} />
+      <Route path='/applicant/apply' element={<><h1>Apply to posted positions</h1></>} />
+      <Route path='/applicant/feedback' element={<><h1>List of feedback from applications</h1></>} />
+      <Route path='/applicant/submission/:id' element={<><h1>Review feedback for particular submission</h1><EmployerReview setHighlightByJobSubmissionId={(id, commentedHighlights) => setHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id, commentedHighlights)} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} currentUser={currentUser}/></>} />
+      <Route path='/applicant/document/:id' element={<><h1>Review all feedback on a submitted document</h1></>} />
       <Route path='*' element={<ErrorPage message="404 not found"/>}/>
     </Routes>
     </>
