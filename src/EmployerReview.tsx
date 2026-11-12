@@ -41,18 +41,29 @@ interface EmployerReviewProps {
     // highlights: CommentedHighlight[],
     setHighlightByJobSubmissionId : (id : number, commentedHighlights : CommentedHighlight[]) => void;
     getHighlightByJobSubmissionId : (id : number) => CommentedHighlight[];
-    getPdfByJobSubmissionId : (id : number) => string | URL | TypedArray | DocumentInitParameters;
+    getPdfByJobSubmissionId : (id : number) => string;
+    getPdfLinkByJobSubmissionId : (id : number) => string;
     updateState : () => void;
     // setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>
 }
 // highlights, setHighlights
-const EmployerReview = ({currentUser, updateState, documentList, jobSubmissionList, jobList, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, getPdfByJobSubmissionId} : EmployerReviewProps) => {
+const EmployerReview = ({currentUser, updateState, documentList, jobSubmissionList, jobList, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, getPdfByJobSubmissionId, getPdfLinkByJobSubmissionId} : EmployerReviewProps) => {
     // const [pdf, setPdf] = useState<string | URL | TypedArray | DocumentInitParameters>(""); // documentList !== null ? documentList[1] !== null ? documentList[1].pdf : "" : ""
+    
     
 
     // Need to be on the id route now to work
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document to load
+    
+    // const [pdfLink, setPdfLink] = useState<string>("");
+
+    // useEffect(() => {
+
+    //     setPdfLink(getPdfByJobSubmissionId(idRoute)); 
+    // }, [idRoute]);
+
+    
     // const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == idRoute);
     // if (jobSubmission == undefined) {
     //     throw Error("jobSubmission undefined!");

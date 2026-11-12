@@ -26,6 +26,7 @@ import LoginSignUpPage from "./LoginSignup.tsx";
 import type { addUserType, User } from "./LoginSignup.tsx";
 import type { DocumentInitParameters, TypedArray } from "pdfjs-dist/types/src/display/api";
 import ApplicantResumeCoverLetterSubmission from "./ApplicantResumeCoverLetterSubmission.tsx";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 
 // import * as pdfjs from 'pdfjs-dist';
@@ -39,12 +40,18 @@ const TEST_HIGHLIGHTS = _testHighlights;
 const PRIMARY_PDF_URL = "https://arxiv.org/pdf/2203.11115";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480";
 
+// export default function useLocalStorage<T>(key: string, initialValue: T) {
+//   const [value, setValue] = useState(() => {
+//     const data = window.localStorage.getItem(key);
+//     return (data || initialValue) as T;
+//   });
 export type DocumentRec = {
   id : number;
   userId : number;
   name: string;
   type: "coverletter" | "resume";
-  pdf : string | URL | TypedArray | DocumentInitParameters;
+  pdfData : string | null;
+  pdfURL : string | null;
 };
 
 export type Job = {
@@ -86,9 +93,20 @@ const addDocument = async (getNextDocumentRecId: (documents: DocumentRec[]) => n
     return null;
   }  
   const idV = getNextDocumentRecId(documentList);
-  const pdf = await file.bytes();
-  setDocumentList([{ id: idV, userId: idV, name: name, type: type, pdf: pdf}, ...documentList]);
-  return { id: idV, userId: idV, name: name, type: type, pdf: pdf};
+  const fileToBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+
+          reader.readAsDataURL(file);
+      });
+  };
+  const base64File = await fileToBase64(file);
+  // const pdf = await file.bytes();
+  setDocumentList([{ id: idV, userId: idV, name: name, type: type, pdfData: base64File, pdfURL: null}, ...documentList]);
+  return { id: idV, userId: idV, name: name, type: type, pdfData: base64File, pdfURL: null};
 };
 
 // Jobs
@@ -108,9 +126,74 @@ const getPdfByJobSubmissionId = (jobSubmissionList: JobSubmission[], documentLis
   if (document == undefined) {
       throw Error("document undefined!");
   }
-  return document.pdf
+  // URL.createObjectURL(file)
+  if (document.pdfURL == null && document.pdfData != null) {
+    const base64ToBlob = (base64: string): Blob => {
+        const [metadata, data] = base64.split(",");
+
+        const mimeType = metadata.match(/:(.*?);/)?.[1] || "application/pdf";
+
+        const binary = atob(data);
+
+        const bytes = new Uint8Array(binary.length);
+
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+
+        return new Blob([bytes], { type: mimeType });
+    };
+    const blob = base64ToBlob(document.pdfData);
+    const pdfURL = URL.createObjectURL(blob);
+    return pdfURL;
+  }
+  if (document.pdfURL == null) {
+    throw Error("pdfURL null!");
+  }
+  
+  return document.pdfURL;
   // return jobSubmission.commentedHighlights;
 }
+
+// const getPdfByJobSubmissionId = (jobSubmissionList: JobSubmission[], documentList : DocumentRec[], id : number) => {
+//   const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == id);
+//   console.log(jobSubmission);
+//   if (jobSubmission == undefined) {
+//       throw Error("jobSubmission undefined!");
+//   }
+//   // console.log(documentList);
+//   const document = documentList.find((document) => document.id == jobSubmission.docId);
+//   if (document == undefined) {
+//       throw Error("document undefined!");
+//   }
+//   // URL.createObjectURL(file)
+//   if (document.pdfURL == null && document.pdfData != null) {
+//     const base64ToBlob = (base64: string): Blob => {
+//         const [metadata, data] = base64.split(",");
+
+//         const mimeType = metadata.match(/:(.*?);/)?.[1] || "application/pdf";
+
+//         const binary = atob(data);
+
+//         const bytes = new Uint8Array(binary.length);
+
+//         for (let i = 0; i < binary.length; i++) {
+//             bytes[i] = binary.charCodeAt(i);
+//         }
+
+//         return new Blob([bytes], { type: mimeType });
+//     };
+//     const blob = base64ToBlob(document.pdfData);
+//     const pdfURL = URL.createObjectURL(blob);
+//     return pdfURL;
+//   }
+//   if (document.pdfURL == null) {
+//     throw Error("pdfURL null!");
+//   }
+  
+//   return document.pdfURL;
+//   // return jobSubmission.commentedHighlights;
+// }
 
 const getHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number) => {
   const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == id);
@@ -204,59 +287,16 @@ const App = () => {
   // const [url, setUrl] = useState(PRIMARY_PDF_URL);
 
 // DocumentAndHighlights -> Document and Highlights
-  const [jobList, setJobList] = useState<Array<Job>>([{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
-  const [jobSubmissionList, setJobSubmissionList] = useState<Array<JobSubmission>>([{id: 0, jobId: 0, date: "11/11/2026", docId: 0, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}, {id: 1, jobId: 1, date: "11/12/2026", docId: 1, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}, {id: 2, jobId: 1, date: "11/12/2026", docId: 2, reviewed: false, commentedHighlights: []}]);
-  const [documentList, setDocumentList] = useState<Array<DocumentRec>>([{id: 0, name: "test", userId: 0, pdf: PRIMARY_PDF_URL, type: "resume"}, {id: 1, name: "test2", userId: 0, pdf: SECONDARY_PDF_URL, type: "resume"}]);
+  // useLocalStorage()
+  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", [{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
+  // const [jobList, setJobList] = useState<Array<Job>>([{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
+  const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", [{id: 0, jobId: 0, date: "11/11/2026", docId: 0, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}, {id: 1, jobId: 1, date: "11/12/2026", docId: 1, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}, {id: 2, jobId: 1, date: "11/12/2026", docId: 2, reviewed: false, commentedHighlights: []}]);
+  // const [jobSubmissionList, setJobSubmissionList] = useState<Array<JobSubmission>>([{id: 0, jobId: 0, date: "11/11/2026", docId: 0, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}, {id: 1, jobId: 1, date: "11/12/2026", docId: 1, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}, {id: 2, jobId: 1, date: "11/12/2026", docId: 2, reviewed: false, commentedHighlights: []}]);
+  const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", [{id: 0, name: "test", userId: 0, pdfData: null, pdfURL: PRIMARY_PDF_URL, type: "resume"}, {id: 1, name: "test2", userId: 0, pdfData: null, pdfURL: SECONDARY_PDF_URL, type: "resume"}]);
+  // const [documentList, setDocumentList] = useState<Array<DocumentRec>>([{id: 0, name: "test", userId: 0, pdf: PRIMARY_PDF_URL, type: "resume"}, {id: 1, name: "test2", userId: 0, pdf: SECONDARY_PDF_URL, type: "resume"}]);
 
-  const [highlightList, setHighlightList] = useState<CommentedHighlight[][]>([TEST_HIGHLIGHTS[PRIMARY_PDF_URL], TEST_HIGHLIGHTS[PRIMARY_PDF_URL]]);
-  
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<Array<User>>([{id: 0, first_name: "James", last_name: "James", username: "TJames", password: "1234", isEmployer: true}, {id: 1, first_name: "Bob", last_name: "James", username: "bob1", password: "1234", isEmployer: false}]);
-
-  // Local state
-  useEffect(() => {
-    updateState(setDocumentList, setJobSubmissionList, setCurrentUser, setUsers);
-    // const documentListData = window.localStorage.getItem('documentList');
-    
-    // if ( documentListData !== null ) console.log("The data from the documentList", JSON.parse(documentListData));
-    // if ( documentListData !== null ) setDocumentList(JSON.parse(documentListData));
-
-    // const jobSubmissionListData = window.localStorage.getItem('jobSubmissionList');
-    
-    // if ( jobSubmissionListData !== null ) console.log("The data from the jobSubmissionList", JSON.parse(jobSubmissionListData));
-    // if ( jobSubmissionListData !== null ) setJobSubmissionList(JSON.parse(jobSubmissionListData));
-
-    // const currentUserData = window.localStorage.getItem('currentUser');
-    
-    // if ( currentUserData !== null ) console.log("The data from the currentUser", JSON.parse(currentUserData));
-    // if ( currentUserData !== null ) setCurrentUser(JSON.parse(currentUserData));
-
-    // const usersData = window.localStorage.getItem('users');
-    
-    // if ( usersData !== null ) console.log("The data from the users", JSON.parse(usersData));
-    // if ( usersData !== null ) setUsers(JSON.parse(usersData));
-    // console.log(currentHighlights);
-  }, []);
-
-  useEffect(() => {
-    console.log("documentList: ", documentList);
-    window.localStorage.setItem('documentList', JSON.stringify(documentList));
-  }, [documentList]);
-
-  useEffect(() => {
-    console.log("jobSubmissionList: ", jobSubmissionList);
-    window.localStorage.setItem('jobSubmissionList', JSON.stringify(jobSubmissionList));
-  }, [jobSubmissionList]);
-
-  useEffect(() => {
-    console.log("currentUser: ", currentUser);
-    window.localStorage.setItem('currentUser', JSON.stringify(currentUser));
-  }, [currentUser]);
-
-  useEffect(() => {
-    console.log("users: ", users);
-    window.localStorage.setItem('users', JSON.stringify(users));
-  }, [users]);
+  const [currentUser, setCurrentUser] = useLocalStorage<User | null>("currentUser", null);
+  const [users, setUsers] = useLocalStorage<Array<User>>("users", [{id: 0, first_name: "James", last_name: "James", username: "TJames", password: "1234", isEmployer: true}, {id: 1, first_name: "Bob", last_name: "James", username: "bob1", password: "1234", isEmployer: false}]);
 
   
 
@@ -310,7 +350,13 @@ const App = () => {
       <Route path='/applicant/resumecoverlettersubmission' element={<><h1>Resume Cover Letter Submission</h1><ApplicantResumeCoverLetterSubmission documentList={documentList} addDocument={(name: string, file: File, type: "coverletter" | "resume") => addDocument(getNextDocumentRecId, documentList, setDocumentList, name, file, type)}/> </>} />
       <Route path='/applicant/apply' element={<><h1>Apply to posted positions</h1></>} />
       <Route path='/applicant/feedback' element={<><h1>List of feedback from applications</h1></>} />
-      <Route path='/applicant/submission/:id' element={<><h1>Review feedback for particular submission</h1><EmployerReview getPdfByJobSubmissionId={(id) => getPdfByJobSubmissionId(jobSubmissionList, documentList, id)} updateState={() => updateState(setDocumentList, setJobSubmissionList, setCurrentUser, setUsers)} getHighlightByJobSubmissionId={(id) => getHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id)} setHighlightByJobSubmissionId={(id, commentedHighlights) => setHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id, commentedHighlights)} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} currentUser={currentUser}/></>} />
+      <Route path='/applicant/submission/:id' element={<><h1>Review feedback for particular submission</h1><EmployerReview 
+      getPdfLinkByJobSubmissionId={(id) => getPdfByJobSubmissionId(jobSubmissionList, documentList, id)} 
+      getPdfByJobSubmissionId={(id) => getPdfByJobSubmissionId(jobSubmissionList, documentList, id)} 
+      updateState={() => updateState(setDocumentList, setJobSubmissionList, setCurrentUser, setUsers)} 
+      getHighlightByJobSubmissionId={(id) => getHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id)} 
+      setHighlightByJobSubmissionId={(id, commentedHighlights) => setHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id, commentedHighlights)} 
+      jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} currentUser={currentUser}/></>} />
       <Route path='/applicant/document/:id' element={<><h1>Review all feedback on a submitted document</h1></>} />
       <Route path='*' element={<ErrorPage message="404 not found"/>}/>
     </Routes>
