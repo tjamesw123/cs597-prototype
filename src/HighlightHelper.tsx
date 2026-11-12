@@ -50,7 +50,7 @@ export const handleContextMenu = (
     event: MouseEvent<HTMLDivElement>,
     highlight: ViewportHighlight<CommentedHighlight>,
     setContextMenu : React.Dispatch<React.SetStateAction<ContextMenuProps | null>>,
-    setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, 
+    setHighlights: (highlight : CommentedHighlight[]) => void, 
     highlights: CommentedHighlight[],
     highlighterUtilsRef: React.MutableRefObject<PdfHighlighterUtils | undefined>
   ) => {
@@ -64,19 +64,19 @@ export const handleContextMenu = (
     });
   };
 
-  export const addHighlight = (setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, highlights: CommentedHighlight[], highlight: GhostHighlight, comment: string) => {
+  export const addHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: GhostHighlight, comment: string) => {
     // Check here if they are the employer reviewer and if they are they can add highlights and if not don't
     console.log("Saving highlight", highlight);
     setHighlights([{ ...highlight, comment, id: getNextId() }, ...highlights]);
   };
 
-  export const deleteHighlight = (setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, highlights: CommentedHighlight[], highlight: ViewportHighlight | Highlight) => {
+  export const deleteHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: ViewportHighlight | Highlight) => {
     console.log("Deleting highlight", highlight);
     setHighlights(highlights.filter((h) => h.id != highlight.id));
   };
 
   export const editHighlight = (
-    setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, 
+    setHighlights: (highlight : CommentedHighlight[]) => void, 
     highlights: CommentedHighlight[],
     idToUpdate: string,
     edit: Partial<CommentedHighlight>,
@@ -90,7 +90,7 @@ export const handleContextMenu = (
     );
   };
 
-  export const resetHighlights = (setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>) => {
+  export const resetHighlights = (setHighlights: (highlight : CommentedHighlight[]) => void ) => {
     setHighlights([]);
   };
 
@@ -100,7 +100,7 @@ export const handleContextMenu = (
 
   // Open comment tip and update highlight with new user input
   export const editComment = (
-    setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>, 
+    setHighlights: (highlight : CommentedHighlight[]) => void, 
     highlights: CommentedHighlight[], 
     highlight: ViewportHighlight<CommentedHighlight>, highlighterUtilsRef: React.MutableRefObject<PdfHighlighterUtils | undefined>) => {
     if (!highlighterUtilsRef.current) return;

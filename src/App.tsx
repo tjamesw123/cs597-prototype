@@ -97,12 +97,28 @@ const addDocument = async (getNextDocumentRecId: (documents: DocumentRec[]) => n
 // Job Submission
 
 
-const getHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number) => {
+const getPdfByJobSubmissionId = (jobSubmissionList: JobSubmission[], documentList : DocumentRec[], id : number) => {
   const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == id);
+  console.log(jobSubmission);
   if (jobSubmission == undefined) {
       throw Error("jobSubmission undefined!");
   }
-  return jobSubmission;
+  // console.log(documentList);
+  const document = documentList.find((document) => document.id == jobSubmission.docId);
+  if (document == undefined) {
+      throw Error("document undefined!");
+  }
+  return document.pdf
+  // return jobSubmission.commentedHighlights;
+}
+
+const getHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number) => {
+  const jobSubmission = jobSubmissionList.find((jobSubmission) => jobSubmission.id == id);
+  // console.log(jobSubmission);
+  if (jobSubmission == undefined) {
+      throw Error("jobSubmission undefined!");
+  }
+  return jobSubmission.commentedHighlights;
 }
 
 const setHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, commentedHighlights : CommentedHighlight[]) => {
@@ -158,31 +174,20 @@ const logOut = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>
 }
 
 
-
-
-const App = () => {
-  // const [url, setUrl] = useState(PRIMARY_PDF_URL);
-
-// DocumentAndHighlights -> Document and Highlights
-  const [jobList, setJobList] = useState<Array<Job>>([{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
-  const [jobSubmissionList, setJobSubmissionList] = useState<Array<JobSubmission>>([{id: 0, jobId: 0, date: "11/11/2026", docId: 0, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}, {id: 1, jobId: 1, date: "11/12/2026", docId: 1, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}]);
-  const [documentList, setDocumentList] = useState<Array<DocumentRec>>([{id: 0, name: "test", userId: 0, pdf: PRIMARY_PDF_URL, type: "resume"}, {id: 1, name: "test2", userId: 0, pdf: SECONDARY_PDF_URL, type: "resume"}]);
-
-  const [highlightList, setHighlightList] = useState<CommentedHighlight[][]>([TEST_HIGHLIGHTS[PRIMARY_PDF_URL], TEST_HIGHLIGHTS[PRIMARY_PDF_URL]]);
-  
-  // const [currentDocument, setCurrentDocument] = useState<>();
-  const [currentHighlights, setCurrentHighlights] = useState<Array<CommentedHighlight>>(
-    TEST_HIGHLIGHTS[PRIMARY_PDF_URL] ?? [],
-  ); // Insert the highlights saved state here, load it here on start up
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<Array<User>>([{id: 0, first_name: "James", last_name: "James", username: "TJames", password: "1234", isEmployer: true}, {id: 1, first_name: "Bob", last_name: "James", username: "bob1", password: "1234", isEmployer: false}]);
-
-  // Local state
-  useEffect(() => {
-    const currentHighlightsData = window.localStorage.getItem('currentHighlights');
+const updateState = (
+  setDocumentList: (value: React.SetStateAction<DocumentRec[]>) => void, 
+  setJobSubmissionList: (value: React.SetStateAction<JobSubmission[]>) => void, 
+  setCurrentUser: (value: React.SetStateAction<User | null>) => void, 
+  setUsers: (value: React.SetStateAction<User[]>) => void) => {
+    const documentListData = window.localStorage.getItem('documentList');
     
-    if ( currentHighlightsData !== null ) console.log("The data from the currentHighlights", JSON.parse(currentHighlightsData));
-    if ( currentHighlightsData !== null ) setCurrentHighlights(JSON.parse(currentHighlightsData));
+    if ( documentListData !== null ) console.log("The data from the documentList", JSON.parse(documentListData));
+    if ( documentListData !== null ) setDocumentList(JSON.parse(documentListData));
+
+    const jobSubmissionListData = window.localStorage.getItem('jobSubmissionList');
+    
+    if ( jobSubmissionListData !== null ) console.log("The data from the jobSubmissionList", JSON.parse(jobSubmissionListData));
+    if ( jobSubmissionListData !== null ) setJobSubmissionList(JSON.parse(jobSubmissionListData));
 
     const currentUserData = window.localStorage.getItem('currentUser');
     
@@ -193,13 +198,55 @@ const App = () => {
     
     if ( usersData !== null ) console.log("The data from the users", JSON.parse(usersData));
     if ( usersData !== null ) setUsers(JSON.parse(usersData));
+}
+
+const App = () => {
+  // const [url, setUrl] = useState(PRIMARY_PDF_URL);
+
+// DocumentAndHighlights -> Document and Highlights
+  const [jobList, setJobList] = useState<Array<Job>>([{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
+  const [jobSubmissionList, setJobSubmissionList] = useState<Array<JobSubmission>>([{id: 0, jobId: 0, date: "11/11/2026", docId: 0, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}, {id: 1, jobId: 1, date: "11/12/2026", docId: 1, reviewed: false, commentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}, {id: 2, jobId: 1, date: "11/12/2026", docId: 2, reviewed: false, commentedHighlights: []}]);
+  const [documentList, setDocumentList] = useState<Array<DocumentRec>>([{id: 0, name: "test", userId: 0, pdf: PRIMARY_PDF_URL, type: "resume"}, {id: 1, name: "test2", userId: 0, pdf: SECONDARY_PDF_URL, type: "resume"}]);
+
+  const [highlightList, setHighlightList] = useState<CommentedHighlight[][]>([TEST_HIGHLIGHTS[PRIMARY_PDF_URL], TEST_HIGHLIGHTS[PRIMARY_PDF_URL]]);
+  
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<Array<User>>([{id: 0, first_name: "James", last_name: "James", username: "TJames", password: "1234", isEmployer: true}, {id: 1, first_name: "Bob", last_name: "James", username: "bob1", password: "1234", isEmployer: false}]);
+
+  // Local state
+  useEffect(() => {
+    updateState(setDocumentList, setJobSubmissionList, setCurrentUser, setUsers);
+    // const documentListData = window.localStorage.getItem('documentList');
+    
+    // if ( documentListData !== null ) console.log("The data from the documentList", JSON.parse(documentListData));
+    // if ( documentListData !== null ) setDocumentList(JSON.parse(documentListData));
+
+    // const jobSubmissionListData = window.localStorage.getItem('jobSubmissionList');
+    
+    // if ( jobSubmissionListData !== null ) console.log("The data from the jobSubmissionList", JSON.parse(jobSubmissionListData));
+    // if ( jobSubmissionListData !== null ) setJobSubmissionList(JSON.parse(jobSubmissionListData));
+
+    // const currentUserData = window.localStorage.getItem('currentUser');
+    
+    // if ( currentUserData !== null ) console.log("The data from the currentUser", JSON.parse(currentUserData));
+    // if ( currentUserData !== null ) setCurrentUser(JSON.parse(currentUserData));
+
+    // const usersData = window.localStorage.getItem('users');
+    
+    // if ( usersData !== null ) console.log("The data from the users", JSON.parse(usersData));
+    // if ( usersData !== null ) setUsers(JSON.parse(usersData));
     // console.log(currentHighlights);
   }, []);
 
   useEffect(() => {
-    console.log("currentHighlights: ", currentHighlights);
-    window.localStorage.setItem('currentHighlights', JSON.stringify(currentHighlights));
-  }, [currentHighlights]);
+    console.log("documentList: ", documentList);
+    window.localStorage.setItem('documentList', JSON.stringify(documentList));
+  }, [documentList]);
+
+  useEffect(() => {
+    console.log("jobSubmissionList: ", jobSubmissionList);
+    window.localStorage.setItem('jobSubmissionList', JSON.stringify(jobSubmissionList));
+  }, [jobSubmissionList]);
 
   useEffect(() => {
     console.log("currentUser: ", currentUser);
@@ -263,7 +310,7 @@ const App = () => {
       <Route path='/applicant/resumecoverlettersubmission' element={<><h1>Resume Cover Letter Submission</h1><ApplicantResumeCoverLetterSubmission documentList={documentList} addDocument={(name: string, file: File, type: "coverletter" | "resume") => addDocument(getNextDocumentRecId, documentList, setDocumentList, name, file, type)}/> </>} />
       <Route path='/applicant/apply' element={<><h1>Apply to posted positions</h1></>} />
       <Route path='/applicant/feedback' element={<><h1>List of feedback from applications</h1></>} />
-      <Route path='/applicant/submission/:id' element={<><h1>Review feedback for particular submission</h1><EmployerReview setHighlightByJobSubmissionId={(id, commentedHighlights) => setHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id, commentedHighlights)} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} currentUser={currentUser}/></>} />
+      <Route path='/applicant/submission/:id' element={<><h1>Review feedback for particular submission</h1><EmployerReview getPdfByJobSubmissionId={(id) => getPdfByJobSubmissionId(jobSubmissionList, documentList, id)} updateState={() => updateState(setDocumentList, setJobSubmissionList, setCurrentUser, setUsers)} getHighlightByJobSubmissionId={(id) => getHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id)} setHighlightByJobSubmissionId={(id, commentedHighlights) => setHighlightByJobSubmissionId(setJobSubmissionList, jobSubmissionList, id, commentedHighlights)} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} currentUser={currentUser}/></>} />
       <Route path='/applicant/document/:id' element={<><h1>Review all feedback on a submitted document</h1></>} />
       <Route path='*' element={<ErrorPage message="404 not found"/>}/>
     </Routes>
