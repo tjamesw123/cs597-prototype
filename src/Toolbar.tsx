@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 
 import "./style/Toolbar.css";
+import type { User } from "./LoginSignup";
 
 interface ToolbarProps {
   setPdfScaleValue: (value: number) => void;
   toggleHighlightPen: () => void;
+  currentUser: User | null;
 }
 
-const Toolbar = ({ setPdfScaleValue, toggleHighlightPen }: ToolbarProps) => {
+const Toolbar = ({ setPdfScaleValue, toggleHighlightPen, currentUser}: ToolbarProps) => {
   const [zoom, setZoom] = useState<number | null>(null);
   const [isHighlightPen, setIsHighlightPen] = useState<boolean>(false);
 
@@ -42,10 +44,12 @@ const Toolbar = ({ setPdfScaleValue, toggleHighlightPen }: ToolbarProps) => {
         <button title="Zoom out" onClick={zoomOut}>-</button>
         {zoom ? `${(zoom * 100).toFixed(0)}%` : "Auto"}
       </div>
+      {currentUser?.isEmployer ? 
       <button title="Highlight" className={`HighlightButton ${isHighlightPen ? 'active' : ''}`} onClick={() => {
         toggleHighlightPen();
         setIsHighlightPen(!isHighlightPen);
       }}>Toggle Highlights</button>
+      : ""}
     </div>
   );
 };

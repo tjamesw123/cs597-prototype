@@ -1,0 +1,76 @@
+import { useParams } from "react-router";
+import type { DocumentRec, Job, JobSubmission } from "./App";
+import type { User } from "./LoginSignup";
+import { useState } from "react";
+
+
+
+
+
+
+
+
+interface ApplicantApplyToJobProps {
+    currentUser : User | null;
+    documentList : DocumentRec[];
+    jobList : Job[];
+    applyToJob : (jobId : number, resumeId : number | null, coverLetterId : number | null) => JobSubmission | null;
+}
+
+
+const ApplicantApplyToJob = ({currentUser, documentList, jobList, applyToJob} : ApplicantApplyToJobProps) => {
+    // Need to be on the id route now to work
+    let params = useParams();
+    const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document to load
+    
+    const [result, setResult] = useState<string>("");
+
+    const [docType, setDocType] = useState<"resume" | "coverletter">("resume");
+
+    const [selectedCoverLetterId, setSelectedCoverLetterId] = useState<number | null>(null);
+    const [selectedResumeId, setSelectedResumeId] = useState<number | null>(null);
+
+
+    return (
+        <>
+        <h1>Apply to Job</h1>
+        <form
+        className="apply"
+        onSubmit={(event) => {
+            event.preventDefault();
+            setResult("");
+            const user = applyToJob(idRoute, selectedResumeId, selectedCoverLetterId);
+            if (user) {
+                setResult("Applied!");
+            } else {
+                setResult("Failed to apply!");
+            }
+        }}
+        >
+        <div>
+            <label>Resume
+                <select onChange={e => setSelectedResumeId(e.target.value == "null" ? null : Number(e.target.value))}>
+                    <option value="null">None</option>
+                    <option value="0">Resume</option>
+                    <option value="1">Cover Letter</option>
+                </select>
+            </label>
+
+            <label>Cover Letter
+                <select onChange={e => setSelectedCoverLetterId(e.target.value == "null" ? null : Number(e.target.value))}>
+                    <option value="null">None</option>
+                    <option value="0">Resume</option>
+                    <option value="1">Cover Letter</option>
+                </select>
+            </label>
+        </div>
+        <div>
+            <input type="submit" value="apply" />
+        </div>
+        </form>
+        <h4>{result}</h4>
+        </>
+    );
+};
+
+export default ApplicantApplyToJob;
