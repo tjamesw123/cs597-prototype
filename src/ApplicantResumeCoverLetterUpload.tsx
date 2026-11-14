@@ -1,30 +1,8 @@
-import React, { type MouseEvent, useEffect, useRef, useState } from "react";
-import CommentForm from "./CommentForm.tsx";
-import ContextMenu, { type ContextMenuProps } from "./ContextMenu.tsx";
-import ExpandableTip from "./ExpandableTip.tsx";
-import HighlightContainer from "./HighlightContainer.tsx";
-import Sidebar from "./Sidebar.tsx";
-import Toolbar from "./Toolbar.tsx";
-import {
-  type GhostHighlight,
-  type Highlight,
-  PdfHighlighter,
-  type PdfHighlighterUtils,
-  PdfLoader,
-  type Tip,
-  type ViewportHighlight
-} from "react-pdf-highlighter-extended";
+import { useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
-import type { CommentedHighlight } from "./types.ts";
-import { Link, Route, Routes } from "react-router";
-import ErrorPage from "./ErrorPage.tsx";
-import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
-import EmployerReview from "./JobSubmissionReview.tsx";
-import { NavLink } from "react-router";
-import LoginSignUpPage from "./LoginSignup.tsx";
-import type { addUserType, User } from "./LoginSignup.tsx";
-import type { DocumentInitParameters, TypedArray } from "pdfjs-dist/types/src/display/api";
+import { Link } from "react-router";
+import type { User } from "./LoginSignup.tsx";
 import type { addDocumentType, DocumentRec } from "./App.tsx";
 
 interface ApplicantResumeCoverLetterUploadProps {

@@ -1,9 +1,8 @@
-import React, { type MouseEvent, useEffect, useRef, useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
-import { Link, Route, Routes } from "react-router";
-import type { addUserType, User } from "./LoginSignup.tsx";
-import type { addDocumentType, DocumentRec, getJobType, Job, JobSubmission } from "./App.tsx";
+import { Link } from "react-router";
+import type { User } from "./LoginSignup.tsx";
+import type { DocumentRec, Job, JobSubmission } from "./App.tsx";
 
 interface ApplicantFeedbackProps {
     currentUser : User | null;
@@ -13,11 +12,7 @@ interface ApplicantFeedbackProps {
     getJob : (id : number) => Job;
 }
 
-const ApplicantFeedback = ({currentUser, documentList, jobSubmissionList, jobList, getJob} : ApplicantFeedbackProps) => {
-    const [name, setName] = useState<string>("");
-    const [docType, setDocType] = useState<"resume" | "coverletter">("resume");
-    const [result, setResult] = useState<string>("");
-    const [files, setFiles] = useState<FileList | null>(null);
+const ApplicantFeedback = ({jobSubmissionList, getJob} : ApplicantFeedbackProps) => {
     return (
         <div>
             <h1>Review Submissions</h1>

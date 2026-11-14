@@ -13,13 +13,12 @@ import { useState } from "react";
 interface ApplicantApplyToJobProps {
     currentUser : User | null;
     documentList : DocumentRec[];
-    jobList : Job[];
     applyToJob : (jobId : number, date: string, resumeId : number | null, coverLetterId : number | null) => JobSubmission | null;
     getJob : (id : number) => Job;
 }
 
 
-const ApplicantApplyToJob = ({currentUser, documentList, jobList, applyToJob, getJob} : ApplicantApplyToJobProps) => {
+const ApplicantApplyToJob = ({currentUser, documentList, applyToJob, getJob} : ApplicantApplyToJobProps) => {
     // Need to be on the id route now to work
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document to load

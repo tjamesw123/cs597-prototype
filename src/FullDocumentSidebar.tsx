@@ -1,4 +1,3 @@
-import React from "react";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
 import type { CommentedHighlight } from "./types.ts";
@@ -24,9 +23,6 @@ const updateHash = (highlight: Highlight) => {
 const FullDocumentReviewSidebar = ({
   highlights,
   // toggleDocument,
-  currentUser,
-  getJobSubmission,
-  getJob,
   getDocumentRec,
   coverLetterOrResume,
   idRoute
@@ -46,6 +42,9 @@ const FullDocumentReviewSidebar = ({
         </h2>
         <p>
           Review the feedback on the document from all submissions
+        </p>
+        <p>
+          Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: {getDocumentRec(idRoute).fileName}
         </p>
       </>
       </div>

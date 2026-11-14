@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import type { ViewportHighlight } from "react-pdf-highlighter-extended";
 
 import "./style/HighlightPopup.css";

@@ -1,4 +1,4 @@
-import React, { type MouseEvent, useEffect, useRef, useState } from "react";
+import React from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
 import type { CommentedHighlight } from "./types.ts";
@@ -6,7 +6,7 @@ import { Link, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
 import JobSubmissionReview from "./JobSubmissionReview.tsx";
 import LoginSignUpPage from "./LoginSignup.tsx";
-import type { addUserType, User } from "./LoginSignup.tsx";
+import type { User } from "./LoginSignup.tsx";
 import ApplicantResumeCoverLetterUpload from "./ApplicantResumeCoverLetterUpload.tsx";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import ApplicantFeedback from "./ApplicantFeedback.tsx";
@@ -291,7 +291,7 @@ const setHighlightByJobSubmissionId = (setJobSubmissionList: React.Dispatch<Reac
 }
 
 // Login, signup, and log out system
-const loginUser = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>, users: User[], setUsers: React.Dispatch<React.SetStateAction<User[]>>, username: string, password: string) : User | null => {
+const loginUser = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>, users: User[], username: string, password: string) : User | null => {
     
     if (username == undefined || password == undefined || username == "" || password == "") {
       return null;
@@ -384,7 +384,7 @@ const App = () => {
       <Route path='/' element={<><h1>Welcome to EmployerMD!</h1> 
       <LoginSignUpPage 
         currentUser={currentUser}
-        loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, setUsers, username, password)} 
+        loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, username, password)} 
         addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  />
         </>} 
       />
@@ -392,7 +392,7 @@ const App = () => {
       <Route path="/employer/jobposting/" element={<><EmployerPostJob documentList={documentList} currentUser={currentUser} jobList={jobList} addJob={(company, position, reviewerId) => addJob(getNextJobId, jobList, setJobList, company, position, reviewerId)}/></>} />
       <Route path='/applicant/resumecoverletterupload' element={<><ApplicantResumeCoverLetterUpload currentUser={currentUser} documentList={documentList} addDocument={(fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) => addDocument(getNextDocumentRecId, documentList, setDocumentList, fileName, name, file, type, userId)}/> </>} />
       <Route path='/applicant/apply' element={<><ApplicantApplyToJobs currentUser={currentUser} jobSubmissionList={jobSubmissionList} documentList={documentList} jobList={jobList}/></>} />
-      <Route path='/applicant/apply/:id' element={<><ApplicantApplyToJob currentUser={currentUser} documentList={documentList} jobList={jobList} getJob={(id) => getJob(jobList, id)} applyToJob={(jobId, date, resumeId, coverLetterId) => applyToJob(getNextJobSubmission, jobSubmissionList, setJobSubmissionList, currentUser?.id == undefined ? -1 : currentUser?.id, jobId, date, resumeId, coverLetterId)}/></>} />
+      <Route path='/applicant/apply/:id' element={<><ApplicantApplyToJob currentUser={currentUser} documentList={documentList} getJob={(id) => getJob(jobList, id)} applyToJob={(jobId, date, resumeId, coverLetterId) => applyToJob(getNextJobSubmission, jobSubmissionList, setJobSubmissionList, currentUser?.id == undefined ? -1 : currentUser?.id, jobId, date, resumeId, coverLetterId)}/></>} />
       <Route path='/applicant/feedback' element={<><ApplicantFeedback currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />
       <Route path='/applicant/submission/:id' element={<>
       <JobSubmissionReview 

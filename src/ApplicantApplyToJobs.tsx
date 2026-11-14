@@ -1,9 +1,8 @@
-import React, { type MouseEvent, useEffect, useRef, useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
-import { Link, Route, Routes } from "react-router";
-import type { addUserType, User } from "./LoginSignup.tsx";
-import type { addDocumentType, DocumentRec, getJobType, Job, JobSubmission } from "./App.tsx";
+import { Link } from "react-router";
+import type { User } from "./LoginSignup.tsx";
+import type { DocumentRec, Job, JobSubmission } from "./App.tsx";
 
 interface ApplicantApplyToJobsProps {
     currentUser : User | null;
@@ -12,11 +11,7 @@ interface ApplicantApplyToJobsProps {
     jobList : Job[];
 }
 
-const ApplicantApplyToJobs = ({currentUser, documentList, jobSubmissionList, jobList} : ApplicantApplyToJobsProps) => {
-    const [name, setName] = useState<string>("");
-    const [docType, setDocType] = useState<"resume" | "coverletter">("resume");
-    const [result, setResult] = useState<string>("");
-    const [files, setFiles] = useState<FileList | null>(null);
+const ApplicantApplyToJobs = ({jobList} : ApplicantApplyToJobsProps) => {
     return (
         <div>
             <h1>Apply to Jobs</h1>

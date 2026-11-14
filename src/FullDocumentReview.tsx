@@ -15,7 +15,6 @@ import { handleContextMenu, resetHash, scrollToHighlightFromHash} from "./Highli
 import type { User } from "./LoginSignup.tsx";
 import type { DocumentRec, Job, JobSubmission } from "./App.tsx";
 import FullDocumentReviewSidebar from "./FullDocumentSidebar.tsx";
-import { getDocument } from "pdfjs-dist";
 
 interface DocumentReviewProps {
     currentUser: User | null, // make this an id as then I can reference the user directly through a function
@@ -51,7 +50,7 @@ const base64ToBlob = (base64: string): Blob => {
 };
 
 // This is more of a jobSubmission review
-const FullDocumentReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, documentList, jobSubmissionList, jobList, getAllHighlightsForDocumentId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission} : DocumentReviewProps) => {
+const FullDocumentReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, getAllHighlightsForDocumentId, reviewedSubmission} : DocumentReviewProps) => {
     
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this is the document id in this case
@@ -162,8 +161,8 @@ const FullDocumentReview = ({currentUser, getJob, getJobSubmission, getDocumentR
                     }}
                     >
                     <HighlightContainer
-                        editHighlight={(idToUpdate, edit) => null}
-                        onContextMenu={(event, highlight) => handleContextMenu(event, highlight, setContextMenu, (highlight) => null, getAllHighlightsForDocumentId(idRoute), highlighterUtilsRef)}
+                        editHighlight={() => null}
+                        onContextMenu={(event, highlight) => handleContextMenu(event, highlight, setContextMenu, () => null, getAllHighlightsForDocumentId(idRoute), highlighterUtilsRef)}
                     />
                 </PdfHighlighter>
             )}

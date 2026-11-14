@@ -1,6 +1,6 @@
 
 import Sidebar from "./Sidebar.tsx";
-import React, { useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState} from "react";
 import ContextMenu, { type ContextMenuProps } from "./ContextMenu.tsx";
 import ExpandableTip from "./ExpandableTip.tsx";
 import HighlightContainer from "./HighlightContainer.tsx";
@@ -8,8 +8,7 @@ import Toolbar from "./Toolbar.tsx";
 import {
   PdfHighlighter,
   type PdfHighlighterUtils,
-  PdfLoader,
-  type ViewportHighlight
+  PdfLoader
 } from "react-pdf-highlighter-extended";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
@@ -54,7 +53,7 @@ const base64ToBlob = (base64: string): Blob => {
 };
 
 // This is more of a jobSubmission review
-const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, documentList, jobSubmissionList, jobList, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission} : DocumentReviewProps) => {
+const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission} : DocumentReviewProps) => {
     // Need to be on the id route now to work
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document(s) to load

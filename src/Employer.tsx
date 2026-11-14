@@ -7,7 +7,7 @@ interface EmployerProps {
     jobSubmissions : JobSubmission[];
 }
 
-const Employer = ({documentList, jobSubmissions} : EmployerProps) => {
+const Employer = ({jobSubmissions} : EmployerProps) => {
     
     return (
         <div>
