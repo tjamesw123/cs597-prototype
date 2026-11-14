@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import type { DocumentRec, Job, JobSubmission } from "./App";
 import type { User } from "./LoginSignup";
 import { useState } from "react";
@@ -32,8 +32,13 @@ const ApplicantApplyToJob = ({currentUser, documentList, jobList, applyToJob, ge
     return (
         <>
         <h1>Apply to Job</h1>
-        <p>Company: {getJob(idRoute).company}</p>
-        <p>Position: {getJob(idRoute).position}</p>
+        <div className="job-header">
+            <span className="job-logo">{getJob(idRoute).company.charAt(0)}</span>
+            <div>
+                <div className="job-position">{getJob(idRoute).position}</div>
+                <div className="job-company">{getJob(idRoute).company}</div>
+            </div>
+        </div>
 
         <form
         className="apply"
@@ -66,8 +71,10 @@ const ApplicantApplyToJob = ({currentUser, documentList, jobList, applyToJob, ge
         <div>
             <input type="submit" value="Apply to Job" />
         </div>
+        {result && <p className={"form-notice " + (result == "Applied!" ? "success" : "error")}>
+            {result == "Applied!" ? <>Application sent! <Link to="/applicant/feedback">Track it in Feedback →</Link></> : "Couldn't apply. Choose a resume or cover letter first."}
+        </p>}
         </form>
-        <h4>{result}</h4>
         </>
     );
 };

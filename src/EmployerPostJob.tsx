@@ -36,16 +36,16 @@ const EmployerPostJob = ({currentUser, documentList, jobList, addJob} : Employer
 
             
             <div>
-                <label>Company: <input type="text" value={company} onInput={(e) => setCompany(e.currentTarget.value)}/></label>
-                <label>Position: <input type="text" value={position} onInput={(e) => setPosition(e.currentTarget.value)}/></label>
+                <label>Company <input type="text" value={company} onInput={(e) => setCompany(e.currentTarget.value)}/></label>
+                <label>Position <input type="text" value={position} onInput={(e) => setPosition(e.currentTarget.value)}/></label>
                 <input type="submit" value="Post job" />
             </div>
-            <p>Your Current Job Postings:</p>
+            {result && <p className={"form-notice " + (result == "Job posted successfully!" ? "success" : "error")}>{result == "Job posted successfully!" ? "Job posted! Applicants can see it now." : "Fill in both the company and position."}</p>}
+            <h2>Your job postings</h2>
             <ul className="card-list">
                 {jobList && jobList.filter((job) => job.reviewerId == currentUser?.id).length != 0 ? jobList.filter((job) => job.reviewerId == currentUser?.id).map((job) => <li key={job.id}><div className="item"><div className="title">{job.position}</div><div className="meta">{job.company}</div></div></li>) : <li className="empty">There are no jobs.</li>}
             </ul>
             </form>
-            <h4>{result}</h4>
         </div>
     );
 };
