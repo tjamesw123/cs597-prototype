@@ -1,4 +1,5 @@
 import React, { useEffect, useState, type FormEvent } from "react";
+import { Link } from "react-router";
 
 
 export type User = {
@@ -143,6 +144,51 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
   );
 };
 
+type HomeAction = { icon: string; title: string; text: string; to: string; button: string };
+
+const HomeDashboard = ({ subtitle, actions, steps }: { subtitle: string; actions: HomeAction[]; steps: string[] }) => (
+    <>
+    <p className="home-subtitle">{subtitle}</p>
+    <div className="home-actions">
+        {actions.map((action) => (
+            <Link key={action.to} to={action.to} className="home-card">
+                <span className="home-icon">{action.icon}</span>
+                <span className="home-title">{action.title}</span>
+                <span className="home-text">{action.text}</span>
+                <span className="home-button">{action.button} →</span>
+            </Link>
+        ))}
+    </div>
+    <h2>How it works</h2>
+    <ol className="home-steps">
+        {steps.map((step, index) => <li key={index}><span>{index + 1}</span>{step}</li>)}
+    </ol>
+    </>
+);
+
+const ApplicantHome = () => (
+    <HomeDashboard
+        subtitle="Get real feedback on your resume from the employers you apply to."
+        actions={[
+            { icon: "📄", title: "Upload a resume", text: "Add your resume or cover letter as a PDF.", to: "/applicant/resumecoverletterupload", button: "Upload" },
+            { icon: "💼", title: "Apply to jobs", text: "Pick a job and send your documents.", to: "/applicant/apply", button: "Browse jobs" },
+            { icon: "💬", title: "See your feedback", text: "Read employer highlights and comments.", to: "/applicant/feedback", button: "View feedback" },
+        ]}
+        steps={["Upload your resume", "Apply to a job", "Get highlighted feedback"]}
+    />
+);
+
+const EmployerHome = () => (
+    <HomeDashboard
+        subtitle="Review applicants and give them feedback that helps."
+        actions={[
+            { icon: "📝", title: "Review applications", text: "Highlight resumes and leave comments.", to: "/employer/applications/", button: "Go to applications" },
+            { icon: "➕", title: "Post a job", text: "Add a new opening for applicants to see.", to: "/employer/jobposting/", button: "Post a job" },
+        ]}
+        steps={["Open an application", "Highlight and comment", "Mark as reviewed"]}
+    />
+);
+
 const LoginSignUpPage = ({ currentUser, loginUser, addUser }: UserSignUpLoginProps) => {
     return (
         <>
@@ -152,7 +198,7 @@ const LoginSignUpPage = ({ currentUser, loginUser, addUser }: UserSignUpLoginPro
                 <SignUpForm currentUser={currentUser} addUser={addUser}/>
             </div>
         : ""}
-        {currentUser ? currentUser.isEmployer ? <p>Proceed to the applications tab to start reviewing job submissions</p> : <p>Add your resume and cover letters in the document upload tab and then apply for jobs with those documents and get annotated feedback on them from the employer</p> : ""}
+        {currentUser ? currentUser.isEmployer ? <EmployerHome /> : <ApplicantHome /> : ""}
         </>
     );
 };

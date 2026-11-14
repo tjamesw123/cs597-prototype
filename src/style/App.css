@@ -118,3 +118,19 @@ form.login input[type="submit"] { width: 100%; margin-top: 4px; }
 .btn-link { padding: 8px 14px; border-radius: 10px; border: 1px solid #cfd6e4; background: var(--card);
   color: var(--ink); font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; }
 .btn-link:hover { border-color: var(--blue); color: var(--blue); }
+
+.home-subtitle { color: var(--muted); font-size: 16px; margin: -8px 0 20px; }
+.home-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.home-card { display: flex; flex-direction: column; gap: 6px; padding: 20px; background: var(--card);
+  border-radius: var(--radius); box-shadow: var(--shadow); color: var(--ink); text-decoration: none;
+  border: 1px solid transparent; transition: border-color 0.15s, transform 0.15s; }
+.home-card:hover { border-color: var(--blue); transform: translateY(-2px); }
+.home-icon { font-size: 28px; }
+.home-title { font-size: 17px; font-weight: 700; }
+.home-text { color: var(--muted); font-size: 14px; flex: 1; }
+.home-button { color: var(--blue); font-weight: 700; font-size: 14px; margin-top: 8px; }
+.home-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.home-steps li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--card);
+  border-radius: var(--radius); box-shadow: var(--shadow); font-weight: 600; }
+.home-steps li span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--blue); color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0; }

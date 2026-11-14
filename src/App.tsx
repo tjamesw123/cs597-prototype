@@ -366,7 +366,7 @@ const App = () => {
     </div>
   <main className="page">
     <Routes>
-      <Route path='/' element={<><h1>Welcome to EmployerMD!</h1> 
+      <Route path='/' element={<><h1>{currentUser ? `Welcome back, ${currentUser.first_name}! 👋` : "Welcome to EmployerMD!"}</h1> 
       <LoginSignUpPage 
         currentUser={currentUser}
         loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, setUsers, username, password)} 
