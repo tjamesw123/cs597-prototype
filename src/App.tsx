@@ -380,6 +380,7 @@ const App = () => {
         </div>
         
     </div>
+  <main className="page">
     <Routes>
       <Route path='/' element={<><h1>Welcome to EmployerMD!</h1> 
       <LoginSignUpPage 
@@ -431,6 +432,7 @@ const App = () => {
         reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}/></>} />
       <Route path='*' element={<ErrorPage message="404 not found"/>}/>
     </Routes>
+        </main>
     </>
     
   );
