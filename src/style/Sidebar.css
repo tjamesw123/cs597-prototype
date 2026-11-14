@@ -68,7 +68,7 @@
 }
 
 a {
-    color: #007bff;
+    color: var(--blue);
 }
 
 blockquote {
@@ -118,3 +118,27 @@ blockquote:after {
     background-color: #d32f2f;
     border-color: #d32f2f;
 }
+
+/* Review screens: full width, card-style sidebar and comments */
+.page:has(.App) { max-width: none; }
+.App { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--card); }
+
+.sidebar, .fulldocumentreviewsidebar { background: var(--card); border-right: 1px solid var(--line); box-shadow: none; overflow: auto; }
+.sidebar .description h2, .fulldocumentreviewsidebar .description h2 { margin-top: 0; font-size: 20px; }
+.sidebar .description p, .fulldocumentreviewsidebar .description p { margin: 4px 0; font-size: 14px; color: var(--muted); }
+.sidebar .description br { display: none; }
+
+.sidebar__highlights, .fulldocumentreviewsidebar__highlights { list-style: none; padding: 0; margin: 8px 0; }
+.sidebar__highlight, .fulldocumentreviewsidebar__highlight {
+    margin: 0 12px 10px; padding: 12px 14px; border: 0; border-left: 4px solid #f5c542;
+    border-radius: 12px; background: var(--bg); cursor: pointer; transition: background 140ms ease-in;
+}
+.sidebar__highlight:hover, .fulldocumentreviewsidebar__highlight:hover { background: #eaf0ff; }
+.sidebar__highlight strong, .fulldocumentreviewsidebar__highlight strong { display: block; color: var(--ink); }
+.sidebar__highlight blockquote, .fulldocumentreviewsidebar__highlight blockquote { font-size: 13px; color: var(--muted); font-style: italic; }
+
+.sidebar__toggle, .sidebar__reset { white-space: normal; border-radius: 10px; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.sidebar__toggle { background-color: var(--blue); border-color: var(--blue); }
+.sidebar__toggle:hover { background-color: var(--blue-dark); border-color: var(--blue-dark); }
+.sidebar .description .sidebar__toggle, .sidebar__reset { width: 100%; }
+.page > button.sidebar__toggle { margin-bottom: 12px; }

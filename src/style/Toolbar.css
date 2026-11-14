@@ -3,9 +3,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 4px 16px;
-    background-color: #2b2e33;
-    color: #f5f5f5;
-    border-bottom: 2px solid #9096a2;
+    background-color: var(--card);
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
 }
 
 .ZoomControls {
@@ -16,7 +16,7 @@
 .ZoomControls button {
     background: none;
     /* Remove background */
-    color: #f5f5f5;
+    color: var(--ink);
     border: none;
     /* Remove border */
     cursor: pointer;
@@ -27,14 +27,14 @@
 }
 
 .ZoomControls button:hover {
-    color: #b958ff;
+    color: var(--blue);
     transform: scale(1.05);
 }
 
 .HighlightButton {
     background: none;
     /* Remove background */
-    color: #f5f5f5;
+    color: var(--ink);
     border: none;
     /* Remove border */
     cursor: pointer;
@@ -45,10 +45,10 @@
 }
 
 .HighlightButton:hover {
-    color: #b958ff;
+    color: var(--blue);
     transform: scale(1.05);
 }
 
 .HighlightButton.active {
-    color: #b958ff;
+    color: var(--blue);
 }
