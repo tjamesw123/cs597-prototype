@@ -2,7 +2,7 @@ import React, { type MouseEvent, useEffect, useRef, useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
 import type { CommentedHighlight } from "./types.ts";
-import { Link, Route, Routes } from "react-router";
+import { Link, NavLink, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
 import JobSubmissionReview from "./JobSubmissionReview.tsx";
 import LoginSignUpPage from "./LoginSignup.tsx";
@@ -340,45 +340,29 @@ const App = () => {
 
   return (
     <>
-    <div className="navbar">
-        <Link to={{
-              pathname: "/"
-            }}>Home</Link>
+        <div className="navbar">
+        <span className="brand">Employer<b>.MD</b></span>
+        <NavLink to="/" end>Home</NavLink>
         {currentUser && currentUser.isEmployer ?
             <>
-            <Link to={{
-              pathname: "/employer/applications/"
-            }}>Applications</Link>
-            <Link to={{
-              pathname: "/employer/jobposting/"
-            }}>Post Jobs</Link>
+            <NavLink to="/employer/applications/">Applications</NavLink>
+            <NavLink to="/employer/jobposting/">Post Jobs</NavLink>
             </>
         : ""}
 
         {currentUser && !currentUser.isEmployer ?
         <>
-            <Link to={{
-              pathname: "/applicant/resumecoverletterupload"
-            }}>Resume and Cover Letters</Link>
-            <Link to={{
-              pathname: "/applicant/feedback"
-            }}>Feedback</Link>
-            <Link to={{
-              pathname: "/applicant/apply"
-            }}>Apply</Link>
+            <NavLink to="/applicant/resumecoverletterupload">Resume and Cover Letters</NavLink>
+            <NavLink to="/applicant/feedback">Feedback</NavLink>
+            <NavLink to="/applicant/apply">Apply</NavLink>
         </>
           : ""}
         <div className="right">
+          {currentUser ? <p>{currentUser.first_name}</p> : ""}
           {currentUser ?
-            <Link onClick={() => logOut(setCurrentUser)} to={{
-              pathname: "/"
-            }}>Log Out</Link>
-          : ""}
-          {currentUser ?
-            <p>{currentUser.first_name}</p>
+            <Link onClick={() => logOut(setCurrentUser)} to="/">Log Out</Link>
           : ""}
         </div>
-        
     </div>
   <main className="page">
     <Routes>

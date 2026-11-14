@@ -61,35 +61,17 @@ body {
 }
 
 
-.navbar {
-    display: flex;
-    background-color: #333;
-}
-
-.navbar a {
-    color: white;
-    padding: 14px 20px;
-    text-decoration: none;
-    text-align: center;
-}
-
-.navbar p {
-    color: white;
-    /* padding: 14px 20px; */
-    padding-left: 10px;
-    padding-right: 10px;
-    text-decoration: none;
-    text-align: center;
-}
-
-.navbar .right {
-  margin-left: auto;
-  display: flex;
-}
-
-.navbar a:hover {
-  background-color: #111111;
-}
+.navbar { display: flex; align-items: center; gap: 4px; background: var(--card);
+  border-bottom: 1px solid var(--line); padding: 0 24px; }
+.navbar .brand { font-size: 20px; margin-right: 20px; color: var(--ink); }
+.navbar .brand b { color: var(--blue); }
+.navbar a { color: var(--muted); font-weight: 600; padding: 18px 12px;
+  text-decoration: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+.navbar a:hover { color: var(--ink); }
+.navbar a.active { color: var(--blue); border-bottom-color: var(--blue); }
+.navbar .right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.navbar p { color: var(--ink); font-weight: 700; margin: 0; padding: 6px 12px;
+  background: var(--bg); border-radius: 999px; }
 
 .page { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
 h1 { font-size: 28px; letter-spacing: -0.3px; margin: 8px 0 16px; }
