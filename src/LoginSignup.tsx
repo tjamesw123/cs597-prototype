@@ -74,15 +74,16 @@ const LoginForm = ({ currentUser, loginUser }: UserLoginProps) => {
             // onSubmit(input);
         }}
         >
+        <h2>Log in</h2>
         <div>
-            <label>Username: <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
-            <label>Password: <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
+            <label>Username <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
+            <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
         </div>
         <div>
-            <input type="submit" value="Login" />
+            <input type="submit" value="Log in" />
         </div>
+        {result && <p className="form-result">{result}</p>}
         </form>
-        <h4>{result}</h4>
         </>
     );
 };
@@ -124,19 +125,20 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
             // onSubmit(input);
         }}
         >
+        <h2>Create an account</h2>
         <div>
-            <label>First Name: <input type="text" value={first_name} onInput={(e) => setFirstName(e.currentTarget.value)}/></label>
-            <label>Last Name: <input type="text" value={last_name} onInput={(e) => setLastName(e.currentTarget.value)}/></label>
-            <label>Username: <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
-            <label>Password: <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
-            <label>Repeat Password: <input type="password" value={repeatPassword} onInput={(e) => setRepeatPassword(e.currentTarget.value)}/></label>
-            <label>Are you an employer? <input type="checkbox" name="isEmployer" defaultChecked={false} onInput={(e) => setIsEmployer(e.currentTarget.checked)}/></label>
+            <label>First Name <input type="text" value={first_name} onInput={(e) => setFirstName(e.currentTarget.value)}/></label>
+            <label>Last Name <input type="text" value={last_name} onInput={(e) => setLastName(e.currentTarget.value)}/></label>
+            <label>Username <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
+            <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
+            <label>Repeat Password <input type="password" value={repeatPassword} onInput={(e) => setRepeatPassword(e.currentTarget.value)}/></label>
+            <label className="check"><input type="checkbox" name="isEmployer" defaultChecked={false} onInput={(e) => setIsEmployer(e.currentTarget.checked)}/> I'm an employer</label>
         </div>
         <div>
             <input type="submit" value="Sign Up" />
         </div>
+        {result && <p className="form-result">{result}</p>}
         </form>
-        <h4>{result}</h4>
     </>
   );
 };
@@ -144,8 +146,12 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
 const LoginSignUpPage = ({ currentUser, loginUser, addUser }: UserSignUpLoginProps) => {
     return (
         <>
-        {!currentUser ? <LoginForm currentUser={currentUser} loginUser={loginUser} /> : ""}
-        {!currentUser ? <SignUpForm currentUser={currentUser} addUser={addUser}/> : ""}
+        {!currentUser ?
+            <div className="auth">
+                <LoginForm currentUser={currentUser} loginUser={loginUser} />
+                <SignUpForm currentUser={currentUser} addUser={addUser}/>
+            </div>
+        : ""}
         {currentUser ? currentUser.isEmployer ? <p>Proceed to the applications tab to start reviewing job submissions</p> : <p>Add your resume and cover letters in the document upload tab and then apply for jobs with those documents and get annotated feedback on them from the employer</p> : ""}
         </>
     );
