@@ -1,42 +1,18 @@
-import React, { type MouseEvent, useEffect, useRef, useState } from "react";
+import React, { type MouseEvent } from "react";
 import CommentForm from "./CommentForm";
-import ContextMenu, { type ContextMenuProps } from "./ContextMenu";
-import ExpandableTip from "./ExpandableTip";
-import HighlightContainer from "./HighlightContainer";
-import Sidebar from "./Sidebar";
-import Toolbar from "./Toolbar";
+import { type ContextMenuProps } from "./ContextMenu";
 import {
   type GhostHighlight,
   type Highlight,
-  PdfHighlighter,
   type PdfHighlighterUtils,
-  PdfLoader,
   type Tip,
   type ViewportHighlight
 } from "react-pdf-highlighter-extended";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
 import type { CommentedHighlight } from "./types.ts";
-import { Route, Routes } from "react-router";
-import ErrorPage from "./ErrorPage.tsx";
 
 const getNextId = () => String(Math.random()).slice(2);
-
-// // // Refs for PdfHighlighter utilities
-// const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
-
-// urls: string[],
-
-// // Convert into toggleDocument into switvch
-// export const toggleDocument = (
-//     currentPdfIndexRef: React.MutableRefObject<number>, 
-//     setUrl: React.Dispatch<React.SetStateAction<string>>, 
-//     setHighlights: React.Dispatch<React.SetStateAction<CommentedHighlight[]>>) => {
-//     const urls = [PRIMARY_PDF_URL, SECONDARY_PDF_URL];
-//     currentPdfIndexRef.current = (currentPdfIndexRef.current + 1) % urls.length;
-//     setUrl(urls[currentPdfIndexRef.current]);
-//     setHighlights(TEST_HIGHLIGHTS[urls[currentPdfIndexRef.current]] ?? []);
-// };
 
 export const parseIdFromHash = () => {
   return document.location.hash.slice("#highlight-".length);

@@ -12,10 +12,16 @@ interface SidebarProps {
   // documentList: DocumentRec[],
   // jobSubmissionList: JobSubmission[],
   // jobList: Job[],
-  idRoute : number,
-  reviewedSubmission: (id : number) => void
+  getJobSubmission : (id : number) => JobSubmission;
+  getJob : (id : number) => Job;
+  getDocumentRec : (id : number) => DocumentRec;
+  coverLetterOrResume : "coverletter" | "resume";
+  idRoute : number;
 
-  // toggleDocument: () => void;
+  reviewedSubmission: (id : number) => void;
+  isResumePresentInJobSubmissionId: (id: number) => boolean;
+  isCoverLetterPresentInJobSubmissionId: (id: number) => boolean;
+  setCoverLetterOrResume: React.Dispatch<React.SetStateAction<"coverletter" | "resume">>;
 }
 
 const updateHash = (highlight: Highlight) => {
@@ -28,9 +34,33 @@ const Sidebar = ({
   // toggleDocument,
   currentUser,
   resetHighlights,
+  getJobSubmission,
+  getJob,
+  getDocumentRec,
+  coverLetterOrResume,
   idRoute,
-  reviewedSubmission
+  reviewedSubmission,
+  
 }: SidebarProps) => {
+  let reviewing = coverLetterOrResume == "coverletter" ? getJobSubmission(idRoute).coverLetterId : getJobSubmission(idRoute).resumeId;
+  if (reviewing == null) {
+    reviewing = 0;
+  } 
+  const submissionInfo = <>
+  <p>
+    Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: {getDocumentRec(reviewing).fileName}
+  </p>
+  <p>
+    Company: {getJob(getJobSubmission(idRoute).jobId).company}
+  </p>
+  <p>
+    Position: {getJob(getJobSubmission(idRoute).jobId).position}
+  </p>
+  <p>
+    Date: {getJobSubmission(idRoute).date}
+  </p>
+  <br></br>
+  </>
   return (
     <div className="sidebar" style={{ width: "25vw", maxWidth: "500px" }}>
        
@@ -40,14 +70,14 @@ const Sidebar = ({
         <h2 style={{ marginBottom: "1rem" }}>
           Employer Review
         </h2>
+        {submissionInfo}
         <p>
           Comment with quick comments on the applicant's resume to tell them what they could do better and what they did well.
         </p>
           <br></br>
         <p>
-          Press the submit button once you are done with feedback
+          Press the mark as reviewed button once you are done with feedback
         </p>
-        {/* You can see this as an employer */}
         <div style={{ padding: "0.5rem" }}>
           <button onClick={() => reviewedSubmission(idRoute)} className="sidebar__toggle">
             Mark as reviewed to the applicant
@@ -65,6 +95,7 @@ const Sidebar = ({
         <h2 style={{ marginBottom: "1rem" }}>
           Applicant Review
         </h2>
+        {submissionInfo}
         <p>
           Review the feedback from the employer
         </p>
@@ -116,13 +147,6 @@ const Sidebar = ({
           ))}
         </ul>
       )}
-
-      {/* Change to either not be visible or a different button 
-      <div style={{ padding: "0.5rem" }}>
-        <button onClick={toggleDocument} className="sidebar__toggle">
-          Toggle PDF document
-        </button>
-      </div> */}
 
       {currentUser?.isEmployer && highlights && highlights.length > 0 && (
         <div style={{ padding: "0.5rem" }}>

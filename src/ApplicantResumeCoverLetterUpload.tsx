@@ -20,7 +20,7 @@ import type { CommentedHighlight } from "./types.ts";
 import { Link, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
 import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
-import EmployerReview from "./DocumentReview.tsx";
+import EmployerReview from "./JobSubmissionReview.tsx";
 import { NavLink } from "react-router";
 import LoginSignUpPage from "./LoginSignup.tsx";
 import type { addUserType, User } from "./LoginSignup.tsx";
@@ -28,11 +28,12 @@ import type { DocumentInitParameters, TypedArray } from "pdfjs-dist/types/src/di
 import type { addDocumentType, DocumentRec } from "./App.tsx";
 
 interface ApplicantResumeCoverLetterUploadProps {
+    currentUser : User | null;
     documentList : DocumentRec[];
     addDocument : addDocumentType;
 }
 
-const ApplicantResumeCoverLetterUpload = ({documentList, addDocument} : ApplicantResumeCoverLetterUploadProps) => {
+const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, addDocument} : ApplicantResumeCoverLetterUploadProps) => {
     const [name, setName] = useState<string>("");
     const [docType, setDocType] = useState<"resume" | "coverletter">("resume");
     const [result, setResult] = useState<string>("");
@@ -48,9 +49,7 @@ const ApplicantResumeCoverLetterUpload = ({documentList, addDocument} : Applican
                 if (files !== null) {
                     setName("");
                     const file = files[0];
-                    // URL.createObjectURL(files[0]);
-                    file.name
-                    await addDocument(file.name, name, file, docType);
+                    await addDocument(file.name, name, file, docType, currentUser?.id != undefined ? currentUser.id : 0);
                 } else {
                     setResult("No file uploaded!");
                 }
@@ -67,32 +66,28 @@ const ApplicantResumeCoverLetterUpload = ({documentList, addDocument} : Applican
             </div>
             <div>
                 <input type="file" onInput={(e) => setFiles(e.currentTarget.files)} />
-                <input type="submit" value="SubmitDoc" />
+                <input type="submit" value="Upload PDF file" />
             </div>
             </form>
             <h4>{result}</h4>
 
             <h2>Cover Letter</h2>
             <ul>
-                {documentList && documentList.filter((document) => document.type == "coverletter").length != 0 ? documentList.filter((document) => document.type == "coverletter").map((document) => <li>id: {document.id.toString()}, {document.fileName != undefined && document.fileName != "" ? "fileName: " + document.fileName + "," : "" } Name: {document.name.toString()}</li>) : "There are no cover letters."}
+                {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "coverletter").length != 0 ? documentList
+                .filter((document) => document.userId == currentUser?.id)
+                .filter((document) => document.type == "coverletter")
+                .map((document) => <li>id: {document.id.toString()}, {document.fileName != undefined && document.fileName != "" ? "File Name: " + document.fileName : "" }{document.name != "" ? ", Name: " + document.name : ""} <Link to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : "There are no cover letters."}
             </ul>
 
             <h2>Resume</h2>
             <ul>
-                {documentList && documentList.filter((document) => document.type == "resume").length != 0 ? documentList.filter((document) => document.type == "resume").map((document) => <li>id: {document.id.toString()}, {document.fileName != undefined && document.fileName != "" ? "fileName: " + document.fileName + "," : "" } Name: {document.name.toString()}</li>) : "There are no resumes."}
+                {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "resume").length != 0 ? documentList
+                .filter((document) => document.userId == currentUser?.id)
+                .filter((document) => document.type == "resume")
+                .map((document) => <li>id: {document.id.toString()}, {document.fileName != undefined && document.fileName != "" ? "File Name: " + document.fileName : "" }{document.name != "" ? ", Name: " + document.name : ""} <Link to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : "There are no resumes."}
             </ul>
         </div>
     );
 };
 
 export default ApplicantResumeCoverLetterUpload;
-
-//  <select
-//           value={roomId}
-//           onChange={e => setRoomId(e.target.value)}
-//         >
-//           <option value="general">general</option>
-//           <option value="travel">travel</option>
-//           <option value="music">music</option>
-//         </select>
-

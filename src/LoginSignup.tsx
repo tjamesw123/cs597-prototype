@@ -92,6 +92,7 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
   const [last_name, setLastName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [repeatPassword, setRepeatPassword] = useState<string>("");
   const [isEmployer, setIsEmployer] = useState<boolean>(false);
   const [result, setResult] = useState<string>("");
   useEffect(() => {
@@ -111,7 +112,10 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
             console.log(event.target);
             console.log(first_name);
             setResult("");
-            const user = addUser(first_name, last_name, username, password, isEmployer);
+            let user = null;
+            if (password == repeatPassword) {
+                user = addUser(first_name, last_name, username, password, isEmployer);
+            }
             if (user) {
                 setResult("Signed up!");
             } else {
@@ -125,10 +129,11 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
             <label>Last Name: <input type="text" value={last_name} onInput={(e) => setLastName(e.currentTarget.value)}/></label>
             <label>Username: <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
             <label>Password: <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
+            <label>Repeat Password: <input type="password" value={repeatPassword} onInput={(e) => setRepeatPassword(e.currentTarget.value)}/></label>
             <label>Are you an employer? <input type="checkbox" name="isEmployer" defaultChecked={false} onInput={(e) => setIsEmployer(e.currentTarget.checked)}/></label>
         </div>
         <div>
-            <input type="submit" value="SignUp" />
+            <input type="submit" value="Sign Up" />
         </div>
         </form>
         <h4>{result}</h4>
@@ -137,14 +142,13 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
 };
 
 const LoginSignUpPage = ({ currentUser, loginUser, addUser }: UserSignUpLoginProps) => {
-  const [input, setInput] = useState<string>("");
-
-  return (
-    <>
-        <LoginForm currentUser={currentUser} loginUser={loginUser} />
-        <SignUpForm currentUser={currentUser} addUser={addUser}/>
-    </>
-  );
+    return (
+        <>
+        {!currentUser ? <LoginForm currentUser={currentUser} loginUser={loginUser} /> : ""}
+        {!currentUser ? <SignUpForm currentUser={currentUser} addUser={addUser}/> : ""}
+        {currentUser ? currentUser.isEmployer ? <p>Proceed to the applications tab to start reviewing job submissions</p> : <p>Add your resume and cover letters in the document upload tab and then apply for jobs with those documents and get annotated feedback on them from the employer</p> : ""}
+        </>
+    );
 };
 
 export default LoginSignUpPage;
