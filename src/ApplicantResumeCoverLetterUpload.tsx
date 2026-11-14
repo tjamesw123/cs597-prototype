@@ -71,20 +71,20 @@ const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, addDocumen
             </form>
             <h4>{result}</h4>
 
-            <h2>Cover Letter</h2>
-            <ul>
+            <h2>Cover Letters</h2>
+            <ul className="card-list">
                 {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "coverletter").length != 0 ? documentList
                 .filter((document) => document.userId == currentUser?.id)
                 .filter((document) => document.type == "coverletter")
-                .map((document) => <li>id: {document.id.toString()}, {document.fileName != undefined && document.fileName != "" ? "File Name: " + document.fileName : "" }{document.name != "" ? ", Name: " + document.name : ""} <Link to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : "There are no cover letters."}
+                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div><Link className="btn-link" to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : <li className="empty">There are no cover letters.</li>}
             </ul>
 
-            <h2>Resume</h2>
-            <ul>
+            <h2>Resumes</h2>
+            <ul className="card-list">
                 {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "resume").length != 0 ? documentList
                 .filter((document) => document.userId == currentUser?.id)
                 .filter((document) => document.type == "resume")
-                .map((document) => <li>id: {document.id.toString()}, {document.fileName != undefined && document.fileName != "" ? "File Name: " + document.fileName : "" }{document.name != "" ? ", Name: " + document.name : ""} <Link to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : "There are no resumes."}
+                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div><Link className="btn-link" to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : <li className="empty">There are no resumes.</li>}
             </ul>
         </div>
     );

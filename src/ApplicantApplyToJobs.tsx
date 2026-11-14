@@ -20,8 +20,8 @@ const ApplicantApplyToJobs = ({currentUser, documentList, jobSubmissionList, job
     return (
         <div>
             <h1>Apply to Jobs</h1>
-            <ul>
-                {jobList ? jobList.map((job) => <li>id: {job.id.toString()}, Company: {job.company}, Position: {job.position} <Link to={{pathname: "/applicant/apply/"+job.id}}>Apply to Job</Link></li>) : ""}
+            <ul className="card-list">
+                {jobList ? jobList.map((job) => <li key={job.id}><div className="item"><div className="title">{job.position}</div><div className="meta">{job.company}</div></div><Link className="btn-link" to={{pathname: "/applicant/apply/"+job.id}}>Apply</Link></li>) : ""}
             </ul>
         </div>
     );

@@ -21,8 +21,8 @@ const ApplicantFeedback = ({currentUser, documentList, jobSubmissionList, jobLis
     return (
         <div>
             <h1>Review Submissions</h1>
-            <ul>
-                {jobSubmissionList ? jobSubmissionList.map((jobSubmission) => <li>id: {jobSubmission.id.toString()}, Date: {jobSubmission.date.toString()}, Company: {getJob(jobSubmission.jobId).company}, Position: {getJob(jobSubmission.jobId).position} Reviewed: {jobSubmission.reviewed ? "Yes" : "No"}, <Link to={{pathname: "/applicant/submission/"+jobSubmission.id}}>View Submission</Link></li>) : ""}
+            <ul className="card-list">
+                {jobSubmissionList ? jobSubmissionList.map((jobSubmission) => <li key={jobSubmission.id}><div className="item"><div className="title">{getJob(jobSubmission.jobId).position} · {getJob(jobSubmission.jobId).company}</div><div className="meta">Applied {jobSubmission.date}</div></div><span className={"badge " + (jobSubmission.reviewed ? "reviewed" : "pending")}>{jobSubmission.reviewed ? "Reviewed" : "Pending Review"}</span><Link className="btn-link" to={{pathname: "/applicant/submission/"+jobSubmission.id}}>View Feedback</Link></li>) : ""}
             </ul>
         </div>
     );

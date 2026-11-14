@@ -104,3 +104,17 @@ form.login input[type="submit"] { width: 100%; margin-top: 4px; }
 .auth { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
 .auth form.login { max-width: none; margin-bottom: 0; }
 .form-result { margin: 12px 0 0; font-weight: 600; color: var(--muted); }
+
+.card-list { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 10px; }
+.card-list li { display: flex; align-items: center; gap: 12px; background: var(--card);
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; }
+.card-list li.empty { color: var(--muted); justify-content: center; }
+.card-list .item { flex: 1; min-width: 0; }
+.card-list .title { font-weight: 700; }
+.card-list .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.badge.reviewed { background: var(--good-soft); color: var(--good); }
+.badge.pending { background: var(--warn-soft); color: var(--warn); }
+.btn-link { padding: 8px 14px; border-radius: 10px; border: 1px solid #cfd6e4; background: var(--card);
+  color: var(--ink); font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.btn-link:hover { border-color: var(--blue); color: var(--blue); }

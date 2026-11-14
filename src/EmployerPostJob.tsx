@@ -41,8 +41,8 @@ const EmployerPostJob = ({currentUser, documentList, jobList, addJob} : Employer
                 <input type="submit" value="Post job" />
             </div>
             <p>Your Current Job Postings:</p>
-            <ul>
-                {jobList && jobList.filter((job) => job.reviewerId == currentUser?.id).length != 0 ? jobList.filter((job) => job.reviewerId == currentUser?.id).map((job) => <li>Company: {job.company}, Position: {job.position}</li>) : "There are no jobs."}
+            <ul className="card-list">
+                {jobList && jobList.filter((job) => job.reviewerId == currentUser?.id).length != 0 ? jobList.filter((job) => job.reviewerId == currentUser?.id).map((job) => <li key={job.id}><div className="item"><div className="title">{job.position}</div><div className="meta">{job.company}</div></div></li>) : <li className="empty">There are no jobs.</li>}
             </ul>
             </form>
             <h4>{result}</h4>
