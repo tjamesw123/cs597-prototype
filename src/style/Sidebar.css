@@ -142,3 +142,29 @@ blockquote:after {
 .sidebar__toggle:hover { background-color: var(--blue-dark); border-color: var(--blue-dark); }
 .sidebar .description .sidebar__toggle, .sidebar__reset { width: 100%; }
 .app-page > button.sidebar__toggle { margin-bottom: 12px; }
+
+.decision-sent { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--good-soft); color: var(--good) !important; }
+.decision-overlay { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 16px;
+  background: rgba(23, 32, 51, 0.45); }
+.decision-card { width: 100%; max-width: 440px; max-height: 90vh; overflow: auto; box-sizing: border-box; padding: 22px;
+  background: var(--card); border-radius: var(--radius); box-shadow: 0 10px 40px rgba(23, 32, 51, 0.25); }
+.decision-card h2 { margin: 0 0 8px; font-size: 20px; }
+.decision-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+.decision-summary .sentiment-tag { margin: 0; }
+.decision-options { display: grid; gap: 8px; margin-bottom: 16px; }
+.decision-option { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 12px 14px;
+  background: var(--card); color: var(--ink); border: 2px solid var(--line); border-radius: 12px; }
+.decision-option:hover { background: var(--bg); }
+.decision-option span { color: var(--muted); font-size: 13px; font-weight: 400; }
+.decision-option.active.d-strong { border-color: var(--good); background: var(--good-soft); }
+.decision-option.active.d-consider { border-color: #f0961e; background: var(--warn-soft); }
+.decision-option.active.d-notfit { border-color: #c93c3c; background: #fde8e8; }
+.decision-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.decision-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+.decision-actions .decision-cancel { background: var(--card); color: var(--ink); border: 1px solid #cfd6e4; }
+.decision-actions .decision-cancel:hover { border-color: var(--blue); color: var(--blue); background: var(--card); }
+.decision-actions .btn { padding: 10px 18px; font-size: 15px; }
+.decision-done { text-align: center; }
+.decision-done .decision-check { font-size: 40px; }
+.decision-done p { color: var(--muted); }
+.decision-done .decision-actions { justify-content: center; }

@@ -1,7 +1,7 @@
 import React from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
-import type { CommentedHighlight } from "./types.ts";
+import type { CommentedHighlight, Decision } from "./types.ts";
 import { Link, NavLink, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
 import JobSubmissionReview from "./JobSubmissionReview.tsx";
@@ -48,6 +48,7 @@ export type JobSubmission = {
   resumeId : number | null;
   coverLetterId : number | null;
   reviewed : boolean;
+  decision? : Decision; // Older submissions have no decision
   resumeCommentedHighlights : CommentedHighlight[];
   coverLetterCommentedHighlights : CommentedHighlight[];
 }
@@ -125,6 +126,19 @@ const reviewedSubmission = (setJobSubmissionList: React.Dispatch<React.SetStateA
   setJobSubmissionList(jobSubmissionList.map(t => {
     if (t.id === id) {
       t.reviewed = true;
+      return t;
+    } else {
+      return t;
+    }
+  }));
+}
+
+// Saves the employer's overall decision and marks the submission as reviewed
+const submitDecision = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, decision : Decision) => {
+  setJobSubmissionList(jobSubmissionList.map(t => {
+    if (t.id === id) {
+      t.reviewed = true;
+      t.decision = decision;
       return t;
     } else {
       return t;
@@ -399,7 +413,8 @@ const App = () => {
         jobSubmissionList={jobSubmissionList} 
         documentList={documentList} 
         currentUser={currentUser}
-        reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}/></>} 
+        reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}
+        submitDecision={(id, decision) => submitDecision(setJobSubmissionList, jobSubmissionList, id, decision)}/></>} 
       />
       <Route path='/applicant/document/:id' element={<>
       <FullDocumentReview getJob={(id) => getJob(jobList, id)}

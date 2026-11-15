@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { Link } from "react-router";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
-import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
+import { DECISIONS, SENTIMENTS, type CommentedHighlight, type Decision, type Sentiment } from "./types.ts";
 import type { User } from "./LoginSignup.tsx";
 import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 
@@ -19,6 +20,7 @@ interface SidebarProps {
   idRoute : number;
 
   reviewedSubmission: (id : number) => void;
+  submitDecision: (id : number, decision : Decision) => void;
   isResumePresentInJobSubmissionId: (id: number) => boolean;
   isCoverLetterPresentInJobSubmissionId: (id: number) => boolean;
   setCoverLetterOrResume: React.Dispatch<React.SetStateAction<"coverletter" | "resume">>;
@@ -39,10 +41,15 @@ const Sidebar = ({
   getDocumentRec,
   coverLetterOrResume,
   idRoute,
-  reviewedSubmission,
-  
+  submitDecision,
 }: SidebarProps) => {
-  const [message, setMessage] = useState<string>("");
+  const [decisionStep, setDecisionStep] = useState<"closed" | "choose" | "sent">("closed");
+  const [decision, setDecision] = useState<Decision | null>(null);
+  const submission = getJobSubmission(idRoute);
+  // Count comments on both the resume and the cover letter
+  const allComments = [...submission.resumeCommentedHighlights, ...submission.coverLetterCommentedHighlights];
+  const countOf = (sentiment: Sentiment) => allComments.filter((highlight) => highlight.sentiment == sentiment).length;
+
   let reviewing = coverLetterOrResume == "coverletter" ? getJobSubmission(idRoute).coverLetterId : getJobSubmission(idRoute).resumeId;
   if (reviewing == null) {
     reviewing = 0;
@@ -52,10 +59,10 @@ const Sidebar = ({
     Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: 
   </p>
   <p>
-    <b>File Name</b>: {getDocumentRec(idRoute).fileName}
+    <b>File Name</b>: {getDocumentRec(reviewing).fileName}
   </p>
   <p>
-    {getDocumentRec(idRoute).name != "" ? <><b>Name</b>: {getDocumentRec(idRoute).name}</> : ""}
+    {getDocumentRec(reviewing).name != "" ? <><b>Name</b>: {getDocumentRec(reviewing).name}</> : ""}
   </p>
   <p>
     <b>Company</b>: {getJob(getJobSubmission(idRoute).jobId).company}
@@ -83,14 +90,18 @@ const Sidebar = ({
         </p>
           <br></br>
         <p>
-          Press the mark as reviewed button once you are done with feedback
+          When you are done commenting, continue to give an overall decision.
         </p>
+        {submission.reviewed && (
+          <p className="decision-sent">
+            {submission.decision ? <>Decision sent: <b>{DECISIONS[submission.decision].icon} {DECISIONS[submission.decision].label}</b></> : <b>Marked as reviewed</b>}
+          </p>
+        )}
         <div style={{ padding: "0.5rem" }}>
-          <button onClick={() => {setMessage("Reviewed Submission!"); reviewedSubmission(idRoute)}} className="sidebar__toggle">
-            Mark as reviewed to the applicant
+          <button onClick={() => { setDecision(submission.decision ?? null); setDecisionStep("choose"); }} className="sidebar__toggle">
+            {submission.reviewed ? "Change overall decision" : "Continue to Overall Decision →"}
           </button>
         </div>
-        <p><b>{message}</b></p>
         <p>
           <small>
             To create an area highlight hold ⌥ Option key (Alt), then click and
@@ -159,6 +170,62 @@ const Sidebar = ({
             </li>
           ))}
         </ul>
+      )}
+
+      {decisionStep != "closed" && (
+        <div className="decision-overlay" onClick={() => decisionStep == "choose" && setDecisionStep("closed")}>
+          <div className="decision-card" onClick={(event) => event.stopPropagation()}>
+            {decisionStep == "choose" ? (
+              <>
+                <h2>Overall decision</h2>
+                <p className="decision-summary">
+                  You left {allComments.length} {allComments.length == 1 ? "comment" : "comments"}:
+                  {(Object.keys(SENTIMENTS) as Sentiment[]).filter((key) => countOf(key) > 0).map((key) => (
+                    <span key={key} className={"sentiment-tag s-" + key}>{SENTIMENTS[key].icon} {countOf(key)} {SENTIMENTS[key].label}</span>
+                  ))}
+                </p>
+                <div className="decision-options">
+                  {(Object.keys(DECISIONS) as Decision[]).map((key) => (
+                    <button
+                      type="button"
+                      key={key}
+                      className={"decision-option d-" + key + (decision == key ? " active" : "")}
+                      onClick={() => setDecision(key)}
+                    >
+                      <b>{DECISIONS[key].icon} {DECISIONS[key].label}</b>
+                      <span>{DECISIONS[key].text}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="decision-actions">
+                  <button type="button" className="decision-cancel" onClick={() => setDecisionStep("closed")}>Back to comments</button>
+                  <button
+                    type="button"
+                    disabled={decision == null}
+                    onClick={() => {
+                      if (decision != null) {
+                        submitDecision(idRoute, decision);
+                        setDecisionStep("sent");
+                      }
+                    }}
+                  >
+                    Send feedback
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="decision-done">
+                <div className="decision-check">✅</div>
+                <h2>Feedback sent!</h2>
+                <p>The applicant can now see your {allComments.length} {allComments.length == 1 ? "comment" : "comments"} and your decision: <b>{decision ? DECISIONS[decision].label : ""}</b>.</p>
+                <div className="decision-actions">
+                  <button type="button" className="decision-cancel" onClick={() => setDecisionStep("closed")}>Stay on this page</button>
+                  <Link className="btn primary" to="/employer/applications/">Back to Applications</Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
 
       {currentUser?.isEmployer && highlights && highlights.length > 0 && (

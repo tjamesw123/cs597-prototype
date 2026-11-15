@@ -9,6 +9,14 @@ export const SENTIMENTS: Record<Sentiment, { label: string; icon: string; color:
   negative: { label: "Did Not Like", icon: "👎", color: "rgba(220, 60, 60, 0.35)" },
 };
 
+export type Decision = "strong" | "consider" | "notfit";
+
+export const DECISIONS: Record<Decision, { label: string; icon: string; text: string }> = {
+  strong: { label: "Strongly Consider", icon: "🟢", text: "We'd like to move forward with this applicant." },
+  consider: { label: "Consider", icon: "🟡", text: "Promising, but some areas need work." },
+  notfit: { label: "Not a Fit", icon: "🔴", text: "Not the right match for this role." },
+};
+
 export interface CommentedHighlight extends Highlight { // Expand this to potential include employer that highlighted
   content: Content;
   comment?: string;
