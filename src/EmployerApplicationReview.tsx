@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
 import { Link } from "react-router";
@@ -13,11 +13,7 @@ interface ApplicantFeedbackProps {
     getJob : (id : number) => Job;
 }
 
-const EmployerApplicationReview = ({currentUser, documentList, jobSubmissionList, jobList, getJob} : ApplicantFeedbackProps) => {
-    const [name, setName] = useState<string>("");
-    const [docType, setDocType] = useState<"resume" | "coverletter">("resume");
-    const [result, setResult] = useState<string>("");
-    const [files, setFiles] = useState<FileList | null>(null);
+const EmployerApplicationReview = ({currentUser, jobSubmissionList, getJob} : ApplicantFeedbackProps) => {
     return (
         <div>
             <h1>Submissions Review</h1>

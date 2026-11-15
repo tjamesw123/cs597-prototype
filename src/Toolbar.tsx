@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import "./style/Toolbar.css";
 import type { User } from "./LoginSignup";

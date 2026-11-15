@@ -11,7 +11,7 @@ interface EmployerPostJobProps {
     addJob : (company : string, position : string, reviewerId : number) => Job | null;
 }
 
-const EmployerPostJob = ({currentUser, documentList, jobList, addJob} : EmployerPostJobProps) => {
+const EmployerPostJob = ({currentUser, jobList, addJob} : EmployerPostJobProps) => {
     const [company, setCompany] = useState<string>("");
     const [position, setPosition] = useState<string>("");
     const [result, setResult] = useState<string>("");

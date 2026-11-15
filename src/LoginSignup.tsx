@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState} from "react";
 import { Link } from "react-router";
 import type { DocumentRec, Job, JobSubmission } from "./App";
 
