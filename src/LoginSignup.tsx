@@ -1,5 +1,6 @@
 import React, { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router";
+import type { DocumentRec, Job, JobSubmission } from "./App";
 
 
 export type User = {
@@ -21,6 +22,9 @@ export type loginUserType = {
 
 interface UserSignUpLoginProps {
     currentUser: User | null;
+    jobList: Job[];
+    jobSubmissionList: JobSubmission[];
+    documentList: DocumentRec[];
     addUser: addUserType;
     loginUser: (username: string, password: string) => User | null;
 }
@@ -146,9 +150,7 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
 
 type HomeAction = { icon: string; title: string; text: string; to: string; button: string };
 
-const HomeDashboard = ({ subtitle, actions, steps }: { subtitle: string; actions: HomeAction[]; steps: string[] }) => (
-    <>
-    <p className="home-subtitle">{subtitle}</p>
+const HomeActions = ({ actions }: { actions: HomeAction[] }) => (
     <div className="home-actions">
         {actions.map((action) => (
             <Link key={action.to} to={action.to} className="home-card">
@@ -159,37 +161,113 @@ const HomeDashboard = ({ subtitle, actions, steps }: { subtitle: string; actions
             </Link>
         ))}
     </div>
-    <h2>How it works</h2>
-    <ol className="home-steps">
-        {steps.map((step, index) => <li key={index}><span>{index + 1}</span>{step}</li>)}
-    </ol>
-    </>
 );
 
-const ApplicantHome = () => (
-    <HomeDashboard
-        subtitle="Get real feedback on your resume from the employers you apply to."
-        actions={[
+const HomeStats = ({ stats }: { stats: { value: number; label: string; to: string }[] }) => (
+    <div className="stat-row">
+        {stats.map((stat) => (
+            <Link key={stat.label} to={stat.to} className="stat"><b>{stat.value}</b><span>{stat.label}</span></Link>
+        ))}
+    </div>
+);
+
+interface HomeProps {
+    currentUser: User;
+    jobList: Job[];
+    jobSubmissionList: JobSubmission[];
+    documentList: DocumentRec[];
+}
+
+const ApplicantHome = ({ currentUser, jobList, jobSubmissionList, documentList }: HomeProps) => {
+    const findJob = (id: number) => jobList.find((job) => job.id == id);
+    const mySubmissions = jobSubmissionList.filter((jobSubmission) => jobSubmission.userId == currentUser.id);
+    const reviewed = mySubmissions.filter((jobSubmission) => jobSubmission.reviewed);
+    const myDocuments = documentList.filter((document) => document.userId == currentUser.id);
+    return (
+        <>
+        <p className="home-subtitle">Get real feedback on your resume from the employers you apply to.</p>
+        {reviewed.map((jobSubmission) => (
+            <Link key={jobSubmission.id} className="notice good" to={"/applicant/submission/" + jobSubmission.id}>
+                <span className="notice-icon">💬</span>
+                <span className="notice-text"><b>Feedback ready from {findJob(jobSubmission.jobId)?.company ?? "an employer"}</b>
+                <span>{findJob(jobSubmission.jobId)?.position ?? ""} · Tap to read their highlights and comments</span></span>
+                <span className="notice-arrow">→</span>
+            </Link>
+        ))}
+        <HomeStats stats={[
+            { value: mySubmissions.length, label: "Applications", to: "/applicant/feedback" },
+            { value: reviewed.length, label: "Reviewed", to: "/applicant/feedback" },
+            { value: myDocuments.length, label: "Documents", to: "/applicant/resumecoverletterupload" },
+        ]} />
+        <HomeActions actions={[
             { icon: "📄", title: "Upload a resume", text: "Add your resume or cover letter as a PDF.", to: "/applicant/resumecoverletterupload", button: "Upload" },
             { icon: "💼", title: "Apply to jobs", text: "Pick a job and send your documents.", to: "/applicant/apply", button: "Browse jobs" },
             { icon: "💬", title: "See your feedback", text: "Read employer highlights and comments.", to: "/applicant/feedback", button: "View feedback" },
-        ]}
-        steps={["Upload your resume", "Apply to a job", "Get highlighted feedback"]}
-    />
-);
+        ]} />
+        <h2>Jobs on Employer.MD</h2>
+        <ul className="card-list">
+            {jobList.length != 0 ? jobList.map((job) => {
+                const applied = mySubmissions.find((jobSubmission) => jobSubmission.jobId == job.id);
+                return (
+                    <li key={job.id}>
+                        <span className="job-logo">{job.company.charAt(0)}</span>
+                        <div className="item"><div className="title">{job.position}</div><div className="meta">{job.company}</div></div>
+                        {applied ? <span className="badge applied">Applied</span> : <Link className="btn-link" to={"/applicant/apply/" + job.id}>Apply</Link>}
+                    </li>
+                );
+            }) : <li className="empty">There are no jobs posted yet.</li>}
+        </ul>
+        </>
+    );
+};
 
-const EmployerHome = () => (
-    <HomeDashboard
-        subtitle="Review applicants and give them feedback that helps."
-        actions={[
-            { icon: "📝", title: "Review applications", text: "Highlight resumes and leave comments.", to: "/employer/applications/", button: "Go to applications" },
-            { icon: "➕", title: "Post a job", text: "Add a new opening for applicants to see.", to: "/employer/jobposting/", button: "Post a job" },
-        ]}
-        steps={["Open an application", "Highlight and comment", "Mark as reviewed"]}
-    />
-);
+const EmployerHome = ({ currentUser, jobList, jobSubmissionList }: HomeProps) => {
+    const findJob = (id: number) => jobList.find((job) => job.id == id);
+    const myJobs = jobList.filter((job) => job.reviewerId == currentUser.id);
+    const mySubmissions = jobSubmissionList.filter((jobSubmission) => findJob(jobSubmission.jobId)?.reviewerId == currentUser.id);
+    const pending = mySubmissions.filter((jobSubmission) => !jobSubmission.reviewed);
+    const reviewed = mySubmissions.filter((jobSubmission) => jobSubmission.reviewed);
+    const next = pending[0];
+    return (
+        <>
+        <p className="home-subtitle">Review applicants and give them feedback that helps.</p>
+        {pending.length != 0 ?
+            <Link className="notice warn" to="/employer/applications/">
+                <span className="notice-num">{pending.length}</span>
+                <span className="notice-text"><b>{pending.length == 1 ? "1 application" : pending.length + " applications"} waiting for your review</b>
+                <span>Tap to see them</span></span>
+                <span className="notice-arrow">→</span>
+            </Link>
+        :
+            <div className="notice good">
+                <span className="notice-icon">✅</span>
+                <span className="notice-text"><b>All caught up!</b><span>Every application has been reviewed.</span></span>
+            </div>
+        }
+        <HomeStats stats={[
+            { value: myJobs.length, label: "Job postings", to: "/employer/jobposting/" },
+            { value: pending.length, label: "Pending review", to: "/employer/applications/" },
+            { value: reviewed.length, label: "Reviewed", to: "/employer/applications/" },
+        ]} />
+        <div className="quick">
+            {next ? <Link className="btn primary" to={"/applicant/submission/" + next.id}>📝 Review next: {findJob(next.jobId)?.position} · {findJob(next.jobId)?.company}</Link> : ""}
+            <Link className="btn secondary" to="/employer/jobposting/">➕ Post a new job</Link>
+        </div>
+        <h2>Recently reviewed</h2>
+        <ul className="card-list">
+            {reviewed.length != 0 ? reviewed.map((jobSubmission) => (
+                <li key={jobSubmission.id}>
+                    <div className="item"><div className="title">{findJob(jobSubmission.jobId)?.position} · {findJob(jobSubmission.jobId)?.company}</div><div className="meta">Submitted {jobSubmission.date}</div></div>
+                    <span className="badge reviewed">Reviewed</span>
+                    <Link className="btn-link" to={"/applicant/submission/" + jobSubmission.id}>View Feedback</Link>
+                </li>
+            )) : <li className="empty">No feedback sent yet.</li>}
+        </ul>
+        </>
+    );
+};
 
-const LoginSignUpPage = ({ currentUser, loginUser, addUser }: UserSignUpLoginProps) => {
+const LoginSignUpPage = ({ currentUser, loginUser, addUser, jobList, jobSubmissionList, documentList }: UserSignUpLoginProps) => {
     return (
         <>
         {!currentUser ?
@@ -198,7 +276,10 @@ const LoginSignUpPage = ({ currentUser, loginUser, addUser }: UserSignUpLoginPro
                 <SignUpForm currentUser={currentUser} addUser={addUser}/>
             </div>
         : ""}
-        {currentUser ? currentUser.isEmployer ? <EmployerHome /> : <ApplicantHome /> : ""}
+        {currentUser ? currentUser.isEmployer ?
+            <EmployerHome currentUser={currentUser} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} />
+            : <ApplicantHome currentUser={currentUser} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} />
+        : ""}
         </>
     );
 };
