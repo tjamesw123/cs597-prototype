@@ -9,7 +9,7 @@ import {
   useHighlightContainerContext,
   usePdfHighlighterContext,
 } from "react-pdf-highlighter-extended";
-import type { CommentedHighlight } from "./types.ts";
+import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
 
 interface HighlightContainerProps {
   editHighlight: (
@@ -36,8 +36,11 @@ const HighlightContainer = ({
 
   const { toggleEditInProgress } = usePdfHighlighterContext();
 
+  const sentimentStyle = highlight.sentiment && !isScrolledTo ? { background: SENTIMENTS[highlight.sentiment].color } : undefined;
+
   const component = highlight.type === "text" ? (
     <TextHighlight
+      style={sentimentStyle}
       isScrolledTo={isScrolledTo}
       highlight={highlight}
       onContextMenu={(event) =>
@@ -46,6 +49,7 @@ const HighlightContainer = ({
     />
   ) : (
     <AreaHighlight
+      style={sentimentStyle}
       isScrolledTo={isScrolledTo}
       highlight={highlight}
       onChange={(boundingRect) => {

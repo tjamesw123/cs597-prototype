@@ -174,7 +174,7 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
                     pdfScaleValue={pdfScaleValue}
                     textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
                     onSelection={currentUser?.isEmployer ? highlightPen ? (selection) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), selection.makeGhostHighlight(), "") : undefined : undefined}
-                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment)} /> : undefined}
+                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment, sentiment) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment)} /> : undefined}
                     highlights={getHighlightByJobSubmissionId(idRoute, coverLetterOrResume)}
                     style={{
                         height: "calc(100% - 41px)",

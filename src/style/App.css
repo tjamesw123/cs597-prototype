@@ -182,3 +182,19 @@ a.notice:hover { border-color: currentColor; }
 .btn.secondary:hover { border-color: var(--blue); color: var(--blue); }
 .badge.applied { background: #e8eefc; color: var(--blue); }
 .card-list .job-logo { width: 38px; height: 38px; font-size: 16px; border-radius: 10px; }
+
+.sentiment-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.sentiment-option { background: var(--card); color: var(--ink); border: 1px solid #cfd6e4; border-radius: 999px;
+  padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.sentiment-option:hover { background: var(--bg); }
+.sentiment-option.active.s-positive { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.sentiment-option.active.s-confused { background: var(--warn-soft); border-color: #f0961e; color: var(--warn); }
+.sentiment-option.active.s-negative { background: #fde8e8; border-color: #c93c3c; color: #c93c3c; }
+.sentiment-tag { display: inline-block; padding: 2px 8px; margin-bottom: 6px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.sentiment-tag.s-positive { background: var(--good-soft); color: var(--good); }
+.sentiment-tag.s-confused { background: var(--warn-soft); color: var(--warn); }
+.sentiment-tag.s-negative { background: #fde8e8; color: #c93c3c; }
+.Highlight__popup .sentiment-tag { display: block; width: fit-content; }
+.sidebar__highlight.s-positive, .fulldocumentreviewsidebar__highlight.s-positive { border-left-color: var(--good); }
+.sidebar__highlight.s-confused, .fulldocumentreviewsidebar__highlight.s-confused { border-left-color: #f0961e; }
+.sidebar__highlight.s-negative, .fulldocumentreviewsidebar__highlight.s-negative { border-left-color: #c93c3c; }

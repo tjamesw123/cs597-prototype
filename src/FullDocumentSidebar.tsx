@@ -1,6 +1,6 @@
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
-import type { CommentedHighlight } from "./types.ts";
+import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
 import type { User } from "./LoginSignup.tsx";
 import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 
@@ -56,13 +56,18 @@ const FullDocumentReviewSidebar = ({
           {highlights.map((highlight, index) => (
             <li
               key={index}
-              className="fulldocumentreviewsidebar__highlight"
+              className={"fulldocumentreviewsidebar__highlight" + (highlight.sentiment ? " s-" + highlight.sentiment : "")}
               onClick={() => {
                 updateHash(highlight);
               }}
             >
               <div>
                 {/* Highlight comment and text */}
+                {highlight.sentiment && (
+                  <span className={"sentiment-tag s-" + highlight.sentiment}>
+                    {SENTIMENTS[highlight.sentiment].icon} {SENTIMENTS[highlight.sentiment].label}
+                  </span>
+                )}
                 <strong>{highlight.comment}</strong>
                 {highlight.content.text && (
                   <blockquote style={{ marginTop: "0.5rem" }}>
