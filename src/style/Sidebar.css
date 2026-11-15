@@ -120,7 +120,7 @@ blockquote:after {
 }
 
 /* Review screens: full width, card-style sidebar and comments */
-.page:has(.App) { max-width: none; }
+.app-page:has(.App) { max-width: none; }
 .App { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--card); }
 
 .sidebar, .fulldocumentreviewsidebar { background: var(--card); border-right: 1px solid var(--line); box-shadow: none; overflow: auto; }
@@ -141,4 +141,4 @@ blockquote:after {
 .sidebar__toggle { background-color: var(--blue); border-color: var(--blue); }
 .sidebar__toggle:hover { background-color: var(--blue-dark); border-color: var(--blue-dark); }
 .sidebar .description .sidebar__toggle, .sidebar__reset { width: 100%; }
-.page > button.sidebar__toggle { margin-bottom: 12px; }
+.app-page > button.sidebar__toggle { margin-bottom: 12px; }

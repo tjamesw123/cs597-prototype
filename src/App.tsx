@@ -364,7 +364,7 @@ const App = () => {
           : ""}
         </div>
     </div>
-  <main className="page">
+  <main className="app-page">
     <Routes>
       <Route path='/' element={<><h1>{currentUser ? `Welcome back, ${currentUser.first_name}! 👋` : "Welcome to EmployerMD!"}</h1> 
       <LoginSignUpPage 
