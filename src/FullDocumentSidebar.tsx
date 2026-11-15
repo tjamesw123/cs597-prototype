@@ -27,10 +27,6 @@ const FullDocumentReviewSidebar = ({
   coverLetterOrResume,
   idRoute
 }: FullDocumentReviewSidebarProps) => {
-  // let reviewing = coverLetterOrResume == "coverletter" ? getJobSubmission(idRoute).coverLetterId : getJobSubmission(idRoute).resumeId;
-  // if (reviewing == null) {
-  //   reviewing = 0;
-  // } 
   return (
     <div className="fulldocumentreviewsidebar" style={{ width: "25vw", maxWidth: "500px" }}>
        
@@ -44,7 +40,13 @@ const FullDocumentReviewSidebar = ({
           Review the feedback on the document from all submissions
         </p>
         <p>
-          Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: {getDocumentRec(idRoute).fileName}
+          Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: 
+        </p>
+        <p>
+          <b>File Name</b>: {getDocumentRec(idRoute).fileName}
+        </p>
+        <p>
+          {getDocumentRec(idRoute).name != "" ? <><b>Name</b>: {getDocumentRec(idRoute).name}</> : ""}
         </p>
       </>
       </div>

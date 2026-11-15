@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
 import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
@@ -42,22 +42,29 @@ const Sidebar = ({
   reviewedSubmission,
   
 }: SidebarProps) => {
+  const [message, setMessage] = useState<string>("");
   let reviewing = coverLetterOrResume == "coverletter" ? getJobSubmission(idRoute).coverLetterId : getJobSubmission(idRoute).resumeId;
   if (reviewing == null) {
     reviewing = 0;
   } 
   const submissionInfo = <>
   <p>
-    Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: {getDocumentRec(reviewing).fileName}
+    Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: 
   </p>
   <p>
-    Company: {getJob(getJobSubmission(idRoute).jobId).company}
+    <b>File Name</b>: {getDocumentRec(idRoute).fileName}
   </p>
   <p>
-    Position: {getJob(getJobSubmission(idRoute).jobId).position}
+    {getDocumentRec(idRoute).name != "" ? <><b>Name</b>: {getDocumentRec(idRoute).name}</> : ""}
   </p>
   <p>
-    Date: {getJobSubmission(idRoute).date}
+    <b>Company</b>: {getJob(getJobSubmission(idRoute).jobId).company}
+  </p>
+  <p>
+    <b>Position</b>: {getJob(getJobSubmission(idRoute).jobId).position}
+  </p>
+  <p>
+    <b>Date</b>: {getJobSubmission(idRoute).date}
   </p>
   <br></br>
   </>
@@ -79,10 +86,11 @@ const Sidebar = ({
           Press the mark as reviewed button once you are done with feedback
         </p>
         <div style={{ padding: "0.5rem" }}>
-          <button onClick={() => reviewedSubmission(idRoute)} className="sidebar__toggle">
+          <button onClick={() => {setMessage("Reviewed Submission!"); reviewedSubmission(idRoute)}} className="sidebar__toggle">
             Mark as reviewed to the applicant
           </button>
         </div>
+        <p><b>{message}</b></p>
         <p>
           <small>
             To create an area highlight hold ⌥ Option key (Alt), then click and
