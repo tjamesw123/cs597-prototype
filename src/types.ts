@@ -11,10 +11,13 @@ export const SENTIMENTS: Record<Sentiment, { label: string; icon: string; color:
 
 export type Decision = "strong" | "consider" | "notfit";
 
-export const DECISIONS: Record<Decision, { label: string; icon: string; text: string }> = {
-  strong: { label: "Strongly Consider", icon: "🟢", text: "We'd like to move forward with this applicant." },
-  consider: { label: "Consider", icon: "🟡", text: "Promising, but some areas need work." },
-  notfit: { label: "Not a Fit", icon: "🔴", text: "Not the right match for this role." },
+export const DECISIONS: Record<Decision, { label: string; icon: string; text: string; next: string }> = {
+  strong: { label: "Strongly Consider", icon: "🟢", text: "We'd like to move forward with this applicant.",
+    next: "The employer wants to move forward. Keep an eye out for them reaching out about next steps." },
+  consider: { label: "Consider", icon: "🟡", text: "Promising, but some areas need work.",
+    next: "You're on the right track. Look at the ❓ and 👎 comments and update your documents before applying again." },
+  notfit: { label: "Not a Fit", icon: "🔴", text: "Not the right match for this role.",
+    next: "Not a match this time. Use the comments to improve your documents for your next application." },
 };
 
 export interface CommentedHighlight extends Highlight { // Expand this to potential include employer that highlighted

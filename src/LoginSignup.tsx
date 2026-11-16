@@ -1,6 +1,7 @@
 import { useEffect, useState} from "react";
 import { Link } from "react-router";
 import type { DocumentRec, Job, JobSubmission } from "./App";
+import { DECISIONS } from "./types.ts";
 
 
 export type User = {
@@ -190,7 +191,7 @@ const ApplicantHome = ({ currentUser, jobList, jobSubmissionList, documentList }
             <Link key={jobSubmission.id} className="notice good" to={"/applicant/submission/" + jobSubmission.id}>
                 <span className="notice-icon">💬</span>
                 <span className="notice-text"><b>Feedback ready from {findJob(jobSubmission.jobId)?.company ?? "an employer"}</b>
-                <span>{findJob(jobSubmission.jobId)?.position ?? ""} · Tap to read their highlights and comments</span></span>
+                <span>{findJob(jobSubmission.jobId)?.position ?? ""}{jobSubmission.decision ? " · " + DECISIONS[jobSubmission.decision].icon + " " + DECISIONS[jobSubmission.decision].label : ""} · Tap to read their highlights and comments</span></span>
                 <span className="notice-arrow">→</span>
             </Link>
         ))}

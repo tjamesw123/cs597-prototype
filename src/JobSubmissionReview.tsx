@@ -12,7 +12,7 @@ import {
 } from "react-pdf-highlighter-extended";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
-import type { CommentedHighlight, Decision } from "./types.ts";
+import { DECISIONS, type CommentedHighlight, type Decision } from "./types.ts";
 import { useParams } from "react-router";
 import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
 import type { User } from "./LoginSignup.tsx";
@@ -135,6 +135,14 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
     return (
         <>
         <h1>Review feedback for submission</h1>
+        {/* Applicant sees the employer's overall decision and what to do next */}
+        {currentUser?.isEmployer != true && getJobSubmission(idRoute).reviewed && getJobSubmission(idRoute).decision ?
+        <div className={"notice decision-banner d-" + getJobSubmission(idRoute).decision}>
+            <span className="notice-icon">{DECISIONS[getJobSubmission(idRoute).decision!].icon}</span>
+            <span className="notice-text"><b>Employer's decision: {DECISIONS[getJobSubmission(idRoute).decision!].label}</b>
+            <span>{DECISIONS[getJobSubmission(idRoute).decision!].next}</span></span>
+        </div>
+        : ""}
         {isCoverLetterPresentInJobSubmissionId(idRoute) && isResumePresentInJobSubmissionId(idRoute) ? 
         <button className="sidebar__toggle" onClick={() => coverLetterOrResume == "resume" ? setCoverLetterOrResume("coverletter") : setCoverLetterOrResume("resume")}>Switch to {coverLetterOrResume == "resume" ? "Cover Letter" : "Resume"}</button>
         : ""}

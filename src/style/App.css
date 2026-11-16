@@ -181,6 +181,12 @@ a.notice:hover { border-color: currentColor; }
 .btn.secondary { background: var(--card); color: var(--ink); border: 1px solid #cfd6e4; }
 .btn.secondary:hover { border-color: var(--blue); color: var(--blue); }
 .badge.applied { background: #e8eefc; color: var(--blue); }
+
+/* Overall decision colors for the applicant */
+.badge.d-strong, .notice.d-strong { background: var(--good-soft); color: var(--good); border-color: #bfe8d2; }
+.badge.d-consider, .notice.d-consider { background: var(--warn-soft); color: var(--warn); border-color: #f5dca8; }
+.badge.d-notfit, .notice.d-notfit { background: #fdeaea; color: #b42318; border-color: #f6c8c4; }
+.decision-banner .notice-text b { color: inherit; }
 .card-list .job-logo { width: 38px; height: 38px; font-size: 16px; border-radius: 10px; }
 
 .sentiment-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
