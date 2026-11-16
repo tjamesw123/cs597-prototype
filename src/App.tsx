@@ -19,8 +19,11 @@ import FullDocumentReview from "./FullDocumentReview.tsx";
 
 
 const TEST_HIGHLIGHTS = _testHighlights;
-const PRIMARY_PDF_URL = "https://arxiv.org/pdf/2203.11115";
-const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480";
+// Sample documents live in public/samples
+const RESUME_URL = "/samples/Bob_Smith_Resume.pdf";
+const RESUME_DATA_URL = "/samples/Bob_Smith_Resume_Data.pdf";
+const COVER_LETTER_NORTHWIND_URL = "/samples/Bob_Smith_Cover_Letter_Northwind.pdf";
+const COVER_LETTER_BRIGHTPATH_URL = "/samples/Bob_Smith_Cover_Letter_Brightpath.pdf";
 
 export type DocumentRec = {
   id : number;
@@ -335,16 +338,16 @@ const logOut = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>
 
 const App = () => {
   // useLocalStorage()
-  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", [{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
+  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", [{id: 0, company: "Northwind Health", position: "Software Engineering Intern", reviewerId: 0}, {id: 1, company: "Brightpath Analytics", position: "Data Analyst Intern", reviewerId: 0}]);
   const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", [
-    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}, 
-    {id: 1, userId: 1, jobId: 1, date: "11/12/2026", resumeId: 2, coverLetterId: 3, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}
+    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_NORTHWIND_URL]}, 
+    {id: 1, userId: 1, jobId: 1, date: "11/12/2026", resumeId: 3, coverLetterId: 2, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_DATA_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_BRIGHTPATH_URL]}
   ]);
   const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", [
-    {id: 0, fileName : "testPdf.pdf", name: "test", userId: 1, pdfData: null, pdfURL: PRIMARY_PDF_URL, type: "resume"}, 
-    {id: 1, fileName : "test2Pdf.pdf", name: "test2", userId: 1, pdfData: null, pdfURL: SECONDARY_PDF_URL, type: "coverletter"},
-    {id: 2, fileName : "test3Pdf.pdf", name: "test3", userId: 1, pdfData: null, pdfURL: SECONDARY_PDF_URL, type: "coverletter"},
-    {id: 3, fileName : "test4Pdf.pdf", name: "test4", userId: 1, pdfData: null, pdfURL: PRIMARY_PDF_URL, type: "resume"}
+    {id: 0, fileName : "Bob_Smith_Resume.pdf", name: "Resume - Software", userId: 1, pdfData: null, pdfURL: RESUME_URL, type: "resume"}, 
+    {id: 1, fileName : "Bob_Smith_Cover_Letter_Northwind.pdf", name: "Cover Letter - Northwind Health", userId: 1, pdfData: null, pdfURL: COVER_LETTER_NORTHWIND_URL, type: "coverletter"},
+    {id: 2, fileName : "Bob_Smith_Cover_Letter_Brightpath.pdf", name: "Cover Letter - Brightpath Analytics", userId: 1, pdfData: null, pdfURL: COVER_LETTER_BRIGHTPATH_URL, type: "coverletter"},
+    {id: 3, fileName : "Bob_Smith_Resume_Data.pdf", name: "Resume - Data", userId: 1, pdfData: null, pdfURL: RESUME_DATA_URL, type: "resume"}
   ]);
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>("currentUser", null);
   const [users, setUsers] = useLocalStorage<Array<User>>("users", [

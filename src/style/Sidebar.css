@@ -125,7 +125,7 @@ blockquote:after {
 
 .sidebar, .fulldocumentreviewsidebar { background: var(--card); border-right: 1px solid var(--line); box-shadow: none; overflow: auto; }
 .sidebar .description h2, .fulldocumentreviewsidebar .description h2 { margin-top: 0; font-size: 20px; }
-.sidebar .description p, .fulldocumentreviewsidebar .description p { margin: 4px 0; font-size: 14px; color: var(--muted); }
+.sidebar .description p, .fulldocumentreviewsidebar .description p { margin: 4px 0; font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
 .sidebar .description br { display: none; }
 
 .sidebar__highlights, .fulldocumentreviewsidebar__highlights { list-style: none; padding: 0; margin: 8px 0; }

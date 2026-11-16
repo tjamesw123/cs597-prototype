@@ -38,9 +38,9 @@
     border: none;
     /* Remove border */
     cursor: pointer;
-    font-size: 16px;
-    padding: 2px;
-    margin-right: 8px;
+    font-size: 15px;
+    padding: 5px 12px;
+    border-radius: var(--radius);
     transition: color 0.3s, transform 0.2s;
 }
 
@@ -50,5 +50,17 @@
 }
 
 .HighlightButton.active {
-    color: var(--blue);
+    color: #fff;
+    background: var(--blue);
+}
+
+.HighlightControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.HighlightHint {
+    color: var(--muted);
+    font-size: 13px;
 }

@@ -200,4 +200,447 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
       id: "29668244118038056",
     },
   ],
+  // Sample resume and cover letters used for the demo
+    "/samples/Bob_Smith_Resume.pdf": [
+      {
+        "content": {
+          "text": "Led a team of 4 to build a clinic appointment app used by 300+ students"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 63.33,
+            "y1": 345.8,
+            "x2": 398.07,
+            "y2": 358.4,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 63.33,
+              "y1": 345.8,
+              "x2": 398.07,
+              "y2": 358.4,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Great impact. Team size and number of users make this stand out.",
+        "sentiment": "positive",
+        "id": "sample-r1"
+      },
+      {
+        "content": {
+          "text": "Responsible for various tasks related to the website"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 63.33,
+            "y1": 276.13,
+            "x2": 303.19,
+            "y2": 288.73,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 63.33,
+              "y1": 276.13,
+              "x2": 303.19,
+              "y2": 288.73,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "What tasks exactly? Name what you built or changed and the result.",
+        "sentiment": "confused",
+        "id": "sample-r2"
+      },
+      {
+        "content": {
+          "text": "Microsoft Word, Excel, Typing (60 WPM)"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 86.1,
+            "y1": 465.15,
+            "x2": 275.72,
+            "y2": 477.75,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 86.1,
+              "y1": 465.15,
+              "x2": 275.72,
+              "y2": 477.75,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "These are expected for any role. Use the space for skills that match this job.",
+        "sentiment": "negative",
+        "id": "sample-r3"
+      },
+      {
+        "content": {
+          "text": "Wrote 10 step-by-step guides that cut repeat tickets by about 20%"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 63.33,
+            "y1": 241.68,
+            "x2": 370.32,
+            "y2": 254.28,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 63.33,
+              "y1": 241.68,
+              "x2": 370.32,
+              "y2": 254.28,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Nice use of a number to show results.",
+        "sentiment": "positive",
+        "id": "sample-r4"
+      }
+    ],
+    "/samples/Bob_Smith_Resume_Data.pdf": [
+      {
+        "content": {
+          "text": "Led a team of 4 to build a clinic appointment app used by 300+ students"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 63.33,
+            "y1": 345.8,
+            "x2": 398.07,
+            "y2": 358.4,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 63.33,
+              "y1": 345.8,
+              "x2": 398.07,
+              "y2": 358.4,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Great impact. Team size and number of users make this stand out.",
+        "sentiment": "positive",
+        "id": "sample-d1"
+      },
+      {
+        "content": {
+          "text": "Responsible for various tasks related to the website"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 63.33,
+            "y1": 276.13,
+            "x2": 303.19,
+            "y2": 288.73,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 63.33,
+              "y1": 276.13,
+              "x2": 303.19,
+              "y2": 288.73,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "What tasks exactly? Name what you built or changed and the result.",
+        "sentiment": "confused",
+        "id": "sample-d2"
+      },
+      {
+        "content": {
+          "text": "Microsoft Word, Excel, Typing (60 WPM)"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 86.1,
+            "y1": 465.15,
+            "x2": 275.72,
+            "y2": 477.75,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 86.1,
+              "y1": 465.15,
+              "x2": 275.72,
+              "y2": 477.75,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "These are expected for any role. Use the space for skills that match this job.",
+        "sentiment": "negative",
+        "id": "sample-d3"
+      },
+      {
+        "content": {
+          "text": "Wrote 10 step-by-step guides that cut repeat tickets by about 20%"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 63.33,
+            "y1": 241.68,
+            "x2": 370.32,
+            "y2": 254.28,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 63.33,
+              "y1": 241.68,
+              "x2": 370.32,
+              "y2": 254.28,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Nice use of a number to show results.",
+        "sentiment": "positive",
+        "id": "sample-d4"
+      }
+    ],
+    "/samples/Bob_Smith_Cover_Letter_Northwind.pdf": [
+      {
+        "content": {
+          "text": "I led a team of four to build CampusCare"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 110.86,
+            "y1": 236.33,
+            "x2": 308.95,
+            "y2": 249.53,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 110.86,
+              "y1": 236.33,
+              "x2": 308.95,
+              "y2": 249.53,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Strong example. This shows leadership with a real result.",
+        "sentiment": "positive",
+        "id": "sample-n1"
+      },
+      {
+        "content": {
+          "text": "I am a hard worker and a fast learner and I think I would be a great fit."
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 54.0,
+            "y1": 292.33,
+            "x2": 393.34,
+            "y2": 305.53,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 54.0,
+              "y1": 292.33,
+              "x2": 393.34,
+              "y2": 305.53,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Every applicant says this. Show it with an example instead.",
+        "sentiment": "confused",
+        "id": "sample-n2"
+      },
+      {
+        "content": {
+          "text": "To Whom It May Concern,"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 54.0,
+            "y1": 117.55,
+            "x2": 176.53,
+            "y2": 130.15,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 54.0,
+              "y1": 117.55,
+              "x2": 176.53,
+              "y2": 130.15,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Feels generic. Try addressing the hiring team or manager by name.",
+        "sentiment": "negative",
+        "id": "sample-n3"
+      }
+    ],
+    "/samples/Bob_Smith_Cover_Letter_Brightpath.pdf": [
+      {
+        "content": {
+          "text": "I led a team of four to build CampusCare"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 110.86,
+            "y1": 236.33,
+            "x2": 308.95,
+            "y2": 249.53,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 110.86,
+              "y1": 236.33,
+              "x2": 308.95,
+              "y2": 249.53,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Strong example. This shows leadership with a real result.",
+        "sentiment": "positive",
+        "id": "sample-b1"
+      },
+      {
+        "content": {
+          "text": "I am a hard worker and a fast learner and I think I would be a great fit."
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 54.0,
+            "y1": 292.33,
+            "x2": 393.34,
+            "y2": 305.53,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 54.0,
+              "y1": 292.33,
+              "x2": 393.34,
+              "y2": 305.53,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Every applicant says this. Show it with an example instead.",
+        "sentiment": "confused",
+        "id": "sample-b2"
+      },
+      {
+        "content": {
+          "text": "To Whom It May Concern,"
+        },
+        "type": "text",
+        "position": {
+          "boundingRect": {
+            "x1": 54.0,
+            "y1": 117.55,
+            "x2": 176.53,
+            "y2": 130.15,
+            "width": 612,
+            "height": 792,
+            "pageNumber": 1
+          },
+          "rects": [
+            {
+              "x1": 54.0,
+              "y1": 117.55,
+              "x2": 176.53,
+              "y2": 130.15,
+              "width": 612,
+              "height": 792,
+              "pageNumber": 1
+            }
+          ]
+        },
+        "comment": "Feels generic. Try addressing the hiring team or manager by name.",
+        "sentiment": "negative",
+        "id": "sample-b3"
+      }
+    ],
 };
