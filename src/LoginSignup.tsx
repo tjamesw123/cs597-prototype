@@ -125,6 +125,12 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
             }
             if (user) {
                 setResult("Signed up!");
+                setFirstName("");
+                setLastName("");
+                setUsername("");
+                setPassword("");
+                setRepeatPassword("");
+                setIsEmployer(false);
             } else {
                 setResult("Failed to sign up!");
             }
@@ -138,7 +144,7 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
             <label>Username <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
             <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
             <label>Repeat Password <input type="password" value={repeatPassword} onInput={(e) => setRepeatPassword(e.currentTarget.value)}/></label>
-            <label className="check"><input type="checkbox" name="isEmployer" defaultChecked={false} onInput={(e) => setIsEmployer(e.currentTarget.checked)}/> I'm an employer</label>
+            <label className="check"><input type="checkbox" name="isEmployer" checked={isEmployer} defaultChecked={false} onInput={(e) => setIsEmployer(!e.currentTarget.checked)}/> I'm an employer</label>
         </div>
         <div>
             <input type="submit" value="Sign Up" />
