@@ -10,7 +10,7 @@ import {
 } from "react-pdf-highlighter-extended";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
-import type { CommentedHighlight } from "./types.ts";
+import type { CommentedHighlight, Sentiment } from "./types.ts";
 
 const getNextId = () => String(Math.random()).slice(2);
 
@@ -40,10 +40,10 @@ export const handleContextMenu = (
     });
   };
 
-  export const addHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: GhostHighlight, comment: string) => {
+  export const addHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: GhostHighlight, comment: string, sentiment?: Sentiment) => {
     // Check here if they are the employer reviewer and if they are they can add highlights and if not don't
     console.log("Saving highlight", highlight);
-    setHighlights([{ ...highlight, comment, id: getNextId() }, ...highlights]);
+    setHighlights([{ ...highlight, comment, ...(sentiment ? { sentiment } : {}), id: getNextId() }, ...highlights]);
   };
 
   export const deleteHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: ViewportHighlight | Highlight) => {

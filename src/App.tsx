@@ -1,8 +1,8 @@
 import React from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
-import type { CommentedHighlight } from "./types.ts";
-import { Link, Route, Routes } from "react-router";
+import type { CommentedHighlight, Decision } from "./types.ts";
+import { Link, NavLink, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
 import JobSubmissionReview from "./JobSubmissionReview.tsx";
 import LoginSignUpPage from "./LoginSignup.tsx";
@@ -15,12 +15,16 @@ import ApplicantApplyToJob from "./ApplicantApplyToJob.tsx";
 import EmployerApplicationReview from "./EmployerApplicationReview.tsx";
 import EmployerPostJob from "./EmployerPostJob.tsx";
 import FullDocumentReview from "./FullDocumentReview.tsx";
+import DemoTools from "./DemoTools.tsx";
 
 
 
 const TEST_HIGHLIGHTS = _testHighlights;
-const PRIMARY_PDF_URL = "https://arxiv.org/pdf/2203.11115";
-const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480";
+// Sample documents live in public/samples
+const RESUME_URL = "/samples/Bob_Smith_Resume.pdf";
+const RESUME_DATA_URL = "/samples/Bob_Smith_Resume_Data.pdf";
+const COVER_LETTER_NORTHWIND_URL = "/samples/Bob_Smith_Cover_Letter_Northwind.pdf";
+const COVER_LETTER_BRIGHTPATH_URL = "/samples/Bob_Smith_Cover_Letter_Brightpath.pdf";
 
 export type DocumentRec = {
   id : number;
@@ -48,6 +52,7 @@ export type JobSubmission = {
   resumeId : number | null;
   coverLetterId : number | null;
   reviewed : boolean;
+  decision? : Decision; // Older submissions have no decision
   resumeCommentedHighlights : CommentedHighlight[];
   coverLetterCommentedHighlights : CommentedHighlight[];
 }
@@ -64,10 +69,10 @@ const getJob = (jobList : Job[],  id : number) => {
   return job;
 }
 
-const getNextDocumentRecId = (documents : DocumentRec[]) => documents.map((document) => document.id).reduce((x, y) => x > y ? x : y)+1;
-const getNextUserId = (users : User[]) => users.map((user) => user.id).reduce((x, y) => x > y ? x : y)+1;
-const getNextJobId = (jobs : Job[]) => jobs.map((job) => job.id).reduce((x, y) => x > y ? x : y)+1;
-const getNextJobSubmission = (jobSubmissions : JobSubmission[]) => jobSubmissions.map((jobSubmission) => jobSubmission.id).reduce((x, y) => x > y ? x : y)+1;
+const getNextDocumentRecId = (documents : DocumentRec[]) => documents.map((document) => document.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
+const getNextUserId = (users : User[]) => users.map((user) => user.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
+const getNextJobId = (jobs : Job[]) => jobs.map((job) => job.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
+const getNextJobSubmission = (jobSubmissions : JobSubmission[]) => jobSubmissions.map((jobSubmission) => jobSubmission.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
 
 // const getNextDocumentRecId: (documents: DocumentRec[]) => number
 // Documents
@@ -125,6 +130,19 @@ const reviewedSubmission = (setJobSubmissionList: React.Dispatch<React.SetStateA
   setJobSubmissionList(jobSubmissionList.map(t => {
     if (t.id === id) {
       t.reviewed = true;
+      return t;
+    } else {
+      return t;
+    }
+  }));
+}
+
+// Saves the employer's overall decision and marks the submission as reviewed
+const submitDecision = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, decision : Decision) => {
+  setJobSubmissionList(jobSubmissionList.map(t => {
+    if (t.id === id) {
+      t.reviewed = true;
+      t.decision = decision;
       return t;
     } else {
       return t;
@@ -319,19 +337,37 @@ const logOut = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>
   setCurrentUser(null);
 }
 
+// Sample data shown on first load (and when "Restore sample data" is used)
+const SAMPLE_JOBS : Job[] = [{id: 0, company: "Northwind Health", position: "Software Engineering Intern", reviewerId: 0}, {id: 1, company: "Brightpath Analytics", position: "Data Analyst Intern", reviewerId: 0}];
+const SAMPLE_SUBMISSIONS : JobSubmission[] = [
+    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: true, decision: "consider", resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_NORTHWIND_URL]}, 
+    {id: 1, userId: 1, jobId: 1, date: "11/12/2026", resumeId: 3, coverLetterId: 2, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_DATA_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_BRIGHTPATH_URL]}
+  ];
+const SAMPLE_DOCUMENTS : DocumentRec[] = [
+    {id: 0, fileName : "Bob_Smith_Resume.pdf", name: "Resume - Software", userId: 1, pdfData: null, pdfURL: RESUME_URL, type: "resume"}, 
+    {id: 1, fileName : "Bob_Smith_Cover_Letter_Northwind.pdf", name: "Cover Letter - Northwind Health", userId: 1, pdfData: null, pdfURL: COVER_LETTER_NORTHWIND_URL, type: "coverletter"},
+    {id: 2, fileName : "Bob_Smith_Cover_Letter_Brightpath.pdf", name: "Cover Letter - Brightpath Analytics", userId: 1, pdfData: null, pdfURL: COVER_LETTER_BRIGHTPATH_URL, type: "coverletter"},
+    {id: 3, fileName : "Bob_Smith_Resume_Data.pdf", name: "Resume - Data", userId: 1, pdfData: null, pdfURL: RESUME_DATA_URL, type: "resume"}
+  ];
+
+// Demo tools: clearing keeps the user accounts so james1 and bob1 can still log in
+const clearSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>) => {
+  setJobList([]);
+  setJobSubmissionList([]);
+  setDocumentList([]);
+}
+
+const restoreSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>) => {
+  setJobList(SAMPLE_JOBS);
+  setJobSubmissionList(SAMPLE_SUBMISSIONS);
+  setDocumentList(SAMPLE_DOCUMENTS);
+}
+
 const App = () => {
   // useLocalStorage()
-  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", [{id: 0, company: "Company 1", position: "Intern", reviewerId: 0}, {id: 1, company: "Company 2", position: "Intern", reviewerId: 0}]);
-  const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", [
-    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL]}, 
-    {id: 1, userId: 1, jobId: 1, date: "11/12/2026", resumeId: 2, coverLetterId: 3, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[SECONDARY_PDF_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[PRIMARY_PDF_URL]}
-  ]);
-  const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", [
-    {id: 0, fileName : "testPdf.pdf", name: "test", userId: 1, pdfData: null, pdfURL: PRIMARY_PDF_URL, type: "resume"}, 
-    {id: 1, fileName : "test2Pdf.pdf", name: "test2", userId: 1, pdfData: null, pdfURL: SECONDARY_PDF_URL, type: "coverletter"},
-    {id: 2, fileName : "test3Pdf.pdf", name: "test3", userId: 1, pdfData: null, pdfURL: SECONDARY_PDF_URL, type: "coverletter"},
-    {id: 3, fileName : "test4Pdf.pdf", name: "test4", userId: 1, pdfData: null, pdfURL: PRIMARY_PDF_URL, type: "resume"}
-  ]);
+  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", SAMPLE_JOBS);
+  const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", SAMPLE_SUBMISSIONS);
+  const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", SAMPLE_DOCUMENTS);
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>("currentUser", null);
   const [users, setUsers] = useLocalStorage<Array<User>>("users", [
     {id: 0, first_name: "James", last_name: "Goodman", username: "james1", password: "1234", isEmployer: true}, 
@@ -340,54 +376,44 @@ const App = () => {
 
   return (
     <>
-    <div className="navbar">
-        <Link to={{
-              pathname: "/"
-            }}>Home</Link>
+        <div className="navbar">
+        <span className="brand">Employer<b>.MD</b></span>
+        <NavLink to="/" end>Home</NavLink>
         {currentUser && currentUser.isEmployer ?
             <>
-            <Link to={{
-              pathname: "/employer/applications/"
-            }}>Applications</Link>
-            <Link to={{
-              pathname: "/employer/jobposting/"
-            }}>Post Jobs</Link>
+            <NavLink to="/employer/applications/">Applications</NavLink>
+            <NavLink to="/employer/jobposting/">Post Jobs</NavLink>
             </>
         : ""}
 
         {currentUser && !currentUser.isEmployer ?
         <>
-            <Link to={{
-              pathname: "/applicant/resumecoverletterupload"
-            }}>Resume and Cover Letters</Link>
-            <Link to={{
-              pathname: "/applicant/feedback"
-            }}>Feedback</Link>
-            <Link to={{
-              pathname: "/applicant/apply"
-            }}>Apply</Link>
+            <NavLink to="/applicant/resumecoverletterupload">Resume and Cover Letters</NavLink>
+            <NavLink to="/applicant/feedback">Feedback</NavLink>
+            <NavLink to="/applicant/apply">Apply</NavLink>
         </>
           : ""}
         <div className="right">
+          {currentUser ? <p>{currentUser.first_name}</p> : ""}
           {currentUser ?
-            <Link onClick={() => logOut(setCurrentUser)} to={{
-              pathname: "/"
-            }}>Log Out</Link>
-          : ""}
-          {currentUser ?
-            <p>{currentUser.first_name}</p>
+            <Link onClick={() => logOut(setCurrentUser)} to="/">Log Out</Link>
           : ""}
         </div>
-        
     </div>
+  <main className="app-page">
     <Routes>
-      <Route path='/' element={<><h1>Welcome to EmployerMD!</h1> 
+      <Route path='/' element={<><h1>{currentUser ? `Welcome back, ${currentUser.first_name}! 👋` : "Welcome to EmployerMD!"}</h1> 
       <LoginSignUpPage 
         currentUser={currentUser}
+        jobList={jobList}
+        jobSubmissionList={jobSubmissionList}
+        documentList={documentList}
         loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, username, password)} 
-        addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  />
-        </>} 
+        addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  
       />
+      {currentUser ? <DemoTools clearSampleData={() => clearSampleData(setJobList, setJobSubmissionList, setDocumentList)} restoreSampleData={() => restoreSampleData(setJobList, setJobSubmissionList, setDocumentList)}/> : ""}
+      </>
+      }/>
       <Route path="/employer/applications/" element={<><EmployerApplicationReview currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />
       <Route path="/employer/jobposting/" element={<><EmployerPostJob documentList={documentList} currentUser={currentUser} jobList={jobList} addJob={(company, position, reviewerId) => addJob(getNextJobId, jobList, setJobList, company, position, reviewerId)}/></>} />
       <Route path='/applicant/resumecoverletterupload' element={<><ApplicantResumeCoverLetterUpload currentUser={currentUser} documentList={documentList} addDocument={(fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) => addDocument(getNextDocumentRecId, documentList, setDocumentList, fileName, name, file, type, userId)}/> </>} />
@@ -411,7 +437,8 @@ const App = () => {
         jobSubmissionList={jobSubmissionList} 
         documentList={documentList} 
         currentUser={currentUser}
-        reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}/></>} 
+        reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}
+        submitDecision={(id, decision) => submitDecision(setJobSubmissionList, jobSubmissionList, id, decision)}/></>} 
       />
       <Route path='/applicant/document/:id' element={<>
       <FullDocumentReview getJob={(id) => getJob(jobList, id)}
@@ -423,7 +450,7 @@ const App = () => {
         getResumePdfByJobSubmissionId={(id) => getResumePdfByJobSubmissionId(jobSubmissionList, documentList, id)}
         getCoverLetterPdfLinkByJobSubmissionId={(id) => getCoverLetterPdfLinkByJobSubmissionId(jobSubmissionList, documentList, id)} 
         getCoverLetterPdfByJobSubmissionId={(id) => getCoverLetterPdfByJobSubmissionId(jobSubmissionList, documentList, id)}
-        getAllHighlightsForDocumentId={(id) => getAllHighlightsForDocumentId(documentList, jobSubmissionList, id)}
+        getAllHighlightsForDocumentId={(id) => getAllHighlightsForDocumentId(documentList, jobSubmissionList.filter((jobSubmission) => jobSubmission.reviewed), id)}
         jobList={jobList} 
         jobSubmissionList={jobSubmissionList} 
         documentList={documentList} 
@@ -431,6 +458,7 @@ const App = () => {
         reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}/></>} />
       <Route path='*' element={<ErrorPage message="404 not found"/>}/>
     </Routes>
+        </main>
     </>
     
   );

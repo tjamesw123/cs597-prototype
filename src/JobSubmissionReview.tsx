@@ -12,7 +12,7 @@ import {
 } from "react-pdf-highlighter-extended";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
-import type { CommentedHighlight } from "./types.ts";
+import { DECISIONS, type CommentedHighlight, type Decision } from "./types.ts";
 import { useParams } from "react-router";
 import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
 import type { User } from "./LoginSignup.tsx";
@@ -34,6 +34,7 @@ interface DocumentReviewProps {
     setHighlightByJobSubmissionId : (id : number, type : "coverletter" | "resume", commentedHighlights : CommentedHighlight[]) => void;
     getHighlightByJobSubmissionId : (id : number, type : "coverletter" | "resume") => CommentedHighlight[];
     reviewedSubmission : (id : number) => void;
+    submitDecision : (id : number, decision : Decision) => void;
     getJob : (id : number) => Job;
 }
 const base64ToBlob = (base64: string): Blob => {
@@ -53,7 +54,7 @@ const base64ToBlob = (base64: string): Blob => {
 };
 
 // This is more of a jobSubmission review
-const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission} : DocumentReviewProps) => {
+const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission, submitDecision} : DocumentReviewProps) => {
     // Need to be on the id route now to work
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document(s) to load
@@ -131,15 +132,26 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
         };
     }, [scrollToHighlightFromHash, coverLetterOrResume]);
 
+    // Applicants only see comments once the employer has sent their feedback
+    const visibleHighlights = currentUser?.isEmployer || getJobSubmission(idRoute).reviewed ? getHighlightByJobSubmissionId(idRoute, coverLetterOrResume) : [];
+
     return (
         <>
         <h1>Review feedback for submission</h1>
+        {/* Applicant sees the employer's overall decision and what to do next */}
+        {currentUser?.isEmployer != true && getJobSubmission(idRoute).reviewed && getJobSubmission(idRoute).decision ?
+        <div className={"notice decision-banner d-" + getJobSubmission(idRoute).decision}>
+            <span className="notice-icon">{DECISIONS[getJobSubmission(idRoute).decision!].icon}</span>
+            <span className="notice-text"><b>Employer's decision: {DECISIONS[getJobSubmission(idRoute).decision!].label}</b>
+            <span>{DECISIONS[getJobSubmission(idRoute).decision!].next}</span></span>
+        </div>
+        : ""}
         {isCoverLetterPresentInJobSubmissionId(idRoute) && isResumePresentInJobSubmissionId(idRoute) ? 
         <button className="sidebar__toggle" onClick={() => coverLetterOrResume == "resume" ? setCoverLetterOrResume("coverletter") : setCoverLetterOrResume("resume")}>Switch to {coverLetterOrResume == "resume" ? "Cover Letter" : "Resume"}</button>
         : ""}
         <div className="App" style={{ display: "flex", height: "100vh" }}>
         <Sidebar
-            highlights={getHighlightByJobSubmissionId(idRoute, coverLetterOrResume)}
+            highlights={visibleHighlights}
             resetHighlights={() => resetHighlights((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight) )}
             currentUser={currentUser}
             getJobSubmission={getJobSubmission}
@@ -148,6 +160,7 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
             coverLetterOrResume={coverLetterOrResume}
             idRoute={idRoute}
             reviewedSubmission={reviewedSubmission}
+            submitDecision={submitDecision}
             isCoverLetterPresentInJobSubmissionId={isCoverLetterPresentInJobSubmissionId}
             isResumePresentInJobSubmissionId={isResumePresentInJobSubmissionId}
             setCoverLetterOrResume={setCoverLetterOrResume}
@@ -174,8 +187,8 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
                     pdfScaleValue={pdfScaleValue}
                     textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
                     onSelection={currentUser?.isEmployer ? highlightPen ? (selection) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), selection.makeGhostHighlight(), "") : undefined : undefined}
-                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment)} /> : undefined}
-                    highlights={getHighlightByJobSubmissionId(idRoute, coverLetterOrResume)}
+                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment, sentiment) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment)} /> : undefined}
+                    highlights={visibleHighlights}
                     style={{
                         height: "calc(100% - 41px)",
                     }}

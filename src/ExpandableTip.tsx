@@ -6,9 +6,10 @@ import {
   usePdfHighlighterContext,
 } from "react-pdf-highlighter-extended";
 import "./style/ExpandableTip.css";
+import type { Sentiment } from "./types.ts";
 
 interface ExpandableTipProps {
-  addHighlight: (highlight: GhostHighlight, comment: string) => void;
+  addHighlight: (highlight: GhostHighlight, comment: string, sentiment?: Sentiment) => void;
 }
 
 const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
@@ -42,7 +43,8 @@ const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
       ) : (
         <CommentForm
           placeHolder="Your comment..."
-          onSubmit={(input) => {
+          showSentiment
+          onSubmit={(input, sentiment) => {
             addHighlight(
               {
                 content: selectionRef.current!.content,
@@ -50,6 +52,7 @@ const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
                 position: selectionRef.current!.position,
               },
               input,
+              sentiment,
             );
 
             removeGhostHighlight();

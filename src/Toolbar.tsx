@@ -45,10 +45,13 @@ const Toolbar = ({ setPdfScaleValue, toggleHighlightPen, currentUser}: ToolbarPr
         {zoom ? `${(zoom * 100).toFixed(0)}%` : "Auto"}
       </div>
       {currentUser?.isEmployer ? 
-      <button title="Highlight" className={`HighlightButton ${isHighlightPen ? 'active' : ''}`} onClick={() => {
-        toggleHighlightPen();
-        setIsHighlightPen(!isHighlightPen);
-      }}>Toggle Highlights</button>
+      <div className="HighlightControls">
+        {isHighlightPen ? <span className="HighlightHint">Selecting text adds a quick highlight without a comment</span> : ""}
+        <button title="Highlight" className={`HighlightButton ${isHighlightPen ? 'active' : ''}`} onClick={() => {
+          toggleHighlightPen();
+          setIsHighlightPen(!isHighlightPen);
+        }}>🖍 Highlighter: {isHighlightPen ? "On" : "Off"}</button>
+      </div>
       : ""}
     </div>
   );

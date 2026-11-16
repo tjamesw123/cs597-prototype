@@ -1,6 +1,6 @@
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
-import type { CommentedHighlight } from "./types.ts";
+import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
 import type { User } from "./LoginSignup.tsx";
 import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 
@@ -27,10 +27,6 @@ const FullDocumentReviewSidebar = ({
   coverLetterOrResume,
   idRoute
 }: FullDocumentReviewSidebarProps) => {
-  // let reviewing = coverLetterOrResume == "coverletter" ? getJobSubmission(idRoute).coverLetterId : getJobSubmission(idRoute).resumeId;
-  // if (reviewing == null) {
-  //   reviewing = 0;
-  // } 
   return (
     <div className="fulldocumentreviewsidebar" style={{ width: "25vw", maxWidth: "500px" }}>
        
@@ -44,7 +40,13 @@ const FullDocumentReviewSidebar = ({
           Review the feedback on the document from all submissions
         </p>
         <p>
-          Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: {getDocumentRec(idRoute).fileName}
+          Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: 
+        </p>
+        <p>
+          <b>File Name</b>: {getDocumentRec(idRoute).fileName}
+        </p>
+        <p>
+          {getDocumentRec(idRoute).name != "" ? <><b>Name</b>: {getDocumentRec(idRoute).name}</> : ""}
         </p>
       </>
       </div>
@@ -56,13 +58,18 @@ const FullDocumentReviewSidebar = ({
           {highlights.map((highlight, index) => (
             <li
               key={index}
-              className="fulldocumentreviewsidebar__highlight"
+              className={"fulldocumentreviewsidebar__highlight" + (highlight.sentiment ? " s-" + highlight.sentiment : "")}
               onClick={() => {
                 updateHash(highlight);
               }}
             >
               <div>
                 {/* Highlight comment and text */}
+                {highlight.sentiment && (
+                  <span className={"sentiment-tag s-" + highlight.sentiment}>
+                    {SENTIMENTS[highlight.sentiment].icon} {SENTIMENTS[highlight.sentiment].label}
+                  </span>
+                )}
                 <strong>{highlight.comment}</strong>
                 {highlight.content.text && (
                   <blockquote style={{ marginTop: "0.5rem" }}>
