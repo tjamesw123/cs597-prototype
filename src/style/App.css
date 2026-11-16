@@ -182,6 +182,14 @@ a.notice:hover { border-color: currentColor; }
 .btn.secondary:hover { border-color: var(--blue); color: var(--blue); }
 .badge.applied { background: #e8eefc; color: var(--blue); }
 
+/* Demo tools box on the home page */
+.demo-tools { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; padding: 14px 16px;
+  border: 1px dashed var(--line); border-radius: var(--radius); background: var(--card); }
+.demo-tools-text { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 2px; }
+.demo-tools-text span { color: var(--muted); font-size: 13px; }
+.demo-tools-text .demo-tools-message { color: var(--good); font-weight: 600; }
+.demo-tools-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
 /* Overall decision colors for the applicant */
 .badge.d-strong, .notice.d-strong { background: var(--good-soft); color: var(--good); border-color: #bfe8d2; }
 .badge.d-consider, .notice.d-consider { background: var(--warn-soft); color: var(--warn); border-color: #f5dca8; }

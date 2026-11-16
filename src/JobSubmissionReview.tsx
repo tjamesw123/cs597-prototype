@@ -132,6 +132,9 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
         };
     }, [scrollToHighlightFromHash, coverLetterOrResume]);
 
+    // Applicants only see comments once the employer has sent their feedback
+    const visibleHighlights = currentUser?.isEmployer || getJobSubmission(idRoute).reviewed ? getHighlightByJobSubmissionId(idRoute, coverLetterOrResume) : [];
+
     return (
         <>
         <h1>Review feedback for submission</h1>
@@ -148,7 +151,7 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
         : ""}
         <div className="App" style={{ display: "flex", height: "100vh" }}>
         <Sidebar
-            highlights={getHighlightByJobSubmissionId(idRoute, coverLetterOrResume)}
+            highlights={visibleHighlights}
             resetHighlights={() => resetHighlights((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight) )}
             currentUser={currentUser}
             getJobSubmission={getJobSubmission}
@@ -185,7 +188,7 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
                     textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
                     onSelection={currentUser?.isEmployer ? highlightPen ? (selection) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), selection.makeGhostHighlight(), "") : undefined : undefined}
                     selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment, sentiment) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment)} /> : undefined}
-                    highlights={getHighlightByJobSubmissionId(idRoute, coverLetterOrResume)}
+                    highlights={visibleHighlights}
                     style={{
                         height: "calc(100% - 41px)",
                     }}

@@ -242,7 +242,7 @@ const EmployerHome = ({ currentUser, jobList, jobSubmissionList }: HomeProps) =>
         :
             <div className="notice good">
                 <span className="notice-icon">✅</span>
-                <span className="notice-text"><b>All caught up!</b><span>Every application has been reviewed.</span></span>
+                <span className="notice-text">{mySubmissions.length == 0 ? <><b>No applications yet</b><span>Post a job to start receiving applications.</span></> : <><b>All caught up!</b><span>Every application has been reviewed.</span></>}</span>
             </div>
         }
         <HomeStats stats={[

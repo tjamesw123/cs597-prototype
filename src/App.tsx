@@ -15,6 +15,7 @@ import ApplicantApplyToJob from "./ApplicantApplyToJob.tsx";
 import EmployerApplicationReview from "./EmployerApplicationReview.tsx";
 import EmployerPostJob from "./EmployerPostJob.tsx";
 import FullDocumentReview from "./FullDocumentReview.tsx";
+import DemoTools from "./DemoTools.tsx";
 
 
 
@@ -68,10 +69,10 @@ const getJob = (jobList : Job[],  id : number) => {
   return job;
 }
 
-const getNextDocumentRecId = (documents : DocumentRec[]) => documents.map((document) => document.id).reduce((x, y) => x > y ? x : y)+1;
-const getNextUserId = (users : User[]) => users.map((user) => user.id).reduce((x, y) => x > y ? x : y)+1;
-const getNextJobId = (jobs : Job[]) => jobs.map((job) => job.id).reduce((x, y) => x > y ? x : y)+1;
-const getNextJobSubmission = (jobSubmissions : JobSubmission[]) => jobSubmissions.map((jobSubmission) => jobSubmission.id).reduce((x, y) => x > y ? x : y)+1;
+const getNextDocumentRecId = (documents : DocumentRec[]) => documents.map((document) => document.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
+const getNextUserId = (users : User[]) => users.map((user) => user.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
+const getNextJobId = (jobs : Job[]) => jobs.map((job) => job.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
+const getNextJobSubmission = (jobSubmissions : JobSubmission[]) => jobSubmissions.map((jobSubmission) => jobSubmission.id).reduce((x, y) => x > y ? x : y, -1)+1; // -1 so an empty list starts at id 0
 
 // const getNextDocumentRecId: (documents: DocumentRec[]) => number
 // Documents
@@ -336,19 +337,37 @@ const logOut = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>
   setCurrentUser(null);
 }
 
-const App = () => {
-  // useLocalStorage()
-  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", [{id: 0, company: "Northwind Health", position: "Software Engineering Intern", reviewerId: 0}, {id: 1, company: "Brightpath Analytics", position: "Data Analyst Intern", reviewerId: 0}]);
-  const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", [
-    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_NORTHWIND_URL]}, 
+// Sample data shown on first load (and when "Restore sample data" is used)
+const SAMPLE_JOBS : Job[] = [{id: 0, company: "Northwind Health", position: "Software Engineering Intern", reviewerId: 0}, {id: 1, company: "Brightpath Analytics", position: "Data Analyst Intern", reviewerId: 0}];
+const SAMPLE_SUBMISSIONS : JobSubmission[] = [
+    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: true, decision: "consider", resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_NORTHWIND_URL]}, 
     {id: 1, userId: 1, jobId: 1, date: "11/12/2026", resumeId: 3, coverLetterId: 2, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_DATA_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_BRIGHTPATH_URL]}
-  ]);
-  const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", [
+  ];
+const SAMPLE_DOCUMENTS : DocumentRec[] = [
     {id: 0, fileName : "Bob_Smith_Resume.pdf", name: "Resume - Software", userId: 1, pdfData: null, pdfURL: RESUME_URL, type: "resume"}, 
     {id: 1, fileName : "Bob_Smith_Cover_Letter_Northwind.pdf", name: "Cover Letter - Northwind Health", userId: 1, pdfData: null, pdfURL: COVER_LETTER_NORTHWIND_URL, type: "coverletter"},
     {id: 2, fileName : "Bob_Smith_Cover_Letter_Brightpath.pdf", name: "Cover Letter - Brightpath Analytics", userId: 1, pdfData: null, pdfURL: COVER_LETTER_BRIGHTPATH_URL, type: "coverletter"},
     {id: 3, fileName : "Bob_Smith_Resume_Data.pdf", name: "Resume - Data", userId: 1, pdfData: null, pdfURL: RESUME_DATA_URL, type: "resume"}
-  ]);
+  ];
+
+// Demo tools: clearing keeps the user accounts so james1 and bob1 can still log in
+const clearSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>) => {
+  setJobList([]);
+  setJobSubmissionList([]);
+  setDocumentList([]);
+}
+
+const restoreSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>) => {
+  setJobList(SAMPLE_JOBS);
+  setJobSubmissionList(SAMPLE_SUBMISSIONS);
+  setDocumentList(SAMPLE_DOCUMENTS);
+}
+
+const App = () => {
+  // useLocalStorage()
+  const [jobList, setJobList] = useLocalStorage<Array<Job>>("jobList", SAMPLE_JOBS);
+  const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", SAMPLE_SUBMISSIONS);
+  const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", SAMPLE_DOCUMENTS);
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>("currentUser", null);
   const [users, setUsers] = useLocalStorage<Array<User>>("users", [
     {id: 0, first_name: "James", last_name: "Goodman", username: "james1", password: "1234", isEmployer: true}, 
@@ -391,6 +410,7 @@ const App = () => {
         documentList={documentList}
         loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, username, password)} 
         addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  />
+        {currentUser ? <DemoTools clearSampleData={() => clearSampleData(setJobList, setJobSubmissionList, setDocumentList)} restoreSampleData={() => restoreSampleData(setJobList, setJobSubmissionList, setDocumentList)}/> : ""}
         </>} 
       />
       <Route path="/employer/applications/" element={<><EmployerApplicationReview currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />
@@ -429,7 +449,7 @@ const App = () => {
         getResumePdfByJobSubmissionId={(id) => getResumePdfByJobSubmissionId(jobSubmissionList, documentList, id)}
         getCoverLetterPdfLinkByJobSubmissionId={(id) => getCoverLetterPdfLinkByJobSubmissionId(jobSubmissionList, documentList, id)} 
         getCoverLetterPdfByJobSubmissionId={(id) => getCoverLetterPdfByJobSubmissionId(jobSubmissionList, documentList, id)}
-        getAllHighlightsForDocumentId={(id) => getAllHighlightsForDocumentId(documentList, jobSubmissionList, id)}
+        getAllHighlightsForDocumentId={(id) => getAllHighlightsForDocumentId(documentList, jobSubmissionList.filter((jobSubmission) => jobSubmission.reviewed), id)}
         jobList={jobList} 
         jobSubmissionList={jobSubmissionList} 
         documentList={documentList} 

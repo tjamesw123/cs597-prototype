@@ -116,7 +116,7 @@ const Sidebar = ({
         </h2>
         {submissionInfo}
         <p>
-          Review the feedback from the employer
+          {getJobSubmission(idRoute).reviewed ? "Review the feedback from the employer" : "The employer hasn't sent feedback yet. Check back later."}
         </p>
       </>
       }
