@@ -1,0 +1,225 @@
+{
+  "ver-maya-gen-1": {
+    "fileName": "maya-shah-resume-2026-02.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | (555) 014-2290 | Hoboken, NJ",
+      "EDUCATION",
+      "M.S. Information Systems — Hudson State University | Expected May 2027",
+      "B.S. Business Administration — Hudson State University | 2025",
+      "EXPERIENCE",
+      "Student Assistant — University Library | 2023–2025",
+      "• Helped students find books and resources.",
+      "• Did data entry for the catalog.",
+      "Volunteer — Community Food Pantry | 2022–2024",
+      "• Organized donations.",
+      "SKILLS",
+      "Microsoft Office, Google Sheets, communication, teamwork"
+    ]
+  },
+  "ver-maya-gen-2": {
+    "fileName": "maya-shah-resume-2026-06.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | (555) 014-2290 | Hoboken, NJ",
+      "EDUCATION",
+      "M.S. Information Systems — Hudson State University | Expected May 2027",
+      "B.S. Business Administration — Hudson State University | 2025",
+      "EXPERIENCE",
+      "Student Assistant — University Library | 2023–2025",
+      "• Assisted 40+ students per week with research and checkout questions.",
+      "• Entered and verified catalog records in the library database.",
+      "Operations Volunteer — Community Food Pantry | 2022–2024",
+      "• Coordinated weekend donation intake with a team of 6 volunteers.",
+      "PROJECTS",
+      "Campus Survey Dashboard — Course Project",
+      "• Built a Google Sheets dashboard summarizing responses from a student survey.",
+      "SKILLS",
+      "Excel (pivot tables), Google Sheets, SQL basics, Microsoft Office, scheduling"
+    ]
+  },
+  "ver-maya-gen-3": {
+    "fileName": "maya-shah-resume-2026-09.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | (555) 014-2290 | Hoboken, NJ",
+      "EDUCATION",
+      "M.S. Information Systems — Hudson State University | Expected May 2027",
+      "B.S. Business Administration — Hudson State University | 2025",
+      "EXPERIENCE",
+      "Graduate Assistant — Department of Information Systems | 2025–Present",
+      "• Prepare weekly enrollment reports for 3 faculty members using Excel.",
+      "• Responsible for handling various administrative tasks for the department.",
+      "Student Assistant — University Library | 2023–2025",
+      "• Assisted 40+ students per week with research and checkout questions.",
+      "• Reduced catalog backlog by 30% by verifying 1,200 records over one semester.",
+      "Operations Volunteer — Community Food Pantry | 2022–2024",
+      "• Coordinated weekend donation intake with 6 volunteers, serving ~150 families monthly.",
+      "PROJECTS",
+      "Campus Survey Dashboard — Course Project",
+      "• Built a Google Sheets dashboard summarizing 600+ student survey responses.",
+      "SKILLS",
+      "Excel (pivot tables, XLOOKUP), Google Sheets, SQL, Tableau basics, Microsoft Office"
+    ]
+  },
+  "ver-maya-data-1": {
+    "fileName": "maya-shah-data-resume.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | (555) 014-2290 | Hoboken, NJ | github.com/mayashah",
+      "EDUCATION",
+      "M.S. Information Systems — Hudson State University | Expected May 2027",
+      "Coursework: Database Systems, Data Visualization, Applied Statistics",
+      "EXPERIENCE",
+      "Graduate Assistant — Department of Information Systems | 2025–Present",
+      "• Prepare weekly enrollment reports for 3 faculty members using Excel.",
+      "• Cleaned and merged 4 years of enrollment data into a single SQL table.",
+      "PROJECTS",
+      "Transit Ridership Analysis — Data Visualization Course",
+      "• Analyzed 2M+ fare records in Python (pandas) to compare weekday ridership trends.",
+      "• Built a Tableau dashboard presented to a panel of 3 faculty reviewers.",
+      "Campus Survey Dashboard — Course Project",
+      "• Built a Google Sheets dashboard summarizing 600+ student survey responses.",
+      "SKILLS",
+      "SQL, Python (pandas, matplotlib), Tableau, Excel, R basics"
+    ]
+  },
+  "ver-maya-cover-1": {
+    "fileName": "maya-shah-cover-letter-2026-03.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | Hoboken, NJ",
+      "Dear Hiring Manager,",
+      "I am excited to apply for this position. I am a hard worker and a fast learner,",
+      "and I believe I would be a great fit for your team.",
+      "At the university library I helped students and did data entry. I also volunteer",
+      "at a food pantry where I organize donations.",
+      "Thank you for your time and consideration.",
+      "Sincerely,",
+      "Maya Shah"
+    ]
+  },
+  "ver-maya-cover-2": {
+    "fileName": "maya-shah-cover-letter-2026-09.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | Hoboken, NJ",
+      "Dear Hiring Manager,",
+      "I am applying for this role because it combines two things I enjoy: keeping",
+      "operations organized and using data to make everyday work easier.",
+      "As a graduate assistant, I prepare weekly enrollment reports for three faculty",
+      "members. At the university library, I helped reduce a catalog backlog by 30%.",
+      "I would welcome the chance to bring the same care and consistency to your team.",
+      "Thank you for your time and consideration.",
+      "Sincerely,",
+      "Maya Shah"
+    ]
+  },
+  "ver-jordan-1": {
+    "fileName": "jordan-lee-resume.pdf",
+    "lines": [
+      "Jordan Lee",
+      "jordan.lee@example.edu | (555) 019-8831 | Newark, NJ",
+      "EDUCATION",
+      "B.A. Communication — Garden State College | Expected May 2027",
+      "EXPERIENCE",
+      "Front Desk Assistant — Campus Recreation Center | 2024–Present",
+      "• Check in 200+ visitors per shift and resolve membership questions.",
+      "• Maintain the equipment checkout log and weekly inventory spreadsheet.",
+      "Office Volunteer — Newark Youth Arts | 2023",
+      "• Answered phones and scheduled 30+ parent meetings for the summer program.",
+      "SKILLS",
+      "Microsoft Office, Google Calendar, customer service, bilingual (English/Korean)"
+    ]
+  },
+  "ver-priya-1": {
+    "fileName": "priya-raman-resume.pdf",
+    "lines": [
+      "Priya Raman",
+      "priya.raman@example.edu | (555) 017-4410 | Jersey City, NJ",
+      "EDUCATION",
+      "B.S. Business Analytics — Liberty University of NJ | Expected Dec 2026",
+      "EXPERIENCE",
+      "Administrative Intern — Riverside Dental Group | Summer 2025",
+      "• Managed patient scheduling for 3 dentists using Dentrix.",
+      "• Worked on many different projects across the office.",
+      "Resident Assistant — Liberty University Housing | 2024–Present",
+      "• Supervise a floor of 42 residents and organize monthly community events.",
+      "SKILLS",
+      "Excel, Outlook, Dentrix, event planning, conflict resolution"
+    ]
+  },
+  "ver-marcus-1": {
+    "fileName": "marcus-bell-resume.pdf",
+    "lines": [
+      "Marcus Bell",
+      "marcus.bell@example.edu | (555) 012-7765 | Hoboken, NJ",
+      "EDUCATION",
+      "M.S. Marketing Analytics — Hudson State University | Expected May 2027",
+      "EXPERIENCE",
+      "Marketing Assistant — Sunrise Coffee Co. | 2024–2025",
+      "• Grew Instagram engagement 45% in six months with a weekly content calendar.",
+      "• Ran A/B tests on 12 email campaigns; best variant lifted open rate by 8 points.",
+      "PROJECTS",
+      "Customer Segmentation — Marketing Analytics Course",
+      "• Clustered 5,000 customer records in R to identify four purchasing segments.",
+      "SKILLS",
+      "Google Analytics, HubSpot, R, Excel, Canva"
+    ]
+  },
+  "ver-elena-1": {
+    "fileName": "elena-ortiz-resume.pdf",
+    "lines": [
+      "Elena Ortiz",
+      "elena.ortiz@example.edu | (555) 016-3302 | Paterson, NJ",
+      "EDUCATION",
+      "B.S. Statistics — Passaic State University | 2026",
+      "EXPERIENCE",
+      "Research Assistant — Public Health Lab | 2025–2026",
+      "• Cleaned and documented survey data for a 1,100-participant study in R.",
+      "• Produced weekly summary tables for the principal investigator.",
+      "PROJECTS",
+      "Housing Price Model — Senior Capstone",
+      "• Built a regression model in Python explaining 71% of price variance.",
+      "SKILLS",
+      "R, Python, SQL, Excel, Power BI"
+    ]
+  },
+  "ver-sam-1": {
+    "fileName": "sam-okafor-resume.pdf",
+    "lines": [
+      "Sam Okafor",
+      "sam.okafor@example.edu | (555) 011-9087 | Montclair, NJ",
+      "EDUCATION",
+      "B.A. English — Montclair Heights College | 2026",
+      "EXPERIENCE",
+      "Writing Tutor — Montclair Heights Writing Center | 2024–2026",
+      "• Tutor students on essays and research papers.",
+      "Barista — Main Street Café | 2022–2024",
+      "• Made drinks and handled the register.",
+      "SKILLS",
+      "Writing, editing, social media"
+    ]
+  },
+  "demo-upload-maya-office": {
+    "fileName": "maya-shah-resume-office.pdf",
+    "lines": [
+      "Maya Shah",
+      "maya.shah@example.edu | (555) 014-2290 | Hoboken, NJ",
+      "EDUCATION",
+      "M.S. Information Systems — Hudson State University | Expected May 2027",
+      "B.S. Business Administration — Hudson State University | 2025",
+      "EXPERIENCE",
+      "Graduate Assistant — Department of Information Systems | 2025–Present",
+      "• Helped with various office tasks and supported the team with daily operations.",
+      "• Prepare weekly enrollment reports for 3 faculty members using Excel.",
+      "Student Assistant — University Library | 2023–2025",
+      "• Assisted 40+ students per week with research and checkout questions.",
+      "• Reduced catalog backlog by 30% by verifying 1,200 records over one semester.",
+      "Operations Volunteer — Community Food Pantry | 2022–2024",
+      "• Coordinated weekend donation intake with a team of 6 volunteers.",
+      "SKILLS",
+      "Microsoft Office (Excel, Word, Outlook), Google Workspace, scheduling, records"
+    ]
+  }
+}
