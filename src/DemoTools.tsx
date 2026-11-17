@@ -13,7 +13,7 @@ const DemoTools = ({clearSampleData, restoreSampleData} : DemoToolsProps) => {
         <div className="demo-tools">
             <div className="demo-tools-text">
                 <b>Demo tools</b>
-                <span>Clear removes all jobs, applications, documents and comments. The james1 and bob1 logins stay.</span>
+                <span>Clear removes all jobs, applications, documents and comments. The Dana and Maya logins stay.</span>
                 {message != "" ? <span className="demo-tools-message">{message}</span> : ""}
             </div>
             <div className="demo-tools-buttons">
@@ -24,7 +24,7 @@ const DemoTools = ({clearSampleData, restoreSampleData} : DemoToolsProps) => {
                     }
                 }}>Clear sample data</button>
                 <button className="btn secondary" onClick={() => {
-                    if (window.confirm("Restore the sample data? This replaces the current jobs, applications and documents.")) {
+                    if (window.confirm("Restore the sample data? This replaces the current jobs, applications, documents and accounts, and logs you out.")) {
                         restoreSampleData();
                         setMessage("✅ Sample data restored.");
                     }

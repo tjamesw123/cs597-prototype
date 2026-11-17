@@ -40,10 +40,10 @@ export const handleContextMenu = (
     });
   };
 
-  export const addHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: GhostHighlight, comment: string, sentiment?: Sentiment) => {
+  export const addHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: GhostHighlight, comment: string, sentiment?: Sentiment, reason?: string) => {
     // Check here if they are the employer reviewer and if they are they can add highlights and if not don't
     console.log("Saving highlight", highlight);
-    setHighlights([{ ...highlight, comment, ...(sentiment ? { sentiment } : {}), id: getNextId() }, ...highlights]);
+    setHighlights([{ ...highlight, comment, ...(sentiment ? { sentiment } : {}), ...(reason ? { reason } : {}), id: getNextId() }, ...highlights]);
   };
 
   export const deleteHighlight = (setHighlights: (highlight : CommentedHighlight[]) => void, highlights: CommentedHighlight[], highlight: ViewportHighlight | Highlight) => {

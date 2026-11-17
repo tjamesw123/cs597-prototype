@@ -82,7 +82,7 @@ const LoginForm = ({ currentUser, loginUser }: UserLoginProps) => {
         >
         <h2>Log in</h2>
         <div>
-            <label>Username <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
+            <label>Email <input type="text" value={username} placeholder="e.g. maya@example.com" onInput={(e) => setUsername(e.currentTarget.value)}/></label>
             <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
         </div>
         <div>
@@ -141,7 +141,7 @@ const SignUpForm = ({ currentUser, addUser }: UserSignUpProps) => {
         <div>
             <label>First Name <input type="text" value={first_name} onInput={(e) => setFirstName(e.currentTarget.value)}/></label>
             <label>Last Name <input type="text" value={last_name} onInput={(e) => setLastName(e.currentTarget.value)}/></label>
-            <label>Username <input type="text" value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
+            <label>Email <input type="email" required value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
             <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
             <label>Repeat Password <input type="password" value={repeatPassword} onInput={(e) => setRepeatPassword(e.currentTarget.value)}/></label>
             <label className="check"><input type="checkbox" name="isEmployer" checked={isEmployer} defaultChecked={false} onInput={(e) => setIsEmployer(!e.currentTarget.checked)}/> I'm an employer</label>
@@ -235,9 +235,18 @@ const EmployerHome = ({ currentUser, jobList, jobSubmissionList }: HomeProps) =>
     const pending = mySubmissions.filter((jobSubmission) => !jobSubmission.reviewed);
     const reviewed = mySubmissions.filter((jobSubmission) => jobSubmission.reviewed);
     const next = pending[0];
+    const withQuestions = mySubmissions.filter((jobSubmission) => (jobSubmission.questions ?? []).some((question) => !question.reply));
     return (
         <>
         <p className="home-subtitle">Review applicants and give them feedback that helps.</p>
+        {withQuestions.map((jobSubmission) => (
+            <Link key={"q" + jobSubmission.id} className="notice question-notice" to={"/applicant/submission/" + jobSubmission.id}>
+                <span className="notice-icon">💬</span>
+                <span className="notice-text"><b>An applicant asked a question about your feedback</b>
+                <span>{findJob(jobSubmission.jobId)?.position ?? ""} · {findJob(jobSubmission.jobId)?.company ?? ""} · Tap to reply</span></span>
+                <span className="notice-arrow">→</span>
+            </Link>
+        ))}
         {pending.length != 0 ?
             <Link className="notice warn" to="/employer/applications/">
                 <span className="notice-num">{pending.length}</span>

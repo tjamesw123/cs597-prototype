@@ -13,6 +13,7 @@ import {
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
 import { DECISIONS, type CommentedHighlight, type Decision } from "./types.ts";
+import FeedbackQuestions from "./FeedbackQuestions.tsx";
 import { useParams } from "react-router";
 import { addHighlight, editHighlight, handleContextMenu, resetHash, resetHighlights, scrollToHighlightFromHash} from "./HighlightHelper.tsx";
 import type { User } from "./LoginSignup.tsx";
@@ -35,6 +36,8 @@ interface DocumentReviewProps {
     getHighlightByJobSubmissionId : (id : number, type : "coverletter" | "resume") => CommentedHighlight[];
     reviewedSubmission : (id : number) => void;
     submitDecision : (id : number, decision : Decision) => void;
+    askQuestion : (id : number, text : string, about? : string) => void;
+    replyToQuestion : (id : number, questionId : number, reply : string) => void;
     getJob : (id : number) => Job;
 }
 const base64ToBlob = (base64: string): Blob => {
@@ -54,7 +57,7 @@ const base64ToBlob = (base64: string): Blob => {
 };
 
 // This is more of a jobSubmission review
-const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission, submitDecision} : DocumentReviewProps) => {
+const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, setHighlightByJobSubmissionId, getHighlightByJobSubmissionId, isResumePresentInJobSubmissionId, isCoverLetterPresentInJobSubmissionId, getCoverLetterPdfByJobSubmissionId, getCoverLetterPdfLinkByJobSubmissionId, getResumePdfByJobSubmissionId, getResumePdfLinkByJobSubmissionId, reviewedSubmission, submitDecision, askQuestion, replyToQuestion} : DocumentReviewProps) => {
     // Need to be on the id route now to work
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document(s) to load
@@ -132,6 +135,11 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
         };
     }, [scrollToHighlightFromHash, coverLetterOrResume]);
 
+    // Questions open once feedback is sent (employers also see any that were asked)
+    const questionCount = (getJobSubmission(idRoute).questions ?? []).length;
+    const unanswered = (getJobSubmission(idRoute).questions ?? []).filter((question) => !question.reply).length;
+    const showQuestions = getJobSubmission(idRoute).reviewed || questionCount > 0;
+
     // Applicants only see comments once the employer has sent their feedback
     const visibleHighlights = currentUser?.isEmployer || getJobSubmission(idRoute).reviewed ? getHighlightByJobSubmissionId(idRoute, coverLetterOrResume) : [];
 
@@ -145,6 +153,11 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
             <span className="notice-text"><b>Employer's decision: {DECISIONS[getJobSubmission(idRoute).decision!].label}</b>
             <span>{DECISIONS[getJobSubmission(idRoute).decision!].next}</span></span>
         </div>
+        : ""}
+        {showQuestions ?
+        <a className="questions-link" href="#questions" onClick={(e) => { e.preventDefault(); document.getElementById("questions")?.scrollIntoView({ behavior: "smooth" }); }}>
+            💬 Questions about this feedback{unanswered > 0 ? " · " + unanswered + " waiting for a reply" : questionCount > 0 ? " (" + questionCount + ")" : ""}
+        </a>
         : ""}
         {isCoverLetterPresentInJobSubmissionId(idRoute) && isResumePresentInJobSubmissionId(idRoute) ? 
         <button className="sidebar__toggle" onClick={() => coverLetterOrResume == "resume" ? setCoverLetterOrResume("coverletter") : setCoverLetterOrResume("resume")}>Switch to {coverLetterOrResume == "resume" ? "Cover Letter" : "Resume"}</button>
@@ -187,7 +200,7 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
                     pdfScaleValue={pdfScaleValue}
                     textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
                     onSelection={currentUser?.isEmployer ? highlightPen ? (selection) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), selection.makeGhostHighlight(), "") : undefined : undefined}
-                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment, sentiment) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment)} /> : undefined}
+                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment, sentiment, reason) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment, reason)} /> : undefined}
                     highlights={visibleHighlights}
                     style={{
                         height: "calc(100% - 41px)",
@@ -204,6 +217,16 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
 
         {currentUser?.isEmployer && contextMenu && <ContextMenu {...contextMenu} />}
         </div>
+        {showQuestions ?
+        <div id="questions">
+            <FeedbackQuestions
+                submission={getJobSubmission(idRoute)}
+                isEmployer={currentUser?.isEmployer == true}
+                askQuestion={(text, about) => askQuestion(idRoute, text, about)}
+                replyToQuestion={(questionId, reply) => replyToQuestion(idRoute, questionId, reply)}
+            />
+        </div>
+        : ""}
         </>
         
     );

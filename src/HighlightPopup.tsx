@@ -2,14 +2,14 @@
 import type { ViewportHighlight } from "react-pdf-highlighter-extended";
 
 import "./style/HighlightPopup.css";
-import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
+import { getSentiment, sentimentTagText, type CommentedHighlight } from "./types.ts";
 
 interface HighlightPopupProps {
   highlight: ViewportHighlight<CommentedHighlight>;
 }
 
 const HighlightPopup = ({ highlight }: HighlightPopupProps) => {
-  const tag = highlight.sentiment ? <span className={"sentiment-tag s-" + highlight.sentiment}>{SENTIMENTS[highlight.sentiment].icon} {SENTIMENTS[highlight.sentiment].label}</span> : null;
+  const tag = getSentiment(highlight.sentiment) ? <span className={"sentiment-tag s-" + highlight.sentiment}>{sentimentTagText(highlight)}</span> : null;
   return highlight.comment ? (
     <div className="Highlight__popup">{tag}{highlight.comment}</div>
   ) : (

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
-import { DECISIONS, SENTIMENTS, type CommentedHighlight, type Decision, type Sentiment } from "./types.ts";
+import { DECISIONS, SENTIMENTS, getSentiment, sentimentTagText, type CommentedHighlight, type Decision, type Sentiment } from "./types.ts";
 import type { User } from "./LoginSignup.tsx";
 import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 
@@ -129,16 +129,16 @@ const Sidebar = ({
           {highlights.map((highlight, index) => (
             <li
               key={index}
-              className={"sidebar__highlight" + (highlight.sentiment ? " s-" + highlight.sentiment : "")}
+              className={"sidebar__highlight" + (getSentiment(highlight.sentiment) ? " s-" + highlight.sentiment : "")}
               onClick={() => {
                 updateHash(highlight);
               }}
             >
               <div>
                 {/* Highlight comment and text */}
-                {highlight.sentiment && (
+                {getSentiment(highlight.sentiment) && (
                   <span className={"sentiment-tag s-" + highlight.sentiment}>
-                    {SENTIMENTS[highlight.sentiment].icon} {SENTIMENTS[highlight.sentiment].label}
+                    {sentimentTagText(highlight)}
                   </span>
                 )}
                 <strong>{highlight.comment}</strong>

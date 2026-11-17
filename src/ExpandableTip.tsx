@@ -9,7 +9,7 @@ import "./style/ExpandableTip.css";
 import type { Sentiment } from "./types.ts";
 
 interface ExpandableTipProps {
-  addHighlight: (highlight: GhostHighlight, comment: string, sentiment?: Sentiment) => void;
+  addHighlight: (highlight: GhostHighlight, comment: string, sentiment?: Sentiment, reason?: string) => void;
 }
 
 const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
@@ -44,7 +44,7 @@ const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
         <CommentForm
           placeHolder="Your comment..."
           showSentiment
-          onSubmit={(input, sentiment) => {
+          onSubmit={(input, sentiment, reason) => {
             addHighlight(
               {
                 content: selectionRef.current!.content,
@@ -53,6 +53,7 @@ const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
               },
               input,
               sentiment,
+              reason,
             );
 
             removeGhostHighlight();

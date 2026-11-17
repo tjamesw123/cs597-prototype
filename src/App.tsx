@@ -1,7 +1,7 @@
 import React from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
-import type { CommentedHighlight, Decision } from "./types.ts";
+import type { CommentedHighlight, Decision, FeedbackQuestion } from "./types.ts";
 import { Link, NavLink, Route, Routes } from "react-router";
 import ErrorPage from "./ErrorPage.tsx";
 import JobSubmissionReview from "./JobSubmissionReview.tsx";
@@ -16,15 +16,16 @@ import EmployerApplicationReview from "./EmployerApplicationReview.tsx";
 import EmployerPostJob from "./EmployerPostJob.tsx";
 import FullDocumentReview from "./FullDocumentReview.tsx";
 import DemoTools from "./DemoTools.tsx";
+import DocumentHistory from "./DocumentHistory.tsx";
 
 
 
 const TEST_HIGHLIGHTS = _testHighlights;
 // Sample documents live in public/samples
-const RESUME_URL = "/samples/Bob_Smith_Resume.pdf";
-const RESUME_DATA_URL = "/samples/Bob_Smith_Resume_Data.pdf";
-const COVER_LETTER_NORTHWIND_URL = "/samples/Bob_Smith_Cover_Letter_Northwind.pdf";
-const COVER_LETTER_BRIGHTPATH_URL = "/samples/Bob_Smith_Cover_Letter_Brightpath.pdf";
+const RESUME_URL = "/samples/Maya_Shah_Resume.pdf";
+const RESUME_DATA_URL = "/samples/Maya_Shah_Resume_Data.pdf";
+const COVER_LETTER_NORTHWIND_URL = "/samples/Maya_Shah_Cover_Letter_Northwind.pdf";
+const COVER_LETTER_BRIGHTPATH_URL = "/samples/Maya_Shah_Cover_Letter_Brightpath.pdf";
 
 export type DocumentRec = {
   id : number;
@@ -53,6 +54,7 @@ export type JobSubmission = {
   coverLetterId : number | null;
   reviewed : boolean;
   decision? : Decision; // Older submissions have no decision
+  questions? : FeedbackQuestion[]; // Follow-up questions from the applicant, older submissions have none
   resumeCommentedHighlights : CommentedHighlight[];
   coverLetterCommentedHighlights : CommentedHighlight[];
 }
@@ -138,6 +140,29 @@ const reviewedSubmission = (setJobSubmissionList: React.Dispatch<React.SetStateA
 }
 
 // Saves the employer's overall decision and marks the submission as reviewed
+const askQuestion = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, text : string, about? : string) => {
+  setJobSubmissionList(jobSubmissionList.map(t => {
+    if (t.id === id) {
+      const questions = t.questions ?? [];
+      t.questions = [...questions, { id: questions.length, text: text, ...(about ? { about: about } : {}), askedAt: new Date().toLocaleDateString() }];
+      return t;
+    } else {
+      return t;
+    }
+  }));
+}
+
+const replyToQuestion = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, questionId : number, reply : string) => {
+  setJobSubmissionList(jobSubmissionList.map(t => {
+    if (t.id === id) {
+      t.questions = (t.questions ?? []).map((question) => question.id === questionId ? { ...question, reply: reply, repliedAt: new Date().toLocaleDateString() } : question);
+      return t;
+    } else {
+      return t;
+    }
+  }));
+}
+
 const submitDecision = (setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, jobSubmissionList: JobSubmission[], id : number, decision : Decision) => {
   setJobSubmissionList(jobSubmissionList.map(t => {
     if (t.id === id) {
@@ -340,24 +365,33 @@ const logOut = (setCurrentUser: React.Dispatch<React.SetStateAction<User | null>
 // Sample data shown on first load (and when "Restore sample data" is used)
 const SAMPLE_JOBS : Job[] = [{id: 0, company: "Northwind Health", position: "Software Engineering Intern", reviewerId: 0}, {id: 1, company: "Brightpath Analytics", position: "Data Analyst Intern", reviewerId: 0}];
 const SAMPLE_SUBMISSIONS : JobSubmission[] = [
-    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: true, decision: "consider", resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_NORTHWIND_URL]}, 
+    {id: 0, userId: 1, jobId: 0, date: "11/11/2026", resumeId: 0, coverLetterId: 1, reviewed: true, decision: "consider", questions: [{id: 0, about: "Responsible for various tasks related to the website", text: "Would it help if I listed the pages I updated and how many customers used them?", askedAt: "11/14/2026"}], resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_NORTHWIND_URL]}, 
     {id: 1, userId: 1, jobId: 1, date: "11/12/2026", resumeId: 3, coverLetterId: 2, reviewed: false, resumeCommentedHighlights: TEST_HIGHLIGHTS[RESUME_DATA_URL], coverLetterCommentedHighlights: TEST_HIGHLIGHTS[COVER_LETTER_BRIGHTPATH_URL]}
   ];
 const SAMPLE_DOCUMENTS : DocumentRec[] = [
-    {id: 0, fileName : "Bob_Smith_Resume.pdf", name: "Resume - Software", userId: 1, pdfData: null, pdfURL: RESUME_URL, type: "resume"}, 
-    {id: 1, fileName : "Bob_Smith_Cover_Letter_Northwind.pdf", name: "Cover Letter - Northwind Health", userId: 1, pdfData: null, pdfURL: COVER_LETTER_NORTHWIND_URL, type: "coverletter"},
-    {id: 2, fileName : "Bob_Smith_Cover_Letter_Brightpath.pdf", name: "Cover Letter - Brightpath Analytics", userId: 1, pdfData: null, pdfURL: COVER_LETTER_BRIGHTPATH_URL, type: "coverletter"},
-    {id: 3, fileName : "Bob_Smith_Resume_Data.pdf", name: "Resume - Data", userId: 1, pdfData: null, pdfURL: RESUME_DATA_URL, type: "resume"}
+    {id: 0, fileName : "Maya_Shah_Resume.pdf", name: "Resume - Software", userId: 1, pdfData: null, pdfURL: RESUME_URL, type: "resume"}, 
+    {id: 1, fileName : "Maya_Shah_Cover_Letter_Northwind.pdf", name: "Cover Letter - Northwind Health", userId: 1, pdfData: null, pdfURL: COVER_LETTER_NORTHWIND_URL, type: "coverletter"},
+    {id: 2, fileName : "Maya_Shah_Cover_Letter_Brightpath.pdf", name: "Cover Letter - Brightpath Analytics", userId: 1, pdfData: null, pdfURL: COVER_LETTER_BRIGHTPATH_URL, type: "coverletter"},
+    {id: 3, fileName : "Maya_Shah_Resume_Data.pdf", name: "Resume - Data", userId: 1, pdfData: null, pdfURL: RESUME_DATA_URL, type: "resume"}
   ];
 
-// Demo tools: clearing keeps the user accounts so james1 and bob1 can still log in
+// Personas from our Assignment 4 (Maya the applicant, Dana the employer)
+const SAMPLE_USERS : User[] = [
+  {id: 0, first_name: "Dana", last_name: "Miller", username: "dana@example.com", password: "1234", isEmployer: true}, 
+  {id: 1, first_name: "Maya", last_name: "Shah", username: "maya@example.com", password: "1234", isEmployer: false}
+];
+
+// Demo tools: clearing keeps the user accounts so Dana and Maya can still log in
 const clearSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>) => {
   setJobList([]);
   setJobSubmissionList([]);
   setDocumentList([]);
 }
 
-const restoreSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>) => {
+const restoreSampleData = (setJobList: React.Dispatch<React.SetStateAction<Job[]>>, setJobSubmissionList: React.Dispatch<React.SetStateAction<JobSubmission[]>>, setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>, setUsers: React.Dispatch<React.SetStateAction<User[]>>, setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>) => {
+  // Also resets the accounts so older saved data picks up the persona names
+  setUsers(SAMPLE_USERS);
+  setCurrentUser(null);
   setJobList(SAMPLE_JOBS);
   setJobSubmissionList(SAMPLE_SUBMISSIONS);
   setDocumentList(SAMPLE_DOCUMENTS);
@@ -369,10 +403,7 @@ const App = () => {
   const [jobSubmissionList, setJobSubmissionList] = useLocalStorage<Array<JobSubmission>>("jobSubmissionList", SAMPLE_SUBMISSIONS);
   const [documentList, setDocumentList] = useLocalStorage<Array<DocumentRec>>("documentList", SAMPLE_DOCUMENTS);
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>("currentUser", null);
-  const [users, setUsers] = useLocalStorage<Array<User>>("users", [
-    {id: 0, first_name: "James", last_name: "Goodman", username: "james1", password: "1234", isEmployer: true}, 
-    {id: 1, first_name: "Bob", last_name: "Smith", username: "bob1", password: "1234", isEmployer: false}
-  ]);
+  const [users, setUsers] = useLocalStorage<Array<User>>("users", SAMPLE_USERS);
 
   return (
     <>
@@ -390,6 +421,7 @@ const App = () => {
         <>
             <NavLink to="/applicant/resumecoverletterupload">Resume and Cover Letters</NavLink>
             <NavLink to="/applicant/feedback">Feedback</NavLink>
+            <NavLink to="/applicant/history">Document History</NavLink>
             <NavLink to="/applicant/apply">Apply</NavLink>
         </>
           : ""}
@@ -411,7 +443,7 @@ const App = () => {
         loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, username, password)} 
         addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  
       />
-      {currentUser ? <DemoTools clearSampleData={() => clearSampleData(setJobList, setJobSubmissionList, setDocumentList)} restoreSampleData={() => restoreSampleData(setJobList, setJobSubmissionList, setDocumentList)}/> : ""}
+      {currentUser ? <DemoTools clearSampleData={() => clearSampleData(setJobList, setJobSubmissionList, setDocumentList)} restoreSampleData={() => restoreSampleData(setJobList, setJobSubmissionList, setDocumentList, setUsers, setCurrentUser)}/> : ""}
       </>
       }/>
       <Route path="/employer/applications/" element={<><EmployerApplicationReview currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />
@@ -438,8 +470,11 @@ const App = () => {
         documentList={documentList} 
         currentUser={currentUser}
         reviewedSubmission={(id) => reviewedSubmission(setJobSubmissionList, jobSubmissionList, id)}
-        submitDecision={(id, decision) => submitDecision(setJobSubmissionList, jobSubmissionList, id, decision)}/></>} 
+        submitDecision={(id, decision) => submitDecision(setJobSubmissionList, jobSubmissionList, id, decision)}
+        askQuestion={(id, text, about) => askQuestion(setJobSubmissionList, jobSubmissionList, id, text, about)}
+        replyToQuestion={(id, questionId, reply) => replyToQuestion(setJobSubmissionList, jobSubmissionList, id, questionId, reply)}/></>} 
       />
+      <Route path='/applicant/history' element={<DocumentHistory currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList}/>} />
       <Route path='/applicant/document/:id' element={<>
       <FullDocumentReview getJob={(id) => getJob(jobList, id)}
         getDocumentRec={(id) => getDocumentRec(documentList, id)}

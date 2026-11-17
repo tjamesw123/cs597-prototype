@@ -8,7 +8,7 @@
 
 - Then run 'npm run dev' to start the project
 
-- Default usernames are james1 and bob1 with the passwords both being 1234, James being the employer and Bob being the applicant, both of them have sample data to be viewed.
+- Default logins are dana@example.com and maya@example.com with the passwords both being 1234, Dana being the employer and Maya being the applicant, both of them have sample data to be viewed.
 
 # Team Contribution Statement
 
@@ -16,7 +16,7 @@
 Worked on implementation with limited CSS, commenting highlighting system, database schema, login forms, applying to jobs, making jobs, uploading pdf resumes and cover letters, rendering job submissions switching between cover letters and resumes, started out all of the routes and their different systems at the beginning, utilized useLocalStorage hooks for the backend data storage.
 
 ## Saxi
-Enhanced the application with better CSS, added additional fields to the commenting highlighting system to allow for employers to mark their preference on the comment, improved the sample data with more realistic data and comments, made better a better notification system for the webpages, cleaned up all of the pages, added the demo reset buttons, and more UI related changes.
+Focused on the look and feel of the app and on making the feedback clearer for both sides. Restyled every page with a consistent color theme, navigation bar, cards, badges and home dashboards, and later made the text larger and easier to read. Updated the feedback to match our Assignment 4 design, with positive or negative comments, predefined reasons like "Too vague" and colored highlights, plus a per-document history page, and an overall decision step where the employer picks Strongly Consider, Consider or Not a Fit before sending feedback. On the applicant side, made the decision show up with what it means and a next step, and kept draft comments hidden until the employer sends them. Also replaced the test PDFs with a sample resume and cover letters for our personas Maya and Dana, and added demo buttons to clear or restore the sample data.
 
 ## Viyasha
 

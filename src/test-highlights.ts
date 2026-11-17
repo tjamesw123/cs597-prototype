@@ -201,7 +201,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
     },
   ],
   // Sample resume and cover letters used for the demo
-    "/samples/Bob_Smith_Resume.pdf": [
+    "/samples/Maya_Shah_Resume.pdf": [
       {
         "content": {
           "text": "Led a team of 4 to build a clinic appointment app used by 300+ students"
@@ -231,6 +231,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Great impact. Team size and number of users make this stand out.",
         "sentiment": "positive",
+        "reason": "Strong impact",
         "id": "sample-r1"
       },
       {
@@ -261,7 +262,8 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
           ]
         },
         "comment": "What tasks exactly? Name what you built or changed and the result.",
-        "sentiment": "confused",
+        "sentiment": "negative",
+        "reason": "Too vague",
         "id": "sample-r2"
       },
       {
@@ -293,6 +295,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "These are expected for any role. Use the space for skills that match this job.",
         "sentiment": "negative",
+        "reason": "Not relevant to the role",
         "id": "sample-r3"
       },
       {
@@ -324,10 +327,11 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Nice use of a number to show results.",
         "sentiment": "positive",
+        "reason": "Clear and specific",
         "id": "sample-r4"
       }
     ],
-    "/samples/Bob_Smith_Resume_Data.pdf": [
+    "/samples/Maya_Shah_Resume_Data.pdf": [
       {
         "content": {
           "text": "Led a team of 4 to build a clinic appointment app used by 300+ students"
@@ -357,6 +361,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Great impact. Team size and number of users make this stand out.",
         "sentiment": "positive",
+        "reason": "Strong impact",
         "id": "sample-d1"
       },
       {
@@ -387,7 +392,8 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
           ]
         },
         "comment": "What tasks exactly? Name what you built or changed and the result.",
-        "sentiment": "confused",
+        "sentiment": "negative",
+        "reason": "Too vague",
         "id": "sample-d2"
       },
       {
@@ -419,6 +425,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "These are expected for any role. Use the space for skills that match this job.",
         "sentiment": "negative",
+        "reason": "Not relevant to the role",
         "id": "sample-d3"
       },
       {
@@ -450,10 +457,11 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Nice use of a number to show results.",
         "sentiment": "positive",
+        "reason": "Clear and specific",
         "id": "sample-d4"
       }
     ],
-    "/samples/Bob_Smith_Cover_Letter_Northwind.pdf": [
+    "/samples/Maya_Shah_Cover_Letter_Northwind.pdf": [
       {
         "content": {
           "text": "I led a team of four to build CampusCare"
@@ -483,6 +491,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Strong example. This shows leadership with a real result.",
         "sentiment": "positive",
+        "reason": "Strong impact",
         "id": "sample-n1"
       },
       {
@@ -513,7 +522,8 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
           ]
         },
         "comment": "Every applicant says this. Show it with an example instead.",
-        "sentiment": "confused",
+        "sentiment": "negative",
+        "reason": "Too vague",
         "id": "sample-n2"
       },
       {
@@ -545,10 +555,11 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Feels generic. Try addressing the hiring team or manager by name.",
         "sentiment": "negative",
+        "reason": "Too vague",
         "id": "sample-n3"
       }
     ],
-    "/samples/Bob_Smith_Cover_Letter_Brightpath.pdf": [
+    "/samples/Maya_Shah_Cover_Letter_Brightpath.pdf": [
       {
         "content": {
           "text": "I led a team of four to build CampusCare"
@@ -578,6 +589,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Strong example. This shows leadership with a real result.",
         "sentiment": "positive",
+        "reason": "Strong impact",
         "id": "sample-b1"
       },
       {
@@ -608,7 +620,8 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
           ]
         },
         "comment": "Every applicant says this. Show it with an example instead.",
-        "sentiment": "confused",
+        "sentiment": "negative",
+        "reason": "Too vague",
         "id": "sample-b2"
       },
       {
@@ -640,6 +653,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         "comment": "Feels generic. Try addressing the hiring team or manager by name.",
         "sentiment": "negative",
+        "reason": "Too vague",
         "id": "sample-b3"
       }
     ],
