@@ -22,6 +22,6 @@ Focused on the look and feel of the app and on making the feedback clearer for b
 
 Parts of their initial task layouts were used to guide the application's design.
 
-## Steven
+## Stephen
 
 Was his original concept.
