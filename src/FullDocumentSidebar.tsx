@@ -1,6 +1,7 @@
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
-import { SENTIMENTS, type CommentedHighlight } from "./types.ts";
+import { Link } from "react-router";
+import { DECISIONS, getSentiment, sentimentTagText, type CommentedHighlight } from "./types.ts";
 import type { User } from "./LoginSignup.tsx";
 import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 
@@ -13,6 +14,7 @@ interface FullDocumentReviewSidebarProps {
   coverLetterOrResume : "coverletter" | "resume";
   idRoute : number;
   reviewedSubmission: (id : number) => void
+  jobSubmissionList : JobSubmission[];
 }
 
 const updateHash = (highlight: Highlight) => {
@@ -24,9 +26,14 @@ const FullDocumentReviewSidebar = ({
   highlights,
   // toggleDocument,
   getDocumentRec,
+  getJob,
   coverLetterOrResume,
-  idRoute
+  idRoute,
+  jobSubmissionList
 }: FullDocumentReviewSidebarProps) => {
+  // Every application this document was sent with
+  const submissions = jobSubmissionList.filter((jobSubmission) =>
+    coverLetterOrResume == "coverletter" ? jobSubmission.coverLetterId == idRoute : jobSubmission.resumeId == idRoute);
   return (
     <div className="fulldocumentreviewsidebar" style={{ width: "25vw", maxWidth: "500px" }}>
        
@@ -34,10 +41,10 @@ const FullDocumentReviewSidebar = ({
       
       <>
         <h2 style={{ marginBottom: "1rem" }}>
-          Applicant Review
+          Document History
         </h2>
         <p>
-          Review the feedback on the document from all submissions
+          Feedback on this document from every application it was sent with
         </p>
         <p>
           Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: 
@@ -48,6 +55,17 @@ const FullDocumentReviewSidebar = ({
         <p>
           {getDocumentRec(idRoute).name != "" ? <><b>Name</b>: {getDocumentRec(idRoute).name}</> : ""}
         </p>
+        <p><b>Submission History</b></p>
+        {submissions.length != 0 ? (
+          <ul className="submission-history">
+            {submissions.map((jobSubmission) => (
+              <li key={jobSubmission.id}>
+                <Link to={"/applicant/submission/" + jobSubmission.id}>{getJob(jobSubmission.jobId).company} · {getJob(jobSubmission.jobId).position}</Link>
+                <span>{jobSubmission.date} · {jobSubmission.reviewed ? (jobSubmission.decision ? DECISIONS[jobSubmission.decision].icon + " " + DECISIONS[jobSubmission.decision].label : "Reviewed") : "Pending Review"}</span>
+              </li>
+            ))}
+          </ul>
+        ) : <p>Not sent with any applications yet.</p>}
       </>
       </div>
       
@@ -58,16 +76,16 @@ const FullDocumentReviewSidebar = ({
           {highlights.map((highlight, index) => (
             <li
               key={index}
-              className={"fulldocumentreviewsidebar__highlight" + (highlight.sentiment ? " s-" + highlight.sentiment : "")}
+              className={"fulldocumentreviewsidebar__highlight" + (getSentiment(highlight.sentiment) ? " s-" + highlight.sentiment : "")}
               onClick={() => {
                 updateHash(highlight);
               }}
             >
               <div>
                 {/* Highlight comment and text */}
-                {highlight.sentiment && (
+                {getSentiment(highlight.sentiment) && (
                   <span className={"sentiment-tag s-" + highlight.sentiment}>
-                    {SENTIMENTS[highlight.sentiment].icon} {SENTIMENTS[highlight.sentiment].label}
+                    {sentimentTagText(highlight)}
                   </span>
                 )}
                 <strong>{highlight.comment}</strong>

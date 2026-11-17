@@ -50,7 +50,7 @@ const base64ToBlob = (base64: string): Blob => {
 };
 
 // This is more of a jobSubmission review
-const FullDocumentReview = ({currentUser, getJob, getJobSubmission, getDocumentRec, getAllHighlightsForDocumentId, reviewedSubmission} : DocumentReviewProps) => {
+const FullDocumentReview = ({currentUser, jobSubmissionList, getJob, getJobSubmission, getDocumentRec, getAllHighlightsForDocumentId, reviewedSubmission} : DocumentReviewProps) => {
     
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this is the document id in this case
@@ -120,7 +120,7 @@ const FullDocumentReview = ({currentUser, getJob, getJobSubmission, getDocumentR
 
     return (
         <>
-        <h1>Review feedback on document for all submissions</h1>
+        <h1>Document History</h1>
         <div className="App" style={{ display: "flex", height: "100vh" }}>
         <FullDocumentReviewSidebar
             highlights={getAllHighlightsForDocumentId(idRoute)}
@@ -131,6 +131,7 @@ const FullDocumentReview = ({currentUser, getJob, getJobSubmission, getDocumentR
             coverLetterOrResume={coverLetterOrResume}
             idRoute={idRoute}
             reviewedSubmission={reviewedSubmission}
+            jobSubmissionList={jobSubmissionList}
         />
         <div
             style={{

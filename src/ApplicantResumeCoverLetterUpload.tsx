@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
-import { Link } from "react-router";
 import type { User } from "./LoginSignup.tsx";
 import type { addDocumentType, DocumentRec } from "./App.tsx";
 
@@ -63,7 +62,7 @@ const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, addDocumen
                 {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "coverletter").length != 0 ? documentList
                 .filter((document) => document.userId == currentUser?.id)
                 .filter((document) => document.type == "coverletter")
-                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div><Link className="btn-link" to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : <li className="empty">There are no cover letters.</li>}
+                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div></li>) : <li className="empty">There are no cover letters.</li>}
             </ul>
 
             <h2>Resumes</h2>
@@ -71,7 +70,7 @@ const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, addDocumen
                 {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "resume").length != 0 ? documentList
                 .filter((document) => document.userId == currentUser?.id)
                 .filter((document) => document.type == "resume")
-                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div><Link className="btn-link" to={{pathname: "/applicant/document/"+document.id}}>View Combined Feedback</Link></li>) : <li className="empty">There are no resumes.</li>}
+                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div></li>) : <li className="empty">There are no resumes.</li>}
             </ul>
         </div>
     );
