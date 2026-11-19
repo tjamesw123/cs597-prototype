@@ -124,6 +124,10 @@ const applyToJob = (getNextJobSubmissionId: (jobSubmission: JobSubmission[]) => 
   if (resumeId == null && coverLetterId == null) {
     return null;
   }
+  // One application per job per applicant
+  if (jobSubmissionList.some((jobSubmission) => jobSubmission.userId == userId && jobSubmission.jobId == jobId)) {
+    return null;
+  }
   const idV = getNextJobSubmissionId(jobSubmissionList);
   setJobSubmissionList([{ id: idV, userId: userId, jobId: jobId, date: date, resumeId: resumeId, coverLetterId: coverLetterId, reviewed: false, coverLetterCommentedHighlights: [], resumeCommentedHighlights: []}, ...jobSubmissionList]);
   return { id: idV, userId: userId, jobId: jobId, date: date, resumeId: resumeId, coverLetterId: coverLetterId, reviewed: false, coverLetterCommentedHighlights: [], resumeCommentedHighlights: []};
@@ -354,6 +358,10 @@ const addUser = (getNextUserId: (users: User[]) => number, users: User[], setUse
   if (first_name == undefined || last_name == undefined || username == undefined || password == undefined || first_name == "" || last_name == "" || username == "" || password == "") {
     return null;
   }  
+  // Each email can only have one account
+  if (users.some((user) => user.username.trim().toLowerCase() == username.trim().toLowerCase())) {
+    return null;
+  }
   const idV = getNextUserId(users);
   setUsers([{ id: idV, first_name: first_name, last_name: last_name, username: username, password: password, isEmployer: isEmployer }, ...users]);
   return { id: idV, first_name: first_name, last_name: last_name, username: username, password: password, isEmployer: isEmployer };
@@ -457,7 +465,7 @@ const App = () => {
       <Route path="/employer/jobposting/" element={<><EmployerPostJob documentList={documentList} currentUser={currentUser} jobList={jobList} addJob={(company, position, reviewerId) => addJob(getNextJobId, jobList, setJobList, company, position, reviewerId)}/></>} />
       <Route path='/applicant/resumecoverletterupload' element={<><ApplicantResumeCoverLetterUpload currentUser={currentUser} documentList={documentList} addDocument={(fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) => addDocument(getNextDocumentRecId, documentList, setDocumentList, fileName, name, file, type, userId)}/> </>} />
       <Route path='/applicant/apply' element={<><ApplicantApplyToJobs currentUser={currentUser} jobSubmissionList={jobSubmissionList} documentList={documentList} jobList={jobList}/></>} />
-      <Route path='/applicant/apply/:id' element={<><ApplicantApplyToJob currentUser={currentUser} documentList={documentList} getJob={(id) => getJob(jobList, id)} applyToJob={(jobId, date, resumeId, coverLetterId) => applyToJob(getNextJobSubmission, jobSubmissionList, setJobSubmissionList, currentUser?.id == undefined ? -1 : currentUser?.id, jobId, date, resumeId, coverLetterId)}/></>} />
+      <Route path='/applicant/apply/:id' element={<><ApplicantApplyToJob currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} getJob={(id) => getJob(jobList, id)} applyToJob={(jobId, date, resumeId, coverLetterId) => applyToJob(getNextJobSubmission, jobSubmissionList, setJobSubmissionList, currentUser?.id == undefined ? -1 : currentUser?.id, jobId, date, resumeId, coverLetterId)}/></>} />
       <Route path='/applicant/feedback' element={<><ApplicantFeedback currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />
       <Route path='/applicant/submission/:id' element={<>
       <JobSubmissionReview 

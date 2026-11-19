@@ -13,12 +13,13 @@ import { useState } from "react";
 interface ApplicantApplyToJobProps {
     currentUser : User | null;
     documentList : DocumentRec[];
+    jobSubmissionList : JobSubmission[];
     applyToJob : (jobId : number, date: string, resumeId : number | null, coverLetterId : number | null) => JobSubmission | null;
     getJob : (id : number) => Job;
 }
 
 
-const ApplicantApplyToJob = ({currentUser, documentList, applyToJob, getJob} : ApplicantApplyToJobProps) => {
+const ApplicantApplyToJob = ({currentUser, documentList, jobSubmissionList, applyToJob, getJob} : ApplicantApplyToJobProps) => {
     // Need to be on the id route now to work
     let params = useParams();
     const idRoute = params.id !== undefined ? Number(params.id) : 0; // this picks the submission to load which then has the document to load
@@ -27,6 +28,12 @@ const ApplicantApplyToJob = ({currentUser, documentList, applyToJob, getJob} : A
 
     const [selectedCoverLetterId, setSelectedCoverLetterId] = useState<number | null>(null);
     const [selectedResumeId, setSelectedResumeId] = useState<number | null>(null);
+    const [sentId, setSentId] = useState<number | null>(null);
+
+    // Prevent applying twice to the same job
+    const existing = jobSubmissionList.find((jobSubmission) => jobSubmission.userId == currentUser?.id && jobSubmission.jobId == idRoute);
+    const myDocuments = documentList.filter((document) => document.userId == currentUser?.id);
+    const label = (document : DocumentRec) => document.name !== "" ? document.name + " (" + document.fileName + ")" : document.fileName;
 
     return (
         <>
@@ -39,16 +46,26 @@ const ApplicantApplyToJob = ({currentUser, documentList, applyToJob, getJob} : A
             </div>
         </div>
 
+        {existing && sentId == null ? (
+            <div className="form-notice success applied-notice">
+                You already applied to this job on {existing.date}. <Link to={"/applicant/submission/" + existing.id}>View your application →</Link>
+            </div>
+        ) : (
         <form
         className="apply"
         onSubmit={(event) => {
             event.preventDefault();
             setResult("");
-            const user = applyToJob(idRoute, new Intl.DateTimeFormat("en-US").format(new Date()), selectedResumeId, selectedCoverLetterId);
-            if (user) {
+            if (selectedResumeId == null && selectedCoverLetterId == null) {
+                setResult("Choose a resume or a cover letter (or both) before applying.");
+                return;
+            }
+            const submission = applyToJob(idRoute, new Intl.DateTimeFormat("en-US").format(new Date()), selectedResumeId, selectedCoverLetterId);
+            if (submission) {
+                setSentId(submission.id);
                 setResult("Applied!");
             } else {
-                setResult("Failed to apply!");
+                setResult("Something went wrong and your application wasn't sent. Please try again.");
             }
         }}
         >
@@ -56,24 +73,25 @@ const ApplicantApplyToJob = ({currentUser, documentList, applyToJob, getJob} : A
             <label>Resume
                 <select onChange={e => setSelectedResumeId(e.target.value == "null" ? null : Number(e.target.value))}>
                     <option value="null">None</option>
-                    {documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "resume").map((document) => <option value={document.id.toString()}> File Name: {document.fileName}{document.name !== "" ? ", Name: " + document.name : ""}</option>)}
+                    {myDocuments.filter((document) => document.type == "resume").map((document) => <option key={document.id} value={document.id.toString()}>{label(document)}</option>)}
                 </select>
             </label>
 
             <label>Cover Letter
                 <select onChange={e => setSelectedCoverLetterId(e.target.value == "null" ? null : Number(e.target.value))}>
                     <option value="null">None</option>
-                    {documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "coverletter").map((document) => <option value={document.id.toString()}> File Name: {document.fileName}{document.name !== "" ? ", Name: " + document.name : ""}</option>)}
+                    {myDocuments.filter((document) => document.type == "coverletter").map((document) => <option key={document.id} value={document.id.toString()}>{label(document)}</option>)}
                 </select>
             </label>
         </div>
         <div>
-            <input type="submit" value="Apply to Job" />
+            <input type="submit" value={sentId != null ? "Application sent ✓" : "Apply to Job"} disabled={sentId != null} />
         </div>
         {result && <p className={"form-notice " + (result == "Applied!" ? "success" : "error")}>
-            {result == "Applied!" ? <>Application sent! <Link to="/applicant/feedback">Track it in Feedback →</Link></> : "Couldn't apply. Choose a resume or cover letter first."}
+            {result == "Applied!" ? <>Application sent! <Link to="/applicant/feedback">Track it in Feedback →</Link></> : result}
         </p>}
         </form>
+        )}
         </>
     );
 };
