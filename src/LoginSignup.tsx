@@ -76,7 +76,7 @@ const ApplicantHome = ({ currentUser, jobList, jobSubmissionList, documentList }
     const findJob = (id: number) => jobList.find((job) => job.id == id);
     const mySubmissions = jobSubmissionList.filter((jobSubmission) => jobSubmission.userId == currentUser.id);
     const reviewed = mySubmissions.filter((jobSubmission) => jobSubmission.reviewed);
-    const myDocuments = documentList.filter((document) => document.userId == currentUser.id);
+    const myDocuments = documentList.filter((document) => document.userId == currentUser.id && !document.removed);
     return (
         <>
         <p className="home-subtitle">Get real feedback on your resume from the employers you apply to.</p>

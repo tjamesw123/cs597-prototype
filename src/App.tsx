@@ -36,6 +36,8 @@ export type DocumentRec = {
   type: "coverletter" | "resume";
   pdfData : string | null;
   pdfURL : string | null;
+  // Removed documents are hidden from the applicant but kept for applications already sent
+  removed? : boolean;
 };
 
 export type Job = {
@@ -83,6 +85,11 @@ const getNextJobSubmission = (jobSubmissions : JobSubmission[]) => jobSubmission
 export type addDocumentType = {
     (fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) : Promise<DocumentRec | null>
 }
+// Hide or bring back a document (applications that already used it keep their copy)
+const setDocumentRemoved = (setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>, documentList: DocumentRec[], id : number, removed : boolean) => {
+  setDocumentList(documentList.map((document) => document.id == id ? { ...document, removed: removed } : document));
+};
+
 const addDocument = async (getNextDocumentRecId: (documents: DocumentRec[]) => number, documentList: DocumentRec[], setDocumentList: React.Dispatch<React.SetStateAction<DocumentRec[]>>, fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) : Promise<DocumentRec | null> => {
   if (name == undefined) { // Empty names can go through they just won't be rendered
     return null;
@@ -463,7 +470,7 @@ const App = () => {
       }/>
       <Route path="/employer/applications/" element={<><EmployerApplicationReview currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />
       <Route path="/employer/jobposting/" element={<><EmployerPostJob documentList={documentList} currentUser={currentUser} jobList={jobList} addJob={(company, position, reviewerId) => addJob(getNextJobId, jobList, setJobList, company, position, reviewerId)}/></>} />
-      <Route path='/applicant/resumecoverletterupload' element={<><ApplicantResumeCoverLetterUpload currentUser={currentUser} documentList={documentList} addDocument={(fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) => addDocument(getNextDocumentRecId, documentList, setDocumentList, fileName, name, file, type, userId)}/> </>} />
+      <Route path='/applicant/resumecoverletterupload' element={<><ApplicantResumeCoverLetterUpload currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} setDocumentRemoved={(id, removed) => setDocumentRemoved(setDocumentList, documentList, id, removed)} addDocument={(fileName : string, name: string, file: File, type: "coverletter" | "resume", userId : number) => addDocument(getNextDocumentRecId, documentList, setDocumentList, fileName, name, file, type, userId)}/> </>} />
       <Route path='/applicant/apply' element={<><ApplicantApplyToJobs currentUser={currentUser} jobSubmissionList={jobSubmissionList} documentList={documentList} jobList={jobList}/></>} />
       <Route path='/applicant/apply/:id' element={<><ApplicantApplyToJob currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} getJob={(id) => getJob(jobList, id)} applyToJob={(jobId, date, resumeId, coverLetterId) => applyToJob(getNextJobSubmission, jobSubmissionList, setJobSubmissionList, currentUser?.id == undefined ? -1 : currentUser?.id, jobId, date, resumeId, coverLetterId)}/></>} />
       <Route path='/applicant/feedback' element={<><ApplicantFeedback currentUser={currentUser} documentList={documentList} jobSubmissionList={jobSubmissionList} jobList={jobList} getJob={(id) => getJob(jobList, id)}/></>} />

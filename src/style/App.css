@@ -249,3 +249,8 @@ a.notice:hover { border-color: currentColor; }
 
 /* Applicant initials, used on the employer's application list and review sidebar */
 .applicant-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #e8edfd; color: var(--blue); font-size: 14px; font-weight: 700; }
+
+/* Remove an uploaded document (undo bar styles live in Sidebar.css) */
+button.btn-link { font: inherit; font-weight: 600; cursor: pointer; }
+.btn-link.remove-doc { color: var(--muted); }
+.btn-link.remove-doc:hover { border-color: #e2a39d; background: #fdeeee; color: #a3261d; }

@@ -1,16 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./style/App.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
 import type { User } from "./LoginSignup.tsx";
-import type { addDocumentType, DocumentRec } from "./App.tsx";
+import type { addDocumentType, DocumentRec, JobSubmission } from "./App.tsx";
 
 interface ApplicantResumeCoverLetterUploadProps {
     currentUser : User | null;
     documentList : DocumentRec[];
+    jobSubmissionList : JobSubmission[];
+    setDocumentRemoved : (id : number, removed : boolean) => void;
     addDocument : addDocumentType;
 }
 
-const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, addDocument} : ApplicantResumeCoverLetterUploadProps) => {
+const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, jobSubmissionList, setDocumentRemoved, addDocument} : ApplicantResumeCoverLetterUploadProps) => {
+    // Removing is instant with an Undo, instead of an "Are you sure?" pop-up
+    const [undo, setUndo] = useState<{ id : number; message : string } | null>(null);
+    useEffect(() => {
+        if (undo == null) {
+            return;
+        }
+        const timer = window.setTimeout(() => setUndo(null), 8000);
+        return () => window.clearTimeout(timer);
+    }, [undo]);
+
+    const myDocuments = documentList.filter((document) => document.userId == currentUser?.id && !document.removed);
+    const timesUsed = (document : DocumentRec) => jobSubmissionList.filter((jobSubmission) =>
+        document.type == "resume" ? jobSubmission.resumeId == document.id : jobSubmission.coverLetterId == document.id).length;
+    const title = (document : DocumentRec) => document.name != "" ? document.name : document.fileName;
+
+    const documentRows = (type : "resume" | "coverletter", emptyText : string) => {
+        const documents = myDocuments.filter((document) => document.type == type);
+        return documents.length != 0 ? documents.map((document) => (
+            <li key={document.id}>
+                <div className="item">
+                    <div className="title">{title(document)}</div>
+                    <div className="meta">{document.fileName}{timesUsed(document) > 0 ? " · Sent with " + timesUsed(document) + " application" + (timesUsed(document) == 1 ? "" : "s") : ""}</div>
+                </div>
+                <button type="button" className="btn-link remove-doc" aria-label={"Remove " + title(document)} onClick={() => {
+                    setDocumentRemoved(document.id, true);
+                    const used = timesUsed(document);
+                    setUndo({ id: document.id, message: "Removed \"" + title(document) + "\"." + (used > 0 ? " Employers you sent it to can still see it." : "") });
+                }}>Remove</button>
+            </li>
+        )) : <li className="empty">{emptyText}</li>;
+    };
     const [name, setName] = useState<string>("");
     const [docType, setDocType] = useState<"resume" | "coverletter">("resume");
     const [result, setResult] = useState<string>("");
@@ -59,19 +92,23 @@ const ApplicantResumeCoverLetterUpload = ({currentUser, documentList, addDocumen
 
             <h2>Cover Letters</h2>
             <ul className="card-list">
-                {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "coverletter").length != 0 ? documentList
-                .filter((document) => document.userId == currentUser?.id)
-                .filter((document) => document.type == "coverletter")
-                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div></li>) : <li className="empty">There are no cover letters.</li>}
+                {documentRows("coverletter", "You haven't uploaded a cover letter yet.")}
             </ul>
 
             <h2>Resumes</h2>
             <ul className="card-list">
-                {documentList && documentList.filter((document) => document.userId == currentUser?.id).filter((document) => document.type == "resume").length != 0 ? documentList
-                .filter((document) => document.userId == currentUser?.id)
-                .filter((document) => document.type == "resume")
-                .map((document) => <li key={document.id}><div className="item"><div className="title">{document.name != "" ? document.name : document.fileName}</div><div className="meta">{document.fileName}</div></div></li>) : <li className="empty">There are no resumes.</li>}
+                {documentRows("resume", "You haven't uploaded a resume yet.")}
             </ul>
+
+            {undo != null ? (
+                <div className="undo-bar" role="status">
+                    <span>{undo.message}</span>
+                    <button type="button" onClick={() => {
+                        setDocumentRemoved(undo.id, false);
+                        setUndo(null);
+                    }}>Undo</button>
+                </div>
+            ) : ""}
         </div>
     );
 };

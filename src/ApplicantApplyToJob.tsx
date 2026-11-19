@@ -32,7 +32,7 @@ const ApplicantApplyToJob = ({currentUser, documentList, jobSubmissionList, appl
 
     // Prevent applying twice to the same job
     const existing = jobSubmissionList.find((jobSubmission) => jobSubmission.userId == currentUser?.id && jobSubmission.jobId == idRoute);
-    const myDocuments = documentList.filter((document) => document.userId == currentUser?.id);
+    const myDocuments = documentList.filter((document) => document.userId == currentUser?.id && !document.removed);
     const label = (document : DocumentRec) => document.name !== "" ? document.name + " (" + document.fileName + ")" : document.fileName;
 
     return (

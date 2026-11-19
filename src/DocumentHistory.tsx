@@ -11,7 +11,7 @@ interface DocumentHistoryProps {
 
 // Per document history: every resume and cover letter with how many applications used it
 const DocumentHistory = ({currentUser, documentList, jobSubmissionList} : DocumentHistoryProps) => {
-    const myDocuments = documentList.filter((document) => document.userId == currentUser?.id);
+    const myDocuments = documentList.filter((document) => document.userId == currentUser?.id && !document.removed);
     const timesUsed = (document : DocumentRec) => jobSubmissionList.filter((jobSubmission) =>
         document.type == "resume" ? jobSubmission.resumeId == document.id : jobSubmission.coverLetterId == document.id).length;
 
