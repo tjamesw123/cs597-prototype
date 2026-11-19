@@ -11,6 +11,7 @@ import {
   PdfLoader
 } from "react-pdf-highlighter-extended";
 import "./style/App.css";
+import "./style/DocumentTabs.css";
 import { testHighlights as _testHighlights } from "./test-highlights.ts";
 import { DECISIONS, type CommentedHighlight, type Decision } from "./types.ts";
 import FeedbackQuestions from "./FeedbackQuestions.tsx";
@@ -158,9 +159,29 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
             💬 Questions about this feedback{unanswered > 0 ? " · " + unanswered + " waiting for a reply" : questionCount > 0 ? " (" + questionCount + ")" : ""}
         </a>
         : ""}
-        {isCoverLetterPresentInJobSubmissionId(idRoute) && isResumePresentInJobSubmissionId(idRoute) ? 
-        <button className="sidebar__toggle" onClick={() => coverLetterOrResume == "resume" ? setCoverLetterOrResume("coverletter") : setCoverLetterOrResume("resume")}>Switch to {coverLetterOrResume == "resume" ? "Cover Letter" : "Resume"}</button>
-        : ""}
+        {/* Tabs sit right above the document they switch, and show which one is open */}
+        <div className="doc-tabs" role="tablist" aria-label="Documents in this application">
+            {(["resume", "coverletter"] as const).filter((type) => type == "resume" ? isResumePresentInJobSubmissionId(idRoute) : isCoverLetterPresentInJobSubmissionId(idRoute)).map((type) => {
+                const submission = getJobSubmission(idRoute);
+                const documentId = type == "resume" ? submission.resumeId : submission.coverLetterId;
+                const documentRec = documentId != null ? getDocumentRec(documentId) : undefined;
+                const count = getHighlightByJobSubmissionId(idRoute, type).length;
+                const showCount = currentUser?.isEmployer || submission.reviewed;
+                return (
+                    <button
+                        key={type}
+                        type="button"
+                        role="tab"
+                        aria-selected={coverLetterOrResume == type}
+                        className={"doc-tab" + (coverLetterOrResume == type ? " active" : "")}
+                        onClick={() => setCoverLetterOrResume(type)}
+                    >
+                        <span className="doc-tab-label">{type == "resume" ? "Resume" : "Cover letter"}{showCount ? <span className="doc-tab-count">{count}</span> : ""}</span>
+                        {documentRec ? <span className="doc-tab-file">{documentRec.name != "" ? documentRec.name : documentRec.fileName}</span> : ""}
+                    </button>
+                );
+            })}
+        </div>
         <div className="App" style={{ display: "flex", height: "100vh" }}>
         <Sidebar
             highlights={visibleHighlights}
