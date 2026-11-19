@@ -17,6 +17,7 @@ import EmployerPostJob from "./EmployerPostJob.tsx";
 import FullDocumentReview from "./FullDocumentReview.tsx";
 import DemoTools from "./DemoTools.tsx";
 import DocumentHistory from "./DocumentHistory.tsx";
+import BackButton from "./BackButton.tsx";
 
 
 
@@ -433,6 +434,7 @@ const App = () => {
         </div>
     </div>
   <main className="app-page">
+    <BackButton />
     <Routes>
       <Route path='/' element={<><h1>{currentUser ? `Welcome back, ${currentUser.first_name}! 👋` : "Welcome to EmployerMD!"}</h1> 
       <LoginSignUpPage 

@@ -1,0 +1,24 @@
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 12px;
+    padding: 6px 14px 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.back-button:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+}
