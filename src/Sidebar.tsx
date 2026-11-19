@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
@@ -9,6 +9,9 @@ import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
   resetHighlights: () => void;
+  // Every comment on the open document (used so delete can be undone)
+  allHighlights?: Array<CommentedHighlight>;
+  setAllHighlights?: (highlights: Array<CommentedHighlight>) => void;
   currentUser: User | null, // make this an id as then I can reference the user directly through a function
   // documentList: DocumentRec[],
   // jobSubmissionList: JobSubmission[],
@@ -36,6 +39,8 @@ const Sidebar = ({
   // toggleDocument,
   currentUser,
   resetHighlights,
+  allHighlights,
+  setAllHighlights,
   getJobSubmission,
   getJob,
   getDocumentRec,
@@ -45,6 +50,40 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [decisionStep, setDecisionStep] = useState<"closed" | "choose" | "sent">("closed");
   const [decision, setDecision] = useState<Decision | null>(null);
+  // Deleting is instant and can be undone (better than an "Are you sure?" pop-up)
+  const [undo, setUndo] = useState<{ message: string; snapshot: CommentedHighlight[] } | null>(null);
+  const canEdit = currentUser?.isEmployer && allHighlights != undefined && setAllHighlights != undefined;
+
+  useEffect(() => {
+    if (undo == null) {
+      return;
+    }
+    const timer = window.setTimeout(() => setUndo(null), 8000);
+    return () => window.clearTimeout(timer);
+  }, [undo]);
+
+  // An undo only applies to the document it came from
+  useEffect(() => {
+    setUndo(null);
+  }, [coverLetterOrResume, idRoute]);
+
+  const removeComment = (highlight: CommentedHighlight) => {
+    if (!canEdit) {
+      return;
+    }
+    setUndo({ message: "Comment deleted", snapshot: allHighlights! });
+    setAllHighlights!(allHighlights!.filter((item) => item.id != highlight.id));
+  };
+
+  const clearAllComments = () => {
+    if (!canEdit) {
+      resetHighlights();
+      return;
+    }
+    const count = allHighlights!.length;
+    setUndo({ message: count + (count == 1 ? " comment" : " comments") + " cleared from this " + (coverLetterOrResume == "coverletter" ? "cover letter" : "resume"), snapshot: allHighlights! });
+    resetHighlights();
+  };
   const submission = getJobSubmission(idRoute);
   // Count comments on both the resume and the cover letter
   const allComments = [...submission.resumeCommentedHighlights, ...submission.coverLetterCommentedHighlights];
@@ -163,9 +202,24 @@ const Sidebar = ({
                 )}
               </div>
 
-              {/* Highlight page number */}
-              <div className="highlight__location">
-                Page {highlight.position.boundingRect.pageNumber}
+              {/* Highlight page number, and delete for the employer */}
+              <div className="highlight__footer">
+                <span className="highlight__location">Page {highlight.position.boundingRect.pageNumber}</span>
+                {canEdit ? (
+                  <button
+                    type="button"
+                    className="comment-delete"
+                    aria-label="Delete this comment"
+                    title="Delete this comment"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      removeComment(highlight);
+                    }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3" /></svg>
+                    Delete
+                  </button>
+                ) : ""}
               </div>
             </li>
           ))}
@@ -230,13 +284,21 @@ const Sidebar = ({
 
       {currentUser?.isEmployer && highlights && highlights.length > 0 && (
         <div style={{ padding: "0.5rem" }}>
-          <button onClick={resetHighlights} className="sidebar__reset">
-            Reset highlights and all feedback
+          <button onClick={clearAllComments} className="sidebar__reset">
+            Clear all comments on this {coverLetterOrResume == "coverletter" ? "cover letter" : "resume"}
           </button>
         </div>
       )}
 
-      
+      {undo != null ? (
+        <div className="undo-bar" role="status">
+          <span>{undo.message}</span>
+          <button type="button" onClick={() => {
+            setAllHighlights!(undo.snapshot);
+            setUndo(null);
+          }}>Undo</button>
+        </div>
+      ) : ""}
     </div>
   );
 };

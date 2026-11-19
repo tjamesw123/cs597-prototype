@@ -165,6 +165,8 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
         <Sidebar
             highlights={visibleHighlights}
             resetHighlights={() => resetHighlights((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight) )}
+            allHighlights={getHighlightByJobSubmissionId(idRoute, coverLetterOrResume)}
+            setAllHighlights={(highlights) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlights)}
             currentUser={currentUser}
             getJobSubmission={getJobSubmission}
             getJob={getJob}
