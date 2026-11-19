@@ -436,13 +436,18 @@ const App = () => {
   <main className="app-page">
     <BackButton />
     <Routes>
-      <Route path='/' element={<><h1>{currentUser ? `Welcome back, ${currentUser.first_name}! 👋` : "Welcome to EmployerMD!"}</h1> 
+      <Route path='/' element={<>{currentUser ? <h1>{`Welcome back, ${currentUser.first_name}! 👋`}</h1> : ""} 
       <LoginSignUpPage 
         currentUser={currentUser}
         jobList={jobList}
         jobSubmissionList={jobSubmissionList}
         documentList={documentList}
         loginUser={(username: string, password: string) => loginUser(setCurrentUser, users, username, password)} 
+        resetDemoAndLogin={(username: string) => {
+          // Older saved data may not have the demo accounts, so bring back the sample data and sign in
+          restoreSampleData(setJobList, setJobSubmissionList, setDocumentList, setUsers, setCurrentUser);
+          setCurrentUser(SAMPLE_USERS.find((user) => user.username == username) ?? null);
+        }}
         addUser={(first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) => addUser(getNextUserId, users, setUsers, first_name, last_name, username, password, isEmployer)}  
       />
       {currentUser ? <DemoTools clearSampleData={() => clearSampleData(setJobList, setJobSubmissionList, setDocumentList)} restoreSampleData={() => restoreSampleData(setJobList, setJobSubmissionList, setDocumentList, setUsers, setCurrentUser)}/> : ""}
