@@ -27,7 +27,7 @@ const ApplicantApplyToJobs = ({currentUser, jobList, jobSubmissionList} : Applic
                 {matches.map((job) => {
                     const submission = appliedTo(job.id);
                     return <li key={job.id}><div className="item"><div className="title">{job.position}</div><div className="meta">{job.company}{submission ? " · Applied " + submission.date : ""}</div></div>
-                    {submission ? <><span className="badge applied">✓ Applied</span><Link className="btn-link" to={"/applicant/submission/" + submission.id}>View</Link></> : <Link className="btn-link" to={{pathname: "/applicant/apply/"+job.id}}>Apply</Link>}</li>;
+                    {submission ? <><span className="badge applied">✓ Applied</span>{submission.reviewed ? <Link className="btn-link" to={"/applicant/submission/" + submission.id}>View Feedback</Link> : ""}</> : <Link className="btn-link" to={{pathname: "/applicant/apply/"+job.id}}>Apply</Link>}</li>;
                 })}
             </ul>
         </div>

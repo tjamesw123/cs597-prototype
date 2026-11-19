@@ -48,7 +48,7 @@ const ApplicantApplyToJob = ({currentUser, documentList, jobSubmissionList, appl
 
         {existing && sentId == null ? (
             <div className="form-notice success applied-notice">
-                You already applied to this job on {existing.date}. <Link to={"/applicant/submission/" + existing.id}>View your application →</Link>
+                You already applied to this job on {existing.date}. {existing.reviewed ? <Link to={"/applicant/submission/" + existing.id}>View the feedback →</Link> : <>It's waiting for the employer's review. <Link to="/applicant/feedback">Track it in Feedback →</Link></>}
             </div>
         ) : (
         <form

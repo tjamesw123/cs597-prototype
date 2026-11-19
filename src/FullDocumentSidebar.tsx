@@ -60,7 +60,7 @@ const FullDocumentReviewSidebar = ({
           <ul className="submission-history">
             {submissions.map((jobSubmission) => (
               <li key={jobSubmission.id}>
-                <Link to={"/applicant/submission/" + jobSubmission.id}>{getJob(jobSubmission.jobId).company} · {getJob(jobSubmission.jobId).position}</Link>
+                {jobSubmission.reviewed ? <Link to={"/applicant/submission/" + jobSubmission.id}>{getJob(jobSubmission.jobId).company} · {getJob(jobSubmission.jobId).position}</Link> : <b>{getJob(jobSubmission.jobId).company} · {getJob(jobSubmission.jobId).position}</b>}
                 <span>{jobSubmission.date} · {jobSubmission.reviewed ? (jobSubmission.decision ? DECISIONS[jobSubmission.decision].icon + " " + DECISIONS[jobSubmission.decision].label : "Reviewed") : "Pending Review"}</span>
               </li>
             ))}
