@@ -245,3 +245,10 @@ a.notice:hover { border-color: currentColor; }
 .Tip__card input[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
 .sidebar__highlight.s-positive, .fulldocumentreviewsidebar__highlight.s-positive { border-left-color: var(--good); }
 .sidebar__highlight.s-negative, .fulldocumentreviewsidebar__highlight.s-negative { border-left-color: var(--bad); }
+
+/* Quick sign in buttons on the login form */
+.quick-login { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.quick-login > span { display: block; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.quick-login-buttons { display: flex; gap: 8px; }
+.quick-login-buttons .btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 10px; cursor: pointer; }
+.quick-login-buttons .btn small { color: var(--muted); font-weight: 500; font-size: 12px; }

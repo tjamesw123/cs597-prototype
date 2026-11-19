@@ -89,6 +89,21 @@ const LoginForm = ({ currentUser, loginUser }: UserLoginProps) => {
             <input type="submit" value="Log in" />
         </div>
         {result && <p className="form-result">{result}</p>}
+        <div className="quick-login">
+            <span>Quick sign in for the demo</span>
+            <div className="quick-login-buttons">
+                <button type="button" className="btn secondary" onClick={() => {
+                    if (!loginUser("dana@example.com", "1234")) {
+                        setResult("Dana's account isn't available. Use Restore sample data to bring it back.");
+                    }
+                }}>Dana <small>Employer</small></button>
+                <button type="button" className="btn secondary" onClick={() => {
+                    if (!loginUser("maya@example.com", "1234")) {
+                        setResult("Maya's account isn't available. Use Restore sample data to bring it back.");
+                    }
+                }}>Maya <small>Applicant</small></button>
+            </div>
+        </div>
         </form>
         </>
     );
