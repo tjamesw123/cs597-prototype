@@ -31,33 +31,17 @@
     transform: scale(1.05);
 }
 
-.HighlightButton {
-    background: none;
-    /* Remove background */
-    color: var(--ink);
-    border: none;
-    /* Remove border */
-    cursor: pointer;
-    font-size: 15px;
-    padding: 5px 12px;
-    border-radius: var(--radius);
-    transition: color 0.3s, transform 0.2s;
+.ZoomLabel {
+    color: var(--muted);
+    font-size: 14px;
+    margin-right: 8px;
 }
 
-.HighlightButton:hover {
-    color: var(--blue);
-    transform: scale(1.05);
-}
-
-.HighlightButton.active {
-    color: #fff;
-    background: var(--blue);
-}
-
-.HighlightControls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.ZoomValue {
+    min-width: 44px;
+    margin-right: 8px;
+    text-align: center;
+    font-size: 14px;
 }
 
 .HighlightHint {

@@ -106,7 +106,6 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
     const [pdfScaleValue, setPdfScaleValue] = useState<number | undefined>(
         undefined,
     );
-    const [highlightPen, setHighlightPen] = useState<boolean>(false);
 
     // Refs for PdfHighlighter utilities
     const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
@@ -187,7 +186,7 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
             flexGrow: 1,
             }}
         >
-            <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} toggleHighlightPen={() => setHighlightPen(!highlightPen)} currentUser={currentUser} />
+            <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} currentUser={currentUser} />
             <PdfLoader document={pdfLink} workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs">
             {(pdfDocument) => (
                 <PdfHighlighter
@@ -198,9 +197,8 @@ const JobSubmissionReview = ({currentUser, getJob, getJobSubmission, getDocument
                         highlighterUtilsRef.current = _pdfHighlighterUtils;
                     }}
                     pdfScaleValue={pdfScaleValue}
-                    textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
-                    onSelection={currentUser?.isEmployer ? highlightPen ? (selection) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), selection.makeGhostHighlight(), "") : undefined : undefined}
-                    selectionTip={currentUser?.isEmployer ? highlightPen ? undefined : <ExpandableTip addHighlight={(highlight, comment, sentiment, reason) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment, reason)} /> : undefined}
+                    onSelection={undefined}
+                    selectionTip={currentUser?.isEmployer ? <ExpandableTip addHighlight={(highlight, comment, sentiment, reason) => addHighlight((highlight) => setHighlightByJobSubmissionId(idRoute, coverLetterOrResume, highlight), getHighlightByJobSubmissionId(idRoute, coverLetterOrResume), highlight, comment, sentiment, reason)} /> : undefined}
                     highlights={visibleHighlights}
                     style={{
                         height: "calc(100% - 41px)",

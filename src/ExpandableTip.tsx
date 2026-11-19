@@ -38,7 +38,7 @@ const ExpandableTip = ({ addHighlight }: ExpandableTipProps) => {
             selectionRef.current!.makeGhostHighlight();
           }}
         >
-          Add highlight
+          Add comment
         </button>
       ) : (
         <CommentForm

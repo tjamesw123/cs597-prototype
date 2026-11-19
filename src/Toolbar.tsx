@@ -5,13 +5,11 @@ import type { User } from "./LoginSignup";
 
 interface ToolbarProps {
   setPdfScaleValue: (value: number) => void;
-  toggleHighlightPen: () => void;
   currentUser: User | null;
 }
 
-const Toolbar = ({ setPdfScaleValue, toggleHighlightPen, currentUser}: ToolbarProps) => {
+const Toolbar = ({ setPdfScaleValue, currentUser}: ToolbarProps) => {
   const [zoom, setZoom] = useState<number | null>(null);
-  const [isHighlightPen, setIsHighlightPen] = useState<boolean>(false);
 
   const zoomIn = () => {
     if (zoom) {
@@ -40,18 +38,13 @@ const Toolbar = ({ setPdfScaleValue, toggleHighlightPen, currentUser}: ToolbarPr
   return (
     <div className="Toolbar">
       <div className="ZoomControls">
-        <button title="Zoom in" onClick={zoomIn}>+</button>
-        <button title="Zoom out" onClick={zoomOut}>-</button>
-        {zoom ? `${(zoom * 100).toFixed(0)}%` : "Auto"}
+        <span className="ZoomLabel">Zoom</span>
+        <button title="Zoom out" aria-label="Zoom out" onClick={zoomOut}>−</button>
+        <span className="ZoomValue">{zoom ? `${(zoom * 100).toFixed(0)}%` : "Auto"}</span>
+        <button title="Zoom in" aria-label="Zoom in" onClick={zoomIn}>+</button>
       </div>
       {currentUser?.isEmployer ? 
-      <div className="HighlightControls">
-        {isHighlightPen ? <span className="HighlightHint">Selecting text adds a quick highlight without a comment</span> : ""}
-        <button title="Highlight" className={`HighlightButton ${isHighlightPen ? 'active' : ''}`} onClick={() => {
-          toggleHighlightPen();
-          setIsHighlightPen(!isHighlightPen);
-        }}>🖍 Highlighter: {isHighlightPen ? "On" : "Off"}</button>
-      </div>
+      <span className="HighlightHint">Select any text on the document to add a comment</span>
       : ""}
     </div>
   );

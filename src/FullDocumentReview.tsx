@@ -89,7 +89,6 @@ const FullDocumentReview = ({currentUser, jobSubmissionList, getJob, getJobSubmi
     const [pdfScaleValue, setPdfScaleValue] = useState<number | undefined>(
         undefined,
     );
-    const [highlightPen, setHighlightPen] = useState<boolean>(false);
 
     // Refs for PdfHighlighter utilities
     const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
@@ -142,7 +141,7 @@ const FullDocumentReview = ({currentUser, jobSubmissionList, getJob, getJobSubmi
             flexGrow: 1,
             }}
         >
-            <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} toggleHighlightPen={() => setHighlightPen(!highlightPen)} currentUser={currentUser} />
+            <Toolbar setPdfScaleValue={(value) => setPdfScaleValue(value)} currentUser={currentUser} />
             <PdfLoader document={pdfLink} workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs">
             {(pdfDocument) => (
                 <PdfHighlighter
@@ -153,7 +152,6 @@ const FullDocumentReview = ({currentUser, jobSubmissionList, getJob, getJobSubmi
                         highlighterUtilsRef.current = _pdfHighlighterUtils;
                     }}
                     pdfScaleValue={pdfScaleValue}
-                    textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
                     onSelection={undefined}
                     selectionTip={undefined}
                     highlights={getAllHighlightsForDocumentId(idRoute)}
