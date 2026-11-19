@@ -157,8 +157,8 @@ blockquote:after {
 .decision-option:hover { background: var(--bg); }
 .decision-option span { color: var(--muted); font-size: 14px; font-weight: 400; }
 .decision-option.active.d-strong { border-color: var(--good); background: var(--good-soft); }
-.decision-option.active.d-consider { border-color: #f0961e; background: var(--warn-soft); }
-.decision-option.active.d-notfit { border-color: #c93c3c; background: #fde8e8; }
+.decision-option.active.d-consider { border-color: var(--neutral); background: var(--neutral-soft); }
+.decision-option.active.d-notfit { border-color: var(--bad); background: var(--bad-soft); }
 .decision-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .decision-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
 .decision-actions .decision-cancel { background: var(--card); color: var(--ink); border: 1px solid #cfd6e4; }

@@ -4,9 +4,9 @@ export type Sentiment = "positive" | "negative";
 
 // Feedback is positive or negative with a predefined reason (Assignment 4, Task 4)
 export const SENTIMENTS: Record<Sentiment, { label: string; icon: string; color: string; reasons: string[] }> = {
-  positive: { label: "Positive", icon: "👍", color: "rgba(26, 138, 85, 0.35)",
+  positive: { label: "Positive", icon: "👍", color: "rgba(0, 114, 178, 0.30)",
     reasons: ["Strong impact", "Relevant skill", "Clear and specific", "Good formatting"] },
-  negative: { label: "Negative", icon: "👎", color: "rgba(220, 60, 60, 0.35)",
+  negative: { label: "Negative", icon: "👎", color: "rgba(230, 120, 0, 0.38)",
     reasons: ["Too vague", "Missing measurable results", "Not relevant to the role", "Formatting issue", "Typo or grammar"] },
 };
 
@@ -22,11 +22,11 @@ export const sentimentTagText = (highlight: { sentiment?: string; reason?: strin
 export type Decision = "strong" | "consider" | "notfit";
 
 export const DECISIONS: Record<Decision, { label: string; icon: string; text: string; next: string }> = {
-  strong: { label: "Strongly Consider", icon: "🟢", text: "We'd like to move forward with this applicant.",
+  strong: { label: "Strongly Consider", icon: "⭐", text: "We'd like to move forward with this applicant.",
     next: "The employer wants to move forward. Keep an eye out for them reaching out about next steps." },
-  consider: { label: "Consider", icon: "🟡", text: "Promising, but some areas need work.",
+  consider: { label: "Consider", icon: "🔍", text: "Promising, but some areas need work.",
     next: "You're on the right track. Look at the 👎 negative comments and update your documents before applying again." },
-  notfit: { label: "Not a Fit", icon: "🔴", text: "Not the right match for this role.",
+  notfit: { label: "Not a Fit", icon: "✖️", text: "Not the right match for this role.",
     next: "Not a match this time. Use the comments to improve your documents for your next application." },
 };
 
