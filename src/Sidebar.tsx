@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
 import { DECISIONS, SENTIMENTS, getSentiment, sentimentTagText, type CommentedHighlight, type Decision, type Sentiment } from "./types.ts";
-import type { User } from "./LoginSignup.tsx";
+import { readUsers, type User } from "./LoginSignup.tsx";
 import type { DocumentRec, JobSubmission, Job } from "./App.tsx";
 
 interface SidebarProps {
@@ -54,27 +54,27 @@ const Sidebar = ({
   if (reviewing == null) {
     reviewing = 0;
   } 
-  const submissionInfo = <>
-  <p>
-    Reviewing {coverLetterOrResume == "coverletter" ? "Cover Letter" : "Resume"}: 
-  </p>
-  <p>
-    <b>File Name</b>: {getDocumentRec(reviewing).fileName}
-  </p>
-  <p>
-    {getDocumentRec(reviewing).name != "" ? <><b>Name</b>: {getDocumentRec(reviewing).name}</> : ""}
-  </p>
-  <p>
-    <b>Company</b>: {getJob(getJobSubmission(idRoute).jobId).company}
-  </p>
-  <p>
-    <b>Position</b>: {getJob(getJobSubmission(idRoute).jobId).position}
-  </p>
-  <p>
-    <b>Date</b>: {getJobSubmission(idRoute).date}
-  </p>
-  <br></br>
-  </>
+  const users = readUsers();
+  const applicant = users.find((user) => user.id == submission.userId);
+  const job = getJob(submission.jobId);
+  const documentRec = getDocumentRec(reviewing);
+  const submissionInfo = <div className="submission-info">
+    {currentUser?.isEmployer ? (
+      <div className="si-applicant">
+        <span className="applicant-avatar" aria-hidden="true">{applicant ? (applicant.first_name.charAt(0) + applicant.last_name.charAt(0)).toUpperCase() : "?"}</span>
+        <div>
+          <b>{applicant ? applicant.first_name + " " + applicant.last_name : "Unknown applicant"}</b>
+          {applicant ? <small>{applicant.username}</small> : ""}
+        </div>
+      </div>
+    ) : ""}
+    <div className="si-job">{job.position}</div>
+    <div className="si-meta">{job.company} · Applied {submission.date}</div>
+    <div className="si-doc">
+      <span>{coverLetterOrResume == "coverletter" ? "Cover letter" : "Resume"}</span>
+      {documentRec.name != "" ? documentRec.name : documentRec.fileName}
+    </div>
+  </div>
   return (
     <div className="sidebar" style={{ width: "25vw", maxWidth: "500px" }}>
        

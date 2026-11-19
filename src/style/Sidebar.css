@@ -174,3 +174,13 @@ blockquote:after {
 .submission-history li { display: flex; flex-direction: column; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
 .submission-history a { font-weight: 600; font-size: 14px; text-decoration: none; overflow-wrap: anywhere; }
 .submission-history span { color: var(--muted); font-size: 13px; }
+
+/* Who and what is being reviewed */
+.submission-info { margin-bottom: 20px; }
+.si-applicant { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.si-applicant b { display: block; font-size: 17px; color: var(--ink); }
+.si-applicant small { display: block; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.si-job { font-size: 15px; font-weight: 700; color: var(--ink); }
+.si-meta { margin-top: 2px; font-size: 14px; color: var(--muted); }
+.si-doc { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #f4f6fb; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; }
+.si-doc span { display: block; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }

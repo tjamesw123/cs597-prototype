@@ -13,6 +13,16 @@ export type User = {
     isEmployer: boolean
 }
 
+// Read the saved accounts without writing anything back (used to show applicant names)
+export const readUsers = () : User[] => {
+    try {
+        const saved = JSON.parse(window.localStorage.getItem("users") ?? "[]");
+        return Array.isArray(saved) ? saved : [];
+    } catch {
+        return [];
+    }
+};
+
 export type addUserType = {
     (first_name: string, last_name: string, username: string, password: string, isEmployer: boolean) : User | null
 }

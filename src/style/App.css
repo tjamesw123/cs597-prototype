@@ -246,3 +246,6 @@ a.notice:hover { border-color: currentColor; }
 .Tip__card input[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
 .sidebar__highlight.s-positive, .fulldocumentreviewsidebar__highlight.s-positive { border-left-color: var(--good); }
 .sidebar__highlight.s-negative, .fulldocumentreviewsidebar__highlight.s-negative { border-left-color: var(--bad); }
+
+/* Applicant initials, used on the employer's application list and review sidebar */
+.applicant-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #e8edfd; color: var(--blue); font-size: 14px; font-weight: 700; }
