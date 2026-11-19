@@ -1,7 +1,7 @@
-import { useEffect, useState} from "react";
 import { Link } from "react-router";
 import type { DocumentRec, Job, JobSubmission } from "./App";
 import { DECISIONS } from "./types.ts";
+import AuthPage from "./AuthPage.tsx";
 
 
 export type User = {
@@ -31,163 +31,6 @@ interface UserSignUpLoginProps {
     resetDemoAndLogin: (username: string) => void;
 }
 
-interface UserSignUpProps {
-    currentUser: User | null;
-  addUser: addUserType; 
-  onSignedUp?: (email: string) => void;
-}
-
-interface UserLoginProps {
-    currentUser: User | null;
-  loginUser: loginUserType;
-  resetDemoAndLogin: (username: string) => void;
-  notice?: string;
-  defaultEmail?: string;
-}
-
-const LoginForm = ({ currentUser, loginUser, resetDemoAndLogin, notice, defaultEmail }: UserLoginProps) => {
-    const quickLogin = (name : string, email : string) => {
-        if (!loginUser(email, "1234")) {
-            if (window.confirm(name + "'s demo account isn't in this browser's saved data. Reset the demo data and sign in as " + name + "?")) {
-                resetDemoAndLogin(email);
-            }
-        }
-    };
-    const [username, setUsername] = useState<string>(defaultEmail ?? "");
-    const [password, setPassword] = useState<string>("");
-    const [result, setResult] = useState<string>("");
-    useEffect(() => {
-        if (currentUser == null) {
-            setResult("");
-        }
-    }, [currentUser]);
-    // function handleSubmit(e) {
-    //     // Prevent the browser from reloading the page
-    //     e.preventDefault();
-    //     const form = e.target;
-    //     const formData = new FormData(form);
-    //     const query = formData.get('query');
-    //     alert(`You searched for '${query}'`);
-    // }
-    // handleChange
-    
-    return (
-        <>
-        <form
-        className="login"
-        onSubmit={(event) => {
-            event.preventDefault();
-            // const form = event.target;
-            // const formData = new FormData(form);
-            console.log(event.target);
-            console.log(password);
-            const user = loginUser(username, password);
-            setUsername("");
-            setPassword("");
-            if (user) {
-                setResult("Logged in!");
-            } else {
-                setResult("Failed to log in!");
-            }
-            // onSubmit(input);
-        }}
-        >
-        <h2>Welcome back</h2>
-        <p className="auth-subtitle">Log in to see your applications and feedback.</p>
-        {notice ? <p className="form-notice success">{notice}</p> : ""}
-        <div>
-            <label>Email <input type="text" value={username} placeholder="e.g. maya@example.com" onInput={(e) => setUsername(e.currentTarget.value)}/></label>
-            <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
-        </div>
-        <div>
-            <input type="submit" value="Log in" />
-        </div>
-        {result && <p className="form-result">{result}</p>}
-        <div className="quick-login">
-            <span>Or sign in with a demo account</span>
-            <div className="quick-login-buttons">
-                <button type="button" className="btn secondary" onClick={() => quickLogin("Dana", "dana@example.com")}>Dana <small>Employer</small></button>
-                <button type="button" className="btn secondary" onClick={() => quickLogin("Maya", "maya@example.com")}>Maya <small>Applicant</small></button>
-            </div>
-        </div>
-        </form>
-        </>
-    );
-};
-
-const SignUpForm = ({ currentUser, addUser, onSignedUp }: UserSignUpProps) => {
-  const [first_name, setFirstName] = useState<string>("");
-  const [last_name, setLastName] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [repeatPassword, setRepeatPassword] = useState<string>("");
-  const [isEmployer, setIsEmployer] = useState<boolean>(false);
-  const [result, setResult] = useState<string>("");
-  useEffect(() => {
-    if (currentUser == null) {
-        setResult("");
-    }
-  }, [currentUser]);
-
-  return (
-    <>
-        <form
-        className="login"
-        onSubmit={(event) => {
-            event.preventDefault();
-            // const form = event.target;
-            // const formData = new FormData(form);
-            console.log(event.target);
-            console.log(first_name);
-            setResult("");
-            let user = null;
-            if (password == repeatPassword) {
-                user = addUser(first_name, last_name, username, password, isEmployer);
-            }
-            if (user) {
-                setResult("Signed up!");
-                if (onSignedUp) {
-                    onSignedUp(username);
-                }
-                setFirstName("");
-                setLastName("");
-                setUsername("");
-                setPassword("");
-                setRepeatPassword("");
-                setIsEmployer(false);
-            } else {
-                setResult("Failed to sign up!");
-            }
-            // onSubmit(input);
-        }}
-        >
-        <h2>Create your account</h2>
-        <p className="auth-subtitle">It's free and takes less than a minute.</p>
-        <div className="role-choice" role="radiogroup" aria-label="I am">
-            <button type="button" role="radio" aria-checked={!isEmployer} className={"role-option" + (!isEmployer ? " active" : "")} onClick={() => setIsEmployer(false)}>
-                <span className="role-icon">🎓</span><b>I'm applying</b><small>Get feedback on my resume</small>
-            </button>
-            <button type="button" role="radio" aria-checked={isEmployer} className={"role-option" + (isEmployer ? " active" : "")} onClick={() => setIsEmployer(true)}>
-                <span className="role-icon">💼</span><b>I'm hiring</b><small>Review applicants' documents</small>
-            </button>
-        </div>
-        <div>
-            <div className="name-row">
-                <label>First Name <input type="text" value={first_name} onInput={(e) => setFirstName(e.currentTarget.value)}/></label>
-                <label>Last Name <input type="text" value={last_name} onInput={(e) => setLastName(e.currentTarget.value)}/></label>
-            </div>
-            <label>Email <input type="email" required value={username} onInput={(e) => setUsername(e.currentTarget.value)}/></label>
-            <label>Password <input type="password" value={password} onInput={(e) => setPassword(e.currentTarget.value)}/></label>
-            <label>Repeat Password <input type="password" value={repeatPassword} onInput={(e) => setRepeatPassword(e.currentTarget.value)}/></label>
-        </div>
-        <div>
-            <input type="submit" value="Create account" />
-        </div>
-        {result && <p className="form-result">{result}</p>}
-        </form>
-    </>
-  );
-};
 
 type HomeAction = { icon: string; title: string; text: string; to: string; button: string };
 
@@ -318,44 +161,10 @@ const EmployerHome = ({ currentUser, jobList, jobSubmissionList }: HomeProps) =>
 };
 
 const LoginSignUpPage = ({ currentUser, loginUser, resetDemoAndLogin, addUser, jobList, jobSubmissionList, documentList }: UserSignUpLoginProps) => {
-    const [tab, setTab] = useState<"login" | "signup">("login");
-    const [notice, setNotice] = useState<string>("");
-    const [signedUpEmail, setSignedUpEmail] = useState<string>("");
     return (
         <>
         {!currentUser ?
-            <div className="auth-page">
-                <section className="auth-hero">
-                    <h1>Know exactly why your application worked, or didn't.</h1>
-                    <p>Employers comment right on your resume and cover letter, so you know what to fix before you apply again.</p>
-                    <ul className="auth-points">
-                        <li><span>👍</span><div><b>Comments on the exact line</b>Positive and negative feedback with a clear reason.</div></li>
-                        <li><span>⭐</span><div><b>A clear decision</b>Strongly Consider, Consider or Not a Fit, plus what to do next.</div></li>
-                        <li><span>💬</span><div><b>Ask about the feedback</b>Not sure what a comment means? Ask the employer.</div></li>
-                    </ul>
-                    <div className="auth-preview" aria-hidden="true">
-                        <div className="auth-preview-line"><mark className="pos">Led a team of 4 to build a clinic appointment app</mark></div>
-                        <div className="auth-preview-tag pos">👍&nbsp; Positive · Strong impact</div>
-                        <div className="auth-preview-line"><mark className="neg">Responsible for various tasks related to the website</mark></div>
-                        <div className="auth-preview-tag neg">👎&nbsp; Negative · Too vague</div>
-                    </div>
-                </section>
-                <section className="auth-card">
-                    <div className="auth-tabs" role="tablist">
-                        <button type="button" role="tab" aria-selected={tab == "login"} className={tab == "login" ? "active" : ""} onClick={() => setTab("login")}>Log in</button>
-                        <button type="button" role="tab" aria-selected={tab == "signup"} className={tab == "signup" ? "active" : ""} onClick={() => { setTab("signup"); setNotice(""); }}>Create account</button>
-                    </div>
-                    {tab == "login" ?
-                        <LoginForm key={signedUpEmail} currentUser={currentUser} loginUser={loginUser} resetDemoAndLogin={resetDemoAndLogin} notice={notice} defaultEmail={signedUpEmail} />
-                    :
-                        <SignUpForm currentUser={currentUser} addUser={addUser} onSignedUp={(email) => {
-                            setSignedUpEmail(email);
-                            setNotice("Account created! Enter your password to log in.");
-                            setTab("login");
-                        }} />
-                    }
-                </section>
-            </div>
+            <AuthPage loginUser={loginUser} addUser={addUser} resetDemoAndLogin={resetDemoAndLogin} />
         : ""}
         {currentUser ? currentUser.isEmployer ?
             <EmployerHome currentUser={currentUser} jobList={jobList} jobSubmissionList={jobSubmissionList} documentList={documentList} />
